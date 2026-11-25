@@ -37,6 +37,6 @@ Open https://plamenn000234.github.io in Chrome (Android) or Safari (iPhone) and 
 
 Allergen, diet and nutrition data are derived from the listed ingredients and are estimates. Always check the labels of the products you buy. Some recipes contain alcohol.
 
-[Privacy policy](https://plamenn000234.github.io/privacy.html) · Contact: plamenn000234@gmail.com
+[Privacy policy](https://plamenn000234.github.io/privacy.html) · [Terms of use](https://plamenn000234.github.io/terms.html) · Contact: plamenn000234@gmail.com
 
 © 2026 Chefsheet. All rights reserved. Recipes, texts and code may not be copied or redistributed without permission.

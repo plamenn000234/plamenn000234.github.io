@@ -663,7 +663,7 @@ function viewHome(){
       <div class="sec"><div class="sec-h"><h2>How it works</h2></div><div class="how">
         <div>${msI("search")}<b>Find</b><p>Search by dish or by ingredient, then filter by diet, calories or the 14 allergens.</p></div>
         <div>${msI("tune")}<b>Scale</b><p>Open a recipe and set your portions. Every quantity in every component follows.</p></div>
-        <div>${msI("receipt_long")}<b>Order</b><p>Add dishes, set guests and grams per guest, and get a gross order list by section.</p></div></div>${STANDALONE?`<p class="note-line" style="text-align:center"><a href="privacy.html">Privacy policy</a> · Chefsheet 1.0</p>`:""}</div>`;
+        <div>${msI("receipt_long")}<b>Order</b><p>Add dishes, set guests and grams per guest, and get a gross order list by section.</p></div></div>${STANDALONE?`<p class="note-line" style="text-align:center"><a href="privacy.html">Privacy policy</a> · <a href="terms.html">Terms of use</a> · Chefsheet 1.0</p>`:""}</div>`;
     return;
   }
   const list=filtered(); const title=ui.coll>=0?D.folders[ui.coll][0]:(ui.q?`Results for “${ui.q}”`:"All recipes");
