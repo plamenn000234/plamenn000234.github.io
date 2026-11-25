@@ -3,6 +3,6 @@
   "target": {
     "namespace": "android_app",
     "package_name": "app.batchbook.twa",
-    "sha256_cert_fingerprints": ["PASTE_SHA256_FROM_PWABUILDER_HERE", "PASTE_SHA256_FROM_PLAY_APP_SIGNING_HERE"]
+    "sha256_cert_fingerprints": ["AF:FA:0C:42:77:56:14:97:BA:B5:6A:88:D0:F0:69:44:8E:67:4D:D4:97:70:E9:2C:F1:37:88:0E:42:96:F2:7A"]
   }
 }]
