@@ -1,7 +1,7 @@
 {
   "id": "./",
-  "name": "Batchbook – Pro Kitchen Recipes",
-  "short_name": "Batchbook",
+  "name": "Chefsheet: Pro Kitchen Recipes",
+  "short_name": "Chefsheet",
   "description": "Professional recipes at any batch size, supplier order lists and kitchen training.",
   "lang": "en",
   "dir": "ltr",

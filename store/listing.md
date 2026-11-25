@@ -1,12 +1,12 @@
 # Google Play store listing
 
-**App name (max 30):** Batchbook – Pro Kitchen Recipes
+**App name (max 30):** Chefsheet: Pro Kitchen Recipes
 
 **Short description (max 80):**
 4,900+ professional recipes you can scale to any batch, plus order lists.
 
 **Full description (max 4000):**
-Batchbook is a recipe library built for professional kitchens: hotels, banquets, buffets, restaurants and catering.
+Chefsheet is a recipe library built for professional kitchens: hotels, banquets, buffets, restaurants and catering.
 
 SCALE ANY RECIPE
 • 4,900+ technical recipe cards in 100+ collections: cuisines, courses, buffet, banquet, pastry, bakery, fine dining and more

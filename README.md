@@ -1,4 +1,4 @@
-# Batchbook
+# Chefsheet
 
 **Professional recipes at any batch size.** 4,900+ technical recipe cards, supplier order lists and kitchen training in one app.
 
@@ -6,7 +6,7 @@
 
 ## Who it is for
 
-Batchbook is made for **kitchen professionals**: chefs, sous chefs, chefs de partie, pastry chefs, banquet and buffet teams, catering and hotel kitchens, and culinary students.
+Chefsheet is made for **kitchen professionals**: chefs, sous chefs, chefs de partie, pastry chefs, banquet and buffet teams, catering and hotel kitchens, and culinary students.
 
 Recipes are written as professional technical cards: net weights in grams, batch yields, portion sizes, allergens and storage. Quantities and methods assume a professional kitchen and trained staff.
 
@@ -39,4 +39,4 @@ Allergen, diet and nutrition data are derived from the listed ingredients and ar
 
 [Privacy policy](https://plamenn000234.github.io/privacy.html) · Contact: plamenn000234@gmail.com
 
-© 2026 Batchbook. All rights reserved. Recipes, texts and code may not be copied or redistributed without permission.
+© 2026 Chefsheet. All rights reserved. Recipes, texts and code may not be copied or redistributed without permission.

@@ -2,14 +2,14 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="Professional recipes at any batch size: 4,900+ technical recipe cards, order lists and kitchen training.">
-<meta property="og:type" content="website"><meta property="og:site_name" content="Batchbook">
-<meta property="og:title" content="Batchbook – professional recipes at any batch size">
+<meta property="og:type" content="website"><meta property="og:site_name" content="Chefsheet">
+<meta property="og:title" content="Chefsheet – professional recipes at any batch size">
 <meta property="og:description" content="4,900+ technical recipe cards for professional kitchens: scale any batch, build supplier order lists, learn with lessons and kitchen tools.">
 <meta property="og:url" content="https://plamenn000234.github.io/"><meta property="og:image" content="https://plamenn000234.github.io/store/feature-graphic-1024x500.png">
 <meta name="twitter:card" content="summary_large_image"><link rel="canonical" href="https://plamenn000234.github.io/">
 <link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
 <style>[hidden]{display:none!important}body{margin:0}</style>
-<title>Batchbook</title>
+<title>Chefsheet</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap">
 <link rel="manifest" href="manifest.json"><meta name="theme-color" content="#E2552B">
@@ -470,7 +470,7 @@ body.cook .sh-head h1{font-size:clamp(24px,3.4vw,34px)}
 </style>
 </head><body>
 <header class="top">
-  <a class="logo" href="#" aria-label="Batchbook home"><span class="lg"><span class="ms f">skillet</span></span><b>Batchbook</b></a>
+  <a class="logo" href="#" aria-label="Chefsheet home"><span class="lg"><span class="ms f">skillet</span></span><b>Chefsheet</b></a>
   <div class="search" role="search">
     <span class="ms" aria-hidden="true">search</span>
     <input id="q" type="search" autocomplete="off" enterkeyhint="search" placeholder="Search recipes or ingredients" aria-label="Search recipes or ingredients">
@@ -662,7 +662,7 @@ function viewHome(){
       <div class="sec"><div class="sec-h"><h2>How it works</h2></div><div class="how">
         <div>${msI("search")}<b>Find</b><p>Search by dish or by ingredient, then filter by diet, calories or the 14 allergens.</p></div>
         <div>${msI("tune")}<b>Scale</b><p>Open a recipe and set your portions. Every quantity in every component follows.</p></div>
-        <div>${msI("receipt_long")}<b>Order</b><p>Add dishes, set guests and grams per guest, and get a gross order list by section.</p></div></div>${STANDALONE?`<p class="note-line" style="text-align:center"><a href="privacy.html">Privacy policy</a> · Batchbook 1.0</p>`:""}</div>`;
+        <div>${msI("receipt_long")}<b>Order</b><p>Add dishes, set guests and grams per guest, and get a gross order list by section.</p></div></div>${STANDALONE?`<p class="note-line" style="text-align:center"><a href="privacy.html">Privacy policy</a> · Chefsheet 1.0</p>`:""}</div>`;
     return;
   }
   const list=filtered(); const title=ui.coll>=0?D.folders[ui.coll][0]:(ui.q?`Results for “${ui.q}”`:"All recipes");
@@ -871,7 +871,7 @@ function recipePdf(r,d){
     y+=4});
   if(d.st){const ls=doc.splitTextToSize(pdfSafe("Storage: "+d.st),W-2*M);page(ls.length*4.4);doc.setFontSize(9.5);doc.text(ls,M,y);y+=ls.length*4.4+2}
   if(d.nu&&d.nu.p){page(6);doc.text(pdfSafe(`Nutrition per portion: protein ${d.nu.p[0]} g, fat ${d.nu.p[1]} g, carbs ${d.nu.p[2]} g, ${d.nu.p[3]} kcal`),M,y);y+=6}
-  page(6); doc.setFontSize(8); doc.setTextColor(110,110,110); doc.text("Made with Batchbook. Check product labels for allergens.",M,y);
+  page(6); doc.setFontSize(8); doc.setTextColor(110,110,110); doc.text("Made with Chefsheet. Check product labels for allergens.",M,y);
   return doc.output("arraybuffer");
 }
 async function copyText(t,msg){try{await navigator.clipboard.writeText(t);toast(msg)}catch(e){const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");toast(msg)}catch(_){toast("Select the text and copy it")}ta.remove()}}
