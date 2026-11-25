@@ -1,0 +1,26 @@
+{
+  "id": "./",
+  "name": "Batchbook – Pro Kitchen Recipes",
+  "short_name": "Batchbook",
+  "description": "Professional recipes at any batch size, supplier order lists and kitchen training.",
+  "lang": "en",
+  "dir": "ltr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F3F3F1",
+  "theme_color": "#E2552B",
+  "categories": ["food", "education", "productivity"],
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ],
+  "screenshots": [
+    {"src": "store/screenshots/01_home.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Recipe library"},
+    {"src": "store/screenshots/03_recipe.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Scale any recipe"},
+    {"src": "store/screenshots/04_order.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Order list"},
+    {"src": "store/screenshots/05_learn.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Kitchen training"}
+  ]
+}
