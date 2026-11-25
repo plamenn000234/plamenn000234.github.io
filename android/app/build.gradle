@@ -1,0 +1,39 @@
+plugins { id "com.android.application" }
+
+def ks = System.getenv("KEYSTORE_FILE")
+
+android {
+    namespace "app.chefsheet"
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "app.chefsheet"
+        minSdk 24
+        targetSdk 35
+        versionCode 2
+        versionName "2.0"
+    }
+
+    signingConfigs {
+        release {
+            if (ks) {
+                storeFile file(ks)
+                storePassword System.getenv("KEYSTORE_PASSWORD")
+                keyAlias System.getenv("KEY_ALIAS")
+                keyPassword System.getenv("KEY_PASSWORD")
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            if (ks) signingConfig signingConfigs.release
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}

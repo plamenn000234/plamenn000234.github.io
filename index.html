@@ -831,6 +831,7 @@ const CYR={"а":"a","б":"b","в":"v","г":"g","д":"d","е":"e","ё":"yo","ж":
 function pdfSafe(s){return String(s).replace(/≈/g,"~").replace(/[–—]/g,"-").replace(/[“”]/g,'"').replace(/[‘’]/g,"'").replace(/×/g,"x").replace(/·/g,"-").replace(/…/g,"...").replace(/≤/g,"<=").replace(/≥/g,">=").replace(/→/g,"->").replace(/[а-яёА-ЯЁ]/g,ch=>{const lo=ch.toLowerCase(),t=CYR[lo];if(t==null)return"";return ch===lo?t:t.charAt(0).toUpperCase()+t.slice(1)}).replace(/[^\x00-\xFF]/g,ch=>{const b=ch.normalize("NFD")[0];return b.charCodeAt(0)<256?b:({"ı":"i","ł":"l","ő":"o","ű":"u","œ":"oe","Œ":"OE"}[ch]||"")})}
 function fileBase(s){return String(s||"file").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^\w\-]+/g,"_").replace(/_+/g,"_").replace(/^_|_$/g,"").slice(0,80)}
 async function saveFile(filename,data){
+  if(window.ChefsheetApp){try{const type=/\.pdf$/i.test(filename)?"application/pdf":/\.csv$/i.test(filename)?"text/csv":"application/octet-stream";const by=typeof data==="string"?new TextEncoder().encode(data):new Uint8Array(data);let bin="";for(let i=0;i<by.length;i+=32768)bin+=String.fromCharCode.apply(null,by.subarray(i,i+32768));if(ChefsheetApp.saveFile(filename,type,btoa(bin))==="ok")return}catch(e){}toast("Could not save the file. Use Copy.");return}
   if(!downloads){try{const type=/\.pdf$/i.test(filename)?"application/pdf":/\.csv$/i.test(filename)?"text/csv":"application/octet-stream";const u=URL.createObjectURL(new Blob([data],{type}));const a=document.createElement("a");a.href=u;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);toast("Saved "+filename)}catch(e){toast("Could not save the file. Use Copy.")}return}
   try{await downloads.save({filename,data});toast("Saved "+filename)}
   catch(e){const code=e&&e.code;if(code==="declined")return;toast(code==="host_unavailable"?"This app can't save files. Open it in a browser.":"Could not save the file ("+(code||"error")+")")}
@@ -875,7 +876,7 @@ function recipePdf(r,d){
   page(6); doc.setFontSize(8); doc.setTextColor(110,110,110); doc.text("Made with Chefsheet. Check product labels for allergens.",M,y);
   return doc.output("arraybuffer");
 }
-async function copyText(t,msg){try{await navigator.clipboard.writeText(t);toast(msg)}catch(e){const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");toast(msg)}catch(_){toast("Select the text and copy it")}ta.remove()}}
+async function copyText(t,msg){if(window.ChefsheetApp){try{ChefsheetApp.copyText(t);toast(msg);return}catch(e){}}try{await navigator.clipboard.writeText(t);toast(msg)}catch(e){const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");toast(msg)}catch(_){toast("Select the text and copy it")}ta.remove()}}
 
 /* ---------- favourites ---------- */
 function toggleFav(id){
@@ -1088,6 +1089,7 @@ function renderTimers(){const el=$("tdock");if(!el)return;el.hidden=!timers.leng
   el.innerHTML=timers.map(t=>`<div class="tmr ${t.fired?"fired":""} ${t.run?"":"paused"}"><span class="ms f" aria-hidden="true">timer</span><span class="tx"><b>${fmtT(t.left)}</b><small>${esc(t.label)}${t.ctx?" · "+esc(t.ctx):""}</small></span>
   ${t.fired?"":`<button class="ib" data-tpause="${t.id}" aria-label="${t.run?"Pause":"Resume"}">${msI(t.run?"pause":"play_arrow",1)}</button>`}<button class="ib" data-tx="${t.id}" aria-label="${t.fired?"Dismiss":"Cancel"} timer">${msI("close")}</button></div>`).join("")}
 async function wake(on){
+  if(window.ChefsheetApp){try{ChefsheetApp.keepScreenOn(!!on);return true}catch(e){}}
   try{if(on){if(!("wakeLock" in navigator))return false;cook.lock=await navigator.wakeLock.request("screen");cook.lock.addEventListener("release",()=>{cook.lock=null});return true}
     else if(cook.lock){await cook.lock.release();cook.lock=null}}catch(e){return false}return true}
 async function setCook(on){
@@ -1098,6 +1100,7 @@ async function setCook(on){
 }
 document.addEventListener("visibilitychange",()=>{if(cook.on&&document.visibilityState==="visible"&&!cook.lock)wake(true)});
 async function shareText(title,text){
+  if(window.ChefsheetApp){try{ChefsheetApp.shareText(title,text);return}catch(e){}}
   if(navigator.share){try{await navigator.share({title,text});return}catch(e){if(e&&e.name==="AbortError")return}}
   copyText(text,"Copied. Paste it into any chat or email");
 }
