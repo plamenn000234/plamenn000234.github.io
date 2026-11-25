@@ -6,7 +6,7 @@
 - Do you provide a way for users to request that their data is deleted? **Not applicable: no data leaves the device** (users clear it by uninstalling or clearing app storage)
 
 ## App content
-- Privacy policy: https://plamenn000234.github.io/batchbook/privacy.html
+- Privacy policy: https://plamenn000234.github.io/privacy.html
 - Ads: **No ads**
 - App access: **All functionality is available without special access**
 - Target audience: **18 and over** (recipes include alcohol)

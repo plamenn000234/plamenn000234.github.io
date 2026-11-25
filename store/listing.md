@@ -39,8 +39,8 @@ Allergen and nutrition data are derived from ingredients and are estimates. Alwa
 **Category:** Food & Drink
 **Tags:** recipes, cooking, chef, kitchen
 **Contact email:** plamenn000234@gmail.com
-**Website:** https://plamenn000234.github.io/batchbook
-**Privacy policy:** https://plamenn000234.github.io/batchbook/privacy.html
+**Website:** https://plamenn000234.github.io
+**Privacy policy:** https://plamenn000234.github.io/privacy.html
 
 ## Graphics (in this folder)
 - App icon 512 × 512: `play-icon-512.png`
