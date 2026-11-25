@@ -99,6 +99,7 @@ main{min-width:0}
   background:radial-gradient(circle at 92% 12%,rgba(255,138,76,.35),rgba(255,138,76,0) 42%),radial-gradient(circle at 70% 110%,rgba(226,69,43,.30),rgba(226,69,43,0) 45%),linear-gradient(135deg,var(--hero-1),var(--hero-2))}
 .hero>*{position:relative;z-index:1;min-width:0}
 .hero h1{font-family:var(--f-display);font-weight:800;font-size:clamp(32px,5vw,54px);line-height:.98;letter-spacing:-.03em;margin:0;text-wrap:balance;max-width:15ch;color:var(--hero-ink)}
+.pro-tag{display:inline-block;margin:0 0 14px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.12);color:#FFC59E;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
 .hero h1 em{font-style:normal;background:linear-gradient(90deg,#FFB36B,#FF6B3D);-webkit-background-clip:text;background-clip:text;color:transparent}
 .hero p{margin:14px 0 0;color:var(--hero-muted);max-width:56ch;font-size:16px}
 .stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
@@ -648,8 +649,8 @@ function viewHome(){
     const pool=R.filter(r=>r.kcal&&!["Prep & Mise en Place","Marinades","Sauces","Staff Canteen","Fermentation & Pickling","Drinks","Classic Cocktails & Bar Spec","Batch Cocktails & Event Punches","Texture-Modified Meals (IDDSI)","Sugar & Chocolate Décor"].includes(D.folders[r.f][0])&&r.lines.length>4&&r.N>=4&&r.kcal<900);
     const day=Math.floor(Date.now()/864e5), fr=pool[(day*7919)%pool.length];
     const POP=["salmon","risotto","lamb","chicken curry","tiramisu","burger","hummus","steak"];
-    m.innerHTML=`<section class="hero"><div><h1>Professional recipes <em>at any batch size</em></h1>
-      <p>Technical recipe cards with batch yields, allergens and nutrition. Scale any recipe to your portions, then turn a menu into a supplier order list.</p>
+    m.innerHTML=`<section class="hero"><div><span class="pro-tag">For chefs and kitchen teams</span><h1>Professional recipes <em>at any batch size</em></h1>
+      <p>Technical recipe cards with batch yields, allergens and nutrition. Scale any recipe to your portions, then turn a menu into a supplier order list. Quantities and methods assume a professional kitchen and trained staff.</p>
       <div class="stats"><span><b>${R.length.toLocaleString("en")}</b> recipes</span><span><b>${GROUPS[0][1].length}</b> cuisines</span><span><b>${nProd.toLocaleString("en")}</b> products</span><span><b>14</b> allergens</span></div>
       <div class="pop"><small>Try</small>${POP.map(p=>`<button data-pop="${esc(p)}">${esc(p)}</button>`).join("")}</div></div>
       <div class="cluster" aria-hidden="true">${plate([8,"meat"],"p1")}${plate([205,"fish"],"p2")}${plate([335,"cake"],"p3")}${plate([108,"leaf"],"p4")}</div></section>

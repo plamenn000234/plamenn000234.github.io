@@ -3,10 +3,10 @@
 **App name (max 30):** Chefsheet: Pro Kitchen Recipes
 
 **Short description (max 80):**
-4,900+ professional recipes you can scale to any batch, plus order lists.
+Pro recipe cards for chefs: scale any batch, build order lists, train the team.
 
 **Full description (max 4000):**
-Chefsheet is a recipe library built for professional kitchens: hotels, banquets, buffets, restaurants and catering.
+Chefsheet is made for kitchen professionals: chefs, sous chefs, chefs de partie, pastry chefs, banquet and catering teams, and culinary students. Recipes are technical cards in grams with batch yields, written for professional kitchens and trained staff.
 
 SCALE ANY RECIPE
 • 4,900+ technical recipe cards in 100+ collections: cuisines, courses, buffet, banquet, pastry, bakery, fine dining and more
