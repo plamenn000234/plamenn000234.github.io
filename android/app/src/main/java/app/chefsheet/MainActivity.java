@@ -115,6 +115,12 @@ public class MainActivity extends Activity {
             }
         });
 
+        if (Build.VERSION.SDK_INT >= 33) {
+            getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
+                    android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT,
+                    () -> { if (web.canGoBack()) web.goBack(); else finish(); });
+        }
+
         if (state != null) web.restoreState(state);
         else web.loadUrl(startUrl(getIntent()));
     }
