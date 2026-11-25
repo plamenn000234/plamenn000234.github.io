@@ -2,7 +2,7 @@
 
 **Professional recipes at any batch size.** 4,900+ technical recipe cards, supplier order lists and kitchen training in one app.
 
-**Open the app:** https://plamenn000234.github.io
+**Android:** [Google Play (closed testing)](#android-google-play-closed-testing) · **Web:** https://plamenn000234.github.io
 
 ## Who it is for
 
@@ -31,7 +31,20 @@ Recipes are written as professional technical cards: net weights in grams, batch
 
 ## Install on your phone
 
-Open https://plamenn000234.github.io in Chrome (Android) or Safari (iPhone) and choose **Add to Home screen**.
+### Android (Google Play, closed testing)
+
+Chefsheet is a standalone Android app on Google Play. It is in closed testing now, so you join as a tester first:
+
+1. On your Android phone, sign in with the Google account you use for Google Play.
+2. Open https://groups.google.com/g/chefsheet-testers and tap **Join group**.
+3. Open the pinned post in the group and follow the link to **Become a tester**: https://play.google.com/apps/testing/app.chefsheet
+4. Install Chefsheet from Google Play: https://play.google.com/store/apps/details?id=app.chefsheet
+
+It can take a few minutes after joining before the Play Store page opens for you. Please keep the app installed for at least 14 days: Google needs 12 testers for 14 days before Chefsheet can go public.
+
+### iPhone and computer
+
+Open https://plamenn000234.github.io in Safari (iPhone) or any browser. On iPhone tap **Share**, then **Add to Home Screen**.
 
 ## Good to know
 
