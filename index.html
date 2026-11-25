@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8">
+<html lang="en">
+<script>if(/ChefsheetApp\//.test(navigator.userAgent))document.documentElement.classList.add("native")</script><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="Professional recipes at any batch size: 4,900+ technical recipe cards, order lists and kitchen training.">
 <meta property="og:type" content="website"><meta property="og:site_name" content="Chefsheet">
@@ -8,7 +9,7 @@
 <meta property="og:url" content="https://plamenn000234.github.io/"><meta property="og:image" content="https://plamenn000234.github.io/store/feature-graphic-1024x500.png">
 <meta name="twitter:card" content="summary_large_image"><link rel="canonical" href="https://plamenn000234.github.io/">
 <link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
-<style>[hidden]{display:none!important}body{margin:0}</style>
+<style>[hidden]{display:none!important}body{margin:0}html.native{--sat:0px;--sab:0px}</style>
 <title>Chefsheet</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap">
@@ -16,7 +17,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&icon_names=ac_unit,add,arrow_back,arrow_forward,auto_awesome,bakery_dining,bento,blender,breakfast_dining,cake,calculate,celebration,check,check_circle,chef_hat,child_care,close,content_copy,cooking,dinner_dining,download_for_offline,eco,egg_alt,euro,fastfood,grain,health_and_safety,icecream,insights,inventory_2,kebab_dining,kitchen,lightbulb,local_bar,local_cafe,local_fire_department,local_pizza,lunch_dining,menu_book,nutrition,outdoor_grill,pause,picture_as_pdf,play_arrow,quiz,ramen_dining,receipt_long,refresh,restaurant,rice_bowl,room_service,scale,school,science,search,set_meal,share,skillet,soup_kitchen,spa,sports_bar,star,stockpot,sunny,tapas,thermostat,timer,translate,tune,warning,water_drop,wine_bar,workspace_premium&display=block">
 <style>
 /* Layout: a modern food app. Paprika-orange brand, every collection gets its own gradient "app icon" colour; recipes read as clean cards; the recipe page opens on a colour banner, then a tech-card body with a scaled quantity column. */
-:root{
+:root{--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);
   --bg:#F3F3F1; --surface:#FFFFFF; --sunk:#F7F7F5; --ink:#17181B; --muted:#6A6D74; --line:#E1E1DD; --line-2:#ECECE8;
   --accent:#E2552B; --accent-ink:#FFFFFF; --accent-soft:#FCE6DD; --ok:#21875A; --ok-soft:#DFF2E8; --mark:#E8A317; --warn:#C0392B; --warn-soft:#FBE3DF;
   --g-s:80%; --g1-l:60%; --g2-l:47%; --tint-s:70%; --tint-l:94%; --deep-s:60%; --deep-l:36%;
@@ -45,10 +46,10 @@ button{cursor:pointer;background:none;border:0;padding:0}
 .mono{font-variant-numeric:tabular-nums}
 .ms{font-family:"Material Symbols Rounded";font-weight:normal;font-style:normal;font-size:22px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;width:1em;overflow:hidden;font-feature-settings:"liga";-webkit-font-feature-settings:"liga";-webkit-font-smoothing:antialiased;font-variation-settings:"FILL" 0,"wght" 500,"GRAD" 0,"opsz" 24;flex:none;user-select:none}
 .ms.f{font-variation-settings:"FILL" 1,"wght" 500,"GRAD" 0,"opsz" 24}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:var(--sat);z-index:30;background:var(--bg)}
 
 /* top bar */
-.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;gap:14px;padding-block:12px;max-width:1280px;margin:0 auto}
+.top{position:sticky;top:var(--sat);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;gap:14px;padding-block:12px;max-width:1280px;margin:0 auto}
 .logo{display:flex;align-items:center;gap:10px;flex:none;text-decoration:none;color:inherit}
 .logo .lg{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;color:#fff;background:linear-gradient(140deg,#FF8A4C,#E2452B);box-shadow:0 4px 12px rgba(226,69,43,.35)}
 .logo .lg .ms{font-size:22px}
@@ -70,7 +71,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .badge:empty{display:none}
 
 .wrap{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:240px minmax(0,1fr);gap:28px;align-items:start}
-.rail{position:sticky;top:calc(env(safe-area-inset-top,0px) + 76px);max-height:calc(100vh - 92px);overflow:auto;padding-bottom:24px;scrollbar-width:thin}
+.rail{position:sticky;top:calc(var(--sat) + 76px);max-height:calc(100vh - 92px);overflow:auto;padding-bottom:24px;scrollbar-width:thin}
 .rail h3{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:20px 0 6px 8px}
 .rail h3:first-child{margin-top:6px}
 .rail .cl{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;text-align:left;padding:5px 8px;border-radius:10px;font-size:14px;font-weight:500;color:var(--ink)}
@@ -276,7 +277,7 @@ table.nut th{font-weight:700;color:var(--muted);font-size:11px}
 .pre{display:inline-flex;gap:4px;flex-wrap:wrap}
 .pre button{height:30px;padding:0 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:12px;font-weight:700}
 .pre button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-.ticket{position:sticky;top:calc(env(safe-area-inset-top,0px) + 80px)}
+.ticket{position:sticky;top:calc(var(--sat) + 80px)}
 .tk-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
 .tk-sum{font-size:12.5px;font-weight:600;color:var(--muted);margin:-8px 0 10px}
 .tk-sec{margin-top:14px}
@@ -298,13 +299,13 @@ table.nut th{font-weight:700;color:var(--muted);font-size:11px}
 
 /* phone tab bar */
 .tabs{display:none}
-.toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:11px 18px;border-radius:999px;font-weight:700;font-size:14px;z-index:50;box-shadow:var(--shadow-h);max-width:calc(100vw - 32px)}
+.toast{position:fixed;left:50%;bottom:calc(92px + var(--sab));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:11px 18px;border-radius:999px;font-weight:700;font-size:14px;z-index:50;box-shadow:var(--shadow-h);max-width:calc(100vw - 32px)}
 
 @media (max-width:980px){
   .wrap{grid-template-columns:minmax(0,1fr)}
   .rail{display:none}
   .topnav{display:none}
-  .tabs{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:25;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line-2);padding:6px max(8px,env(safe-area-inset-left,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-right,0px))}
+  .tabs{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:25;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line-2);padding:6px max(8px,env(safe-area-inset-left,0px)) calc(6px + var(--sab)) max(8px,env(safe-area-inset-right,0px))}
   .tabs a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0;text-decoration:none;color:var(--muted);font-size:11px;font-weight:700;position:relative}
   .tabs a .ms{font-size:24px;width:50px;height:30px;line-height:30px;text-align:center;border-radius:999px}
   .tabs a[aria-current="page"]{color:var(--ink)}
@@ -436,7 +437,7 @@ table.lt.gl td:first-child{font-weight:700}
 .tm{display:inline-flex;align-items:center;gap:3px;white-space:nowrap;padding:0 7px 0 5px;margin:0 1px;border-radius:8px;background:var(--accent-soft);color:var(--accent);font-weight:800;font-size:.95em;line-height:1.6;vertical-align:baseline}
 .tm .ms{font-size:15px}
 .tm:hover{filter:brightness(.96)}
-.tdock{position:fixed;right:16px;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:40;display:flex;flex-direction:column;gap:8px;max-width:calc(100vw - 32px)}
+.tdock{position:fixed;right:16px;bottom:calc(20px + var(--sab));z-index:40;display:flex;flex-direction:column;gap:8px;max-width:calc(100vw - 32px)}
 .tmr{display:flex;align-items:center;gap:8px;padding:8px 8px 8px 14px;border-radius:18px;background:var(--ink);color:var(--bg);box-shadow:var(--shadow-h);min-width:220px}
 .tmr>.ms{font-size:22px;color:var(--hero-acc)}
 .tmr .tx{display:flex;flex-direction:column;flex:1;min-width:0}
@@ -445,12 +446,12 @@ table.lt.gl td:first-child{font-weight:700}
 .tmr .ib{color:var(--bg);width:36px;height:36px}
 .tmr.paused b{opacity:.6}
 .tmr .ib:hover,.tmr .ib:focus-visible{background:rgba(127,127,127,.25);color:inherit}
-body.has-tm .toast{bottom:calc(100px + 64px * var(--nt,1) + env(safe-area-inset-bottom,0px))}
+body.has-tm .toast{bottom:calc(100px + 64px * var(--nt,1) + var(--sab))}
 .tmr.fired{background:var(--warn);color:#fff;animation:pulse 1s infinite}
 .tmr.fired .ib{color:#fff}.tmr.fired>.ms{color:#fff}
 @keyframes pulse{50%{transform:scale(1.03)}}
 @media (prefers-reduced-motion:reduce){.tmr.fired{animation:none}}
-.cookbar{position:sticky;top:calc(64px + env(safe-area-inset-top,0px));z-index:19;display:flex;align-items:center;gap:10px;padding:8px 8px 8px 14px;margin:8px 0;border-radius:16px;background:var(--ok);color:#fff;font-weight:700;font-size:14px}
+.cookbar{position:sticky;top:calc(64px + var(--sat));z-index:19;display:flex;align-items:center;gap:10px;padding:8px 8px 8px 14px;margin:8px 0;border-radius:16px;background:var(--ok);color:#fff;font-weight:700;font-size:14px}
 .cookbar .ms{font-size:20px}.cookbar span.t{flex:1;min-width:0}
 .cookbar .btn{height:34px;background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.4);color:#fff}
 body.cook ol.steps li{font-size:19px;line-height:1.5;padding:12px 0}
@@ -460,7 +461,7 @@ body.cook .sh-head h1{font-size:clamp(24px,3.4vw,34px)}
 .sh-head .btn.on{background:#fff;color:hsl(var(--h) 70% 32%)}
 .offl{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:14px 16px;border-radius:18px;background:var(--surface);box-shadow:var(--shadow)}
 .offl div{flex:1;min-width:180px}.offl p{margin:0;color:var(--muted);font-size:13.5px}
-@media (max-width:980px){.tdock{bottom:calc(84px + env(safe-area-inset-bottom,0px));right:12px}}
+@media (max-width:980px){.tdock{bottom:calc(84px + var(--sab));right:12px}}
 @media (max-width:640px){
   .lhero{grid-template-columns:minmax(0,1fr)}.ring{display:none}
   .lbody{padding:18px 16px 6px}.lfoot{padding:12px 16px 18px}
