@@ -96,7 +96,7 @@ public class MainActivity extends Activity {
         s.setDatabaseEnabled(true);
         s.setMediaPlaybackRequiresUserGesture(false);
         s.setCacheMode(WebSettings.LOAD_DEFAULT);
-        s.setUserAgentString(s.getUserAgentString() + " ChefsheetApp/2");
+        s.setUserAgentString(s.getUserAgentString() + " ChefsheetApp/3");
 
         web.addJavascriptInterface(new Bridge(), "ChefsheetApp");
         web.setWebChromeClient(new WebChromeClient());
@@ -141,6 +141,29 @@ public class MainActivity extends Activity {
     void openExternal(Uri u) {
         Intent i = "mailto".equals(u.getScheme()) ? new Intent(Intent.ACTION_SENDTO, u) : new Intent(Intent.ACTION_VIEW, u);
         try { startActivity(i); } catch (ActivityNotFoundException e) { toast("No app can open this link"); }
+    }
+
+    boolean askedNotif;
+
+    /** Once per session: allow notifications (Android 13+) and exact alarms (Android 12+), so timers ring on time. */
+    void askNotifications() {
+        if (askedNotif) return;
+        askedNotif = true;
+        if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            runOnUiThread(() -> requestPermissions(new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 42));
+            return;
+        }
+        android.app.AlarmManager am = (android.app.AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        if (Build.VERSION.SDK_INT >= 31 && !am.canScheduleExactAlarms()
+                && !getPreferences(MODE_PRIVATE).getBoolean("askedExact", false)) {
+            getPreferences(MODE_PRIVATE).edit().putBoolean("askedExact", true).apply();
+            runOnUiThread(() -> {
+                toast("Allow alarms so timers ring on time with the screen off");
+                try {
+                    startActivity(new Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, Uri.parse("package:" + getPackageName())));
+                } catch (ActivityNotFoundException e) { /* settings screen missing */ }
+            });
+        }
     }
 
     void toast(String t) { Toast.makeText(this, t, Toast.LENGTH_SHORT).show(); }
@@ -204,6 +227,18 @@ public class MainActivity extends Activity {
         public void copyText(String text) {
             ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
             cm.setPrimaryClip(ClipData.newPlainText("Chefsheet", text));
+        }
+
+        @JavascriptInterface
+        public void setTimer(String id, double endAt, String label) {
+            askNotifications();
+            TimerReceiver.channel(MainActivity.this);
+            TimerReceiver.schedule(MainActivity.this, id, (long) endAt, label);
+        }
+
+        @JavascriptInterface
+        public void cancelTimer(String id) {
+            TimerReceiver.cancel(MainActivity.this, id);
         }
 
         @JavascriptInterface

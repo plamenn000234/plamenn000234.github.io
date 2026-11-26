@@ -1088,13 +1088,16 @@ function fmtT(s){s=Math.max(0,Math.ceil(s));const h=Math.floor(s/3600),m=Math.fl
 function addTimer(sec,label){
   try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();if(actx.state==="suspended")actx.resume()}catch(e){}
   const r=byId.get(scale.id); const ctx=location.hash.startsWith("#r-")&&r?r.t:"";
-  timers.push({id:Math.random().toString(36).slice(2),label,ctx,dur:sec,end:Date.now()+sec*1000,left:sec,run:true,fired:false});
+  const nt={id:Math.random().toString(36).slice(2),label,ctx,dur:sec,end:Date.now()+sec*1000,left:sec,run:true,fired:false};
+  timers.push(nt); nativeTimer(nt,true);
   if(!tmInt)tmInt=setInterval(tickTimers,500); renderTimers(); toast("Timer started: "+label);
 }
 function tickTimers(){let any=false;const now=Date.now();
   timers.forEach(t=>{if(t.run){t.left=(t.end-now)/1000;if(t.left<=0&&!t.fired){t.fired=true;t.run=false;t.left=0;alarm(t)}}if(t.run)any=true});
   renderTimers(); if(!any&&!timers.some(t=>t.fired)){clearInterval(tmInt);tmInt=null}}
-function alarm(t){toast("Time is up: "+t.label);try{navigator.vibrate&&navigator.vibrate([400,150,400,150,800])}catch(e){}
+function nativeTimer(t,on){const A=window.ChefsheetApp;if(!A||!A.setTimer)return;try{if(on)A.setTimer(t.id,t.end,t.label+(t.ctx?" · "+t.ctx:""));else A.cancelTimer(t.id)}catch(e){}}
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&timers.length)tickTimers()});
+function alarm(t){if(document.visibilityState==="visible")nativeTimer(t,false);toast("Time is up: "+t.label);try{navigator.vibrate&&navigator.vibrate([400,150,400,150,800])}catch(e){}
   try{if(!actx)return;const t0=actx.currentTime;for(let i=0;i<6;i++){const o=actx.createOscillator(),g=actx.createGain();o.type="square";o.frequency.value=i%2?880:1175;g.gain.setValueAtTime(0.0001,t0+i*.32);g.gain.exponentialRampToValueAtTime(.25,t0+i*.32+.02);g.gain.exponentialRampToValueAtTime(.0001,t0+i*.32+.26);o.connect(g).connect(actx.destination);o.start(t0+i*.32);o.stop(t0+i*.32+.28)}}catch(e){}}
 function renderTimers(){const el=$("tdock");if(!el)return;el.hidden=!timers.length;document.body.classList.toggle("has-tm",timers.length>0);document.body.style.setProperty("--nt",Math.min(timers.length,4));
   el.innerHTML=timers.map(t=>`<div class="tmr ${t.fired?"fired":""} ${t.run?"":"paused"}"><span class="ms f" aria-hidden="true">timer</span><span class="tx"><b>${fmtT(t.left)}</b><small>${esc(t.label)}${t.ctx?" · "+esc(t.ctx):""}</small></span>
@@ -1161,8 +1164,8 @@ function bind(){
     if(t.matches("a[data-nav='home']")){if(!location.hash||location.hash==="#"){e.preventDefault();ui.coll=-1;ui.q="";$("q").value="";$("q-clr").hidden=true;ui.diet=0;ui.free.clear();ui.low=false;route()}else{ui.coll=-1}return}
     if(t.matches(".logo")){e.preventDefault();ui.coll=-1;ui.q="";$("q").value="";$("q-clr").hidden=true;ui.diet=0;ui.free.clear();ui.low=false;ui.shown=PAGE;history.pushState(null,"",location.pathname+location.search);route();window.scrollTo(0,0);return}
     if(t.dataset.tm){addTimer(+t.dataset.tm,t.dataset.tl);return}
-    if(t.dataset.tpause){const x=timers.find(z=>z.id===t.dataset.tpause);if(x){if(x.run){x.run=false;x.left=(x.end-Date.now())/1000}else{x.run=true;x.end=Date.now()+x.left*1000;if(!tmInt)tmInt=setInterval(tickTimers,500)}renderTimers()}return}
-    if(t.dataset.tx){timers=timers.filter(z=>z.id!==t.dataset.tx);renderTimers();return}
+    if(t.dataset.tpause){const x=timers.find(z=>z.id===t.dataset.tpause);if(x){if(x.run){x.run=false;x.left=(x.end-Date.now())/1000;nativeTimer(x,false)}else{x.run=true;x.end=Date.now()+x.left*1000;nativeTimer(x,true);if(!tmInt)tmInt=setInterval(tickTimers,500)}renderTimers()}return}
+    if(t.dataset.tx){timers.filter(z=>z.id===t.dataset.tx).forEach(z=>nativeTimer(z,false));timers=timers.filter(z=>z.id!==t.dataset.tx);renderTimers();return}
     if(t.id==="r-cook"){setCook(!cook.on);return}
     if(t.id==="cook-x"){setCook(false);return}
     if(t.id==="r-share"){const r=byId.get(scale.id);if(!r)return;detail(r).then(d=>shareText(r.t,recipeText(r,d)));return}
