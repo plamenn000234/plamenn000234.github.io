@@ -58,14 +58,18 @@ public class MainActivity extends Activity {
         root.addView(bottomBar, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0));
 
         root.setOnApplyWindowInsetsListener((v, insets) -> {
-            int top, bottom;
+            int top, bottom, left, right;
             if (Build.VERSION.SDK_INT >= 30) {
-                android.graphics.Insets i = insets.getInsets(WindowInsets.Type.systemBars() | WindowInsets.Type.ime());
-                top = i.top; bottom = i.bottom;
+                android.graphics.Insets i = insets.getInsets(WindowInsets.Type.systemBars() | WindowInsets.Type.ime() | WindowInsets.Type.displayCutout());
+                top = i.top; bottom = i.bottom; left = i.left; right = i.right;
             } else {
                 top = insets.getSystemWindowInsetTop();
                 bottom = insets.getSystemWindowInsetBottom();
+                left = insets.getSystemWindowInsetLeft();
+                right = insets.getSystemWindowInsetRight();
             }
+            // landscape on phones and tablets: keep content clear of side navigation bars and cutouts
+            v.setPadding(left, 0, right, 0);
             topBar.getLayoutParams().height = top;
             bottomBar.getLayoutParams().height = bottom;
             topBar.requestLayout();
@@ -96,7 +100,7 @@ public class MainActivity extends Activity {
         s.setDatabaseEnabled(true);
         s.setMediaPlaybackRequiresUserGesture(false);
         s.setCacheMode(WebSettings.LOAD_DEFAULT);
-        s.setUserAgentString(s.getUserAgentString() + " ChefsheetApp/3");
+        s.setUserAgentString(s.getUserAgentString() + " ChefsheetApp/4");
 
         web.addJavascriptInterface(new Bridge(), "ChefsheetApp");
         web.setWebChromeClient(new WebChromeClient());
