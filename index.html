@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap">
 <link rel="manifest" href="manifest.json"><meta name="theme-color" content="#E2552B">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&icon_names=ac_unit,add,arrow_back,arrow_forward,auto_awesome,bakery_dining,bento,blender,breakfast_dining,cake,calculate,celebration,check,check_circle,chef_hat,child_care,close,content_copy,cooking,dinner_dining,download_for_offline,eco,egg_alt,euro,fastfood,grain,health_and_safety,icecream,insights,inventory_2,kebab_dining,kitchen,lightbulb,local_bar,local_cafe,local_fire_department,local_pizza,lunch_dining,menu_book,nutrition,outdoor_grill,pause,picture_as_pdf,play_arrow,quiz,ramen_dining,receipt_long,refresh,restaurant,rice_bowl,room_service,scale,school,science,search,set_meal,share,skillet,soup_kitchen,spa,sports_bar,star,stockpot,sunny,tapas,thermostat,timer,translate,tune,warning,water_drop,wine_bar,workspace_premium&display=block">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&icon_names=ac_unit,add,arrow_back,arrow_forward,auto_awesome,bakery_dining,bento,blender,breakfast_dining,cake,calculate,celebration,check,check_circle,chef_hat,child_care,close,content_copy,cookie,cooking,dinner_dining,download_for_offline,eco,egg_alt,euro,fastfood,grain,health_and_safety,icecream,insights,inventory_2,kebab_dining,kitchen,lightbulb,local_bar,local_cafe,local_fire_department,local_pizza,lunch_dining,menu_book,nutrition,outdoor_grill,pause,picture_as_pdf,play_arrow,quiz,ramen_dining,receipt_long,refresh,restaurant,rice_bowl,room_service,scale,school,science,search,set_meal,share,skillet,soup_kitchen,spa,sports_bar,star,stockpot,sunny,tapas,thermostat,timer,translate,tune,warning,water_drop,wine_bar,workspace_premium&display=block">
 <style>
 /* Layout: a modern food app. Paprika-orange brand, every collection gets its own gradient "app icon" colour; recipes read as clean cards; the recipe page opens on a colour banner, then a tech-card body with a scaled quantity column. */
 :root{--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);
@@ -70,7 +70,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:var(--sat);z-index:
 .badge{display:inline-grid;place-items:center;min-width:19px;height:19px;padding:0 5px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-size:11px;font-weight:800}
 .badge:empty{display:none}
 
-.wrap{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:240px minmax(0,1fr);gap:28px;align-items:start}
+.wrap{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:240px minmax(0,1fr);gap:0 28px;align-items:start}
 .rail{position:sticky;top:calc(var(--sat) + 76px);max-height:calc(100vh - 92px);overflow:auto;padding-bottom:24px;scrollbar-width:thin}
 .rail h3{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:20px 0 6px 8px}
 .rail h3:first-child{margin-top:6px}
@@ -82,6 +82,8 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:var(--sat);z-index:
 .rail .cl i .ms{font-size:15px}
 .rail .cl>span:last-child{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
 main{min-width:0}
+.wrap>.rail{grid-column:1;grid-row:1/span 2}
+.wrap>.cookbar,.wrap>main{grid-column:2}
 
 /* filters */
 .filters{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
@@ -304,6 +306,7 @@ table.nut th{font-weight:700;color:var(--muted);font-size:11px}
 @media (max-width:980px){
   .wrap{grid-template-columns:minmax(0,1fr)}
   .rail{display:none}
+  .wrap>.cookbar,.wrap>main{grid-column:1}
   .topnav{display:none}
   .tabs{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:25;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line-2);padding:6px max(8px,env(safe-area-inset-left,0px)) calc(6px + var(--sab)) max(8px,env(safe-area-inset-right,0px))}
   .tabs a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0;text-decoration:none;color:var(--muted);font-size:11px;font-weight:700;position:relative}
@@ -583,7 +586,7 @@ function prep(){
 function folderIdx(name){return D.folders.findIndex(f=>f[0]===name)}
 function inColl(r,c){return r.f===c||r.also.includes(c)}
 function filtered(){
-  const toks=fold(ui.q).split(/[^a-z0-9%]+/).filter(t=>t.length>1||/\d/.test(t));
+  const toks=fold(ui.q).split(/[^\p{L}\p{N}%]+/u).filter(t=>t.length>1||/\d/.test(t));
   const out=[];
   for(const r of R){
     if(ui.coll>=0&&!inColl(r,ui.coll))continue;
@@ -664,17 +667,17 @@ function viewHome(){
       <div class="sec"><div class="sec-h"><h2>How it works</h2></div><div class="how">
         <div>${msI("search")}<b>Find</b><p>Search by dish or by ingredient, then filter by diet, calories or the 14 allergens.</p></div>
         <div>${msI("tune")}<b>Scale</b><p>Open a recipe and set your portions. Every quantity in every component follows.</p></div>
-        <div>${msI("receipt_long")}<b>Order</b><p>Add dishes, set guests and grams per guest, and get a gross order list by section.</p></div></div>${STANDALONE?`<p class="note-line" style="text-align:center"><a href="privacy.html">Privacy policy</a> · <a href="terms.html">Terms of use</a> · Chefsheet 1.0</p>`:""}</div>`;
+        <div>${msI("receipt_long")}<b>Order</b><p>Add dishes, set guests and grams per guest, and get a gross order list by section.</p></div></div>${STANDALONE?`<p class="note-line" style="text-align:center"><a href="privacy.html">Privacy policy</a> · <a href="terms.html">Terms of use</a> · Chefsheet</p>`:""}</div>`;
     return;
   }
   const list=filtered(); const title=ui.coll>=0?D.folders[ui.coll][0]:(ui.q?`Results for “${ui.q}”`:"All recipes");
   m.innerHTML=`<div class="rhead"><h2>${esc(title)}</h2><span class="mono" style="color:var(--muted);font-size:13px">${list.length.toLocaleString("en")} recipes</span></div>
     <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:flex-start"><div style="min-width:0;flex:1">${filtersHtml()}</div>
-    <select id="sort" aria-label="Sort"><option value="rel">${ui.q?"Best match":"A–Z"}</option><option value="az">A–Z</option><option value="kcal">Lowest kcal</option></select></div>
+    <select id="sort" aria-label="Sort"><option value="rel">${ui.q?"Best match":"A–Z"}</option>${ui.q?`<option value="az">A–Z</option>`:""}<option value="kcal">Lowest kcal</option></select></div>
     ${ui.coll>=0?`<div style="margin-top:8px"><button class="chip" id="coll-clr">× ${esc(D.folders[ui.coll][0])}</button></div>`:""}
     <div style="margin-top:12px">${list.length?`<div class="list">${list.slice(0,ui.shown).map(rowHtml).join("")}</div>${list.length>ui.shown?`<button class="more" id="more">Show more (${(list.length-ui.shown).toLocaleString("en")} left)</button>`:""}`
       :`<div class="empty"><b>No recipes match</b>Try fewer words, another ingredient, or clear a filter.</div>`}</div>`;
-  $("sort").value=ui.sort;
+  $("sort").value=ui.sort==="az"&&!ui.q?"rel":ui.sort;
 }
 function viewFav(){
   const list=favs.map(id=>byId.get(id)).filter(Boolean);
@@ -707,7 +710,8 @@ function renderSheet(r,d){
     <div class="scaler"><label for="sc-p">Portions</label><div class="stepper"><button data-step="-1" aria-label="Fewer portions">−</button><input id="sc-p" type="number" inputmode="numeric" min="1" max="5000" value="${scale.p}"><button data-step="1" aria-label="More portions">+</button></div>
     <div class="quick">${quick.map(q=>`<button data-qp="${q}" aria-pressed="${scale.p===q}">${q}</button>`).join("")}</div>
     <span class="fx">× ${(Math.round(f*100)/100).toLocaleString("en")} of the base batch</span></div>
-    <div class="sh-body"><div class="col"><h2 class="mh">Ingredients</h2>
+    ${d.c.length?"":`<div class="empty" style="margin:18px 28px;box-shadow:none;background:var(--sunk)"><b>This recipe card is not finished yet</b>Ingredients and method will be added in an update.</div>`}
+    <div class="sh-body" ${d.c.length?"":"hidden"}><div class="col"><h2 class="mh">Ingredients</h2>
       ${d.c.map((c,ci)=>`<div class="comp">${d.c.length>1||c[0]?`<h3>${esc(c[0])}</h3>`:""}${c[1]&&c[1].length?`<p class="note">${esc(c[1].join(" · ").replace(/Batch · /g,""))}</p>`:""}
       <table class="ing"><tbody>${c[2].map((x,i)=>{const k=ci+":"+i;const yl=/^(yield|cooked yield)/i.test(x[0]);return `<tr class="${yl?"yl":""} ${ticks.ing.has(k)?"got":""}" data-ing="${k}"><td>${esc(x[0])}</td><td class="q">${typeof x[1]==="number"?fmtG(x[1]*f):esc(x[1])}</td></tr>`}).join("")}</tbody></table></div>`).join("")}
       <p class="note-line">Tap an ingredient or a step to tick it off. Tap a time to start a timer.</p></div>
@@ -757,7 +761,8 @@ function compute(){
   const secs=D.sections.map(()=>[]);
   for(const e of acc.values()){const q=roundQty(e.q,e.unit); if(q>0)secs[e.sec].push({...e,q})}
   secs.forEach(s=>s.sort((a,b)=>a.name.localeCompare(b.name)));
-  return {secs,algs:[...algs].sort((a,b)=>a-b),count:secs.reduce((a,s)=>a+s.length,0)};
+  const miss=ord.lines.map(l=>byId.get(l.id)).filter(r=>r&&!r.lines.length).map(r=>r.name);
+  return {secs,algs:[...algs].sort((a,b)=>a-b),count:secs.reduce((a,s)=>a+s.length,0),miss};
 }
 function viewOrder(){
   const c=compute();
@@ -773,12 +778,12 @@ function viewOrder(){
       ${l.mode==="buffet"?`<span class="pre">${PRESETS.map(([n,g])=>`<button data-pre="${n}" data-g="${g}" aria-pressed="${l.pre===n}">${n} ${g}</button>`).join("")}</span>
       <label><span class="lb">g/guest </span><input data-f="gpg" type="number" inputmode="numeric" min="0" value="${l.gpg==null?"":esc(l.gpg)}"></label>
       <label><span class="lb">K </span><select data-f="k">${[0.5,0.6,0.7,0.8,0.9,1,1.1,1.2,1.3,1.5].map(k=>`<option ${Number(l.k)===k?"selected":""}>${k}</option>`).join("")}</select></label>`:""}
-      <span class="pp">${(Math.round(portions(l)*10)/10).toLocaleString("en")} portions</span></div></div>`}).join("")
+      <span class="pp">${(Math.round(portions(l)*10)/10).toLocaleString("en")} portions</span></div>${r.lines.length?"":`<p class="note-line" style="color:var(--warn);margin-top:8px">No product data for this recipe yet, so it is not counted in the order list.</p>`}</div>`}).join("")
       :`<div class="empty"><b>The order is empty</b>Open any recipe and tap Add to order, or use the + next to a recipe in the list.<br><br><a href="#">Browse recipes</a></div>`}</div>
     ${ord.lines.length?`<p class="note-line">Buffet: portions = guests × K × (g per guest ÷ TTK portion) + reserve. K is the popularity factor (1 = average, 1.3 = very popular). Plated: one portion per guest + reserve.</p>
     <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="o-new">New order</button></div>`:""}</section>
     <aside class="panel ticket"><div class="tk-h"><h2>Order list</h2>${ord.sid?`<span class="mono" style="font-size:11px;color:var(--muted)">saved</span>`:""}</div>
-    <div class="tk-sum">${ord.lines.length} dishes · ${c.count} products · gross, rounded up</div>
+    <div class="tk-sum">${ord.lines.length} dishes · ${c.count} products · gross, rounded up${c.miss.length?` · <span style="color:var(--warn)">${c.miss.length} not counted</span>`:""}</div>
     <div class="tk-scroll">${c.count?c.secs.map((s,i)=>s.length?`<div class="tk-sec"><h4>${esc(D.sections[i])}</h4>${s.map(it=>`<div class="tk-it"><span>${esc(it.name)}${it.note?`<small>${esc(it.note)}</small>`:""}</span><b>${fmtQ(it.q)} ${esc(it.unit)}</b></div>`).join("")}</div>`:"").join(""):`<p style="color:var(--muted);margin:0">Products appear here as you add dishes.</p>`}</div>
     ${c.algs.length?`<div class="tk-al">Allergens in this menu: ${c.algs.map(a=>a+" "+ALG[a]).join(", ")}</div>`:""}
     <div class="tk-acts"><button class="btn pri" id="o-save" ${ord.lines.length?"":"disabled"}>${ord.sid?"Update saved order":"Save order"}</button>
@@ -792,7 +797,8 @@ function refreshTicket(){const y=window.scrollY;const a=document.activeElement;c
 function orderText(c){let t=`ORDER LIST${ord.name?" · "+ord.name:""}\n${ord.date||"no date"} · ${ord.pax} guests · reserve ${ord.reserve}%\n`;
   c.secs.forEach((s,i)=>{if(!s.length)return;t+=`\n${D.sections[i].toUpperCase()}\n`;s.forEach(it=>t+=`${it.name} — ${fmtQ(it.q)} ${it.unit}\n`)});
   t+=`\nDishes:\n`+ord.lines.map(l=>{const r=byId.get(l.id);return r?`- ${r.name} (${Math.round(portions(l)*10)/10} portions)`:""}).join("\n");
-  if(c.algs.length)t+=`\nAllergens: ${c.algs.map(a=>a+" "+ALG[a]).join(", ")}`;return t}
+  if(c.algs.length)t+=`\nAllergens: ${c.algs.map(a=>a+" "+ALG[a]).join(", ")}`;
+  if(c.miss.length)t+=`\nNot counted (no product data yet): ${c.miss.join(", ")}`;return t}
 function viewOrders(){
   const where=userCol?"Saved to your account, visible only to you.":(STANDALONE?"Saved on this device.":"Saved on this device. Sign in to claude.ai to keep orders on all your devices.");
   const list=userCol?savedDocs.map(s=>({id:s.id,o:s.data()})):lsGet("bb-saved",[]).map(o=>({id:o.id,o}));
@@ -830,7 +836,7 @@ async function delOrder(id){
 /* ---------- files ---------- */
 const CYR={"а":"a","б":"b","в":"v","г":"g","д":"d","е":"e","ё":"yo","ж":"zh","з":"z","и":"i","й":"y","к":"k","л":"l","м":"m","н":"n","о":"o","п":"p","р":"r","с":"s","т":"t","у":"u","ф":"f","х":"h","ц":"ts","ч":"ch","ш":"sh","щ":"sht","ъ":"a","ы":"y","ь":"y","э":"e","ю":"yu","я":"ya"};
 function pdfSafe(s){return String(s).replace(/≈/g,"~").replace(/[–—]/g,"-").replace(/[“”]/g,'"').replace(/[‘’]/g,"'").replace(/×/g,"x").replace(/·/g,"-").replace(/…/g,"...").replace(/≤/g,"<=").replace(/≥/g,">=").replace(/→/g,"->").replace(/[а-яёА-ЯЁ]/g,ch=>{const lo=ch.toLowerCase(),t=CYR[lo];if(t==null)return"";return ch===lo?t:t.charAt(0).toUpperCase()+t.slice(1)}).replace(/[^\x00-\xFF]/g,ch=>{const b=ch.normalize("NFD")[0];return b.charCodeAt(0)<256?b:({"ı":"i","ł":"l","ő":"o","ű":"u","œ":"oe","Œ":"OE"}[ch]||"")})}
-function fileBase(s){return String(s||"file").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^\w\-]+/g,"_").replace(/_+/g,"_").replace(/^_|_$/g,"").slice(0,80)}
+function fileBase(s){return pdfSafe(s||"file").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^\w\-]+/g,"_").replace(/_+/g,"_").replace(/^_|_$/g,"").slice(0,80)}
 async function saveFile(filename,data){
   if(window.ChefsheetApp){try{const type=/\.pdf$/i.test(filename)?"application/pdf":/\.csv$/i.test(filename)?"text/csv":"application/octet-stream";const by=typeof data==="string"?new TextEncoder().encode(data):new Uint8Array(data);let bin="";for(let i=0;i<by.length;i+=32768)bin+=String.fromCharCode.apply(null,by.subarray(i,i+32768));if(ChefsheetApp.saveFile(filename,type,btoa(bin))==="ok")return}catch(e){}toast("Could not save the file. Use Copy.");return}
   if(!downloads){try{const type=/\.pdf$/i.test(filename)?"application/pdf":/\.csv$/i.test(filename)?"text/csv":"application/octet-stream";const u=URL.createObjectURL(new Blob([data],{type}));const a=document.createElement("a");a.href=u;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);toast("Saved "+filename)}catch(e){toast("Could not save the file. Use Copy.")}return}
@@ -855,6 +861,7 @@ function orderPdf(c){
   page(); y+=2; doc.setFont("helvetica","bold"); doc.setFontSize(10); doc.text("Dishes",M,y); y+=5; doc.setFont("helvetica","normal"); doc.setFontSize(9);
   ord.lines.forEach(l=>{const r=byId.get(l.id);if(!r)return;page();doc.text(pdfSafe(`${r.name}  -  ${Math.round(portions(l)*10)/10} portions`),M+2,y,{maxWidth:W-2*M-2});y+=4.6});
   if(c.algs.length){page();y+=2;doc.text(pdfSafe("Allergens: "+c.algs.map(a=>a+" "+ALG[a]).join(", ")),M,y,{maxWidth:W-2*M});y+=8}
+  if(c.miss.length){const ls=doc.splitTextToSize(pdfSafe("Not counted (no product data yet): "+c.miss.join(", ")),W-2*M);page(ls.length*4.4);doc.setFontSize(9);doc.setTextColor(192,57,43);doc.text(ls,M,y);doc.setTextColor(21,32,26);y+=ls.length*4.4+3}
   page(); doc.setFontSize(8); doc.setTextColor(110,110,110);
   doc.text("Gross (as-bought) quantities from recipe net weights with standard trim losses, rounded up. Deduct stock on hand. Deep-frying oil not included.",M,y,{maxWidth:W-2*M});
   return doc.output("arraybuffer");
@@ -926,7 +933,7 @@ function viewLearn(){withLearn(()=>{
     <div class="stats"><span><b>${done}/${all}</b> lessons</span><span><b>${passed}/${LD.mods.length}</b> tests passed</span><span><b>${LD.gloss.reduce((a,s)=>a+s[1].length,0)}</b> terms</span></div>
     ${next?`<a class="go" href="#l-${next[1].id}">${done?"Continue":"Start"}: ${esc(next[1].t)} ${msI("arrow_forward")}</a>`:`<span class="go done">${msI("workspace_premium",1)} All lessons done</span>`}</div>
     <div class="ring" aria-hidden="true" style="--p:${all?done/all*100:0}"><b>${all?Math.round(done/all*100):0}%</b><small>complete</small></div></section>
-    ${passed===LD.mods.length?`<div class="sec"><div class="cert-card">${msI("workspace_premium",1)}<div><b>Course complete</b><p>All ${LD.mods.length} tests passed. Download your course certificate.</p></div><button class="btn pri" data-cert="all">${ICON.pdf}Certificate</button></div></div>`:""}
+    ${passed===LD.mods.length?`<div class="sec"><div class="cert-card">${msI("workspace_premium",1)}<div><b>Course complete</b><p>All ${LD.mods.length} tests passed. Download your course certificate.</p></div></div><div class="certf" style="margin-top:10px"><label class="fld"><span>Name on the certificate</span><input id="cert-name" value="${esc(LP.name||"")}" placeholder="Your full name" autocomplete="name"></label><button class="btn pri" data-cert="all">${ICON.pdf}Certificate PDF</button></div></div>`:""}
     <div class="sec"><div class="sec-h"><h2>Modules</h2><small>${LD.mods.length} modules</small></div><div class="mods">
     ${LD.mods.map(m=>{const d=modDone(m),q=LP.quiz[m.id];return `<a class="mod" href="#m-${m.id}" style="--h:${m.h}"><span class="mi">${msI(m.ic,1)}</span><span class="mt"><small>Module ${m.n}</small><b>${esc(m.t)}</b>
       <span class="mm">${m.L.length} lessons${q&&q.pass?` · ${msI("workspace_premium",1)}test ${q.best}%`:""}</span>${pbar(d,m.L.length)}</span></a>`}).join("")}</div></div>
@@ -961,19 +968,20 @@ function viewLesson(id){withLearn(()=>{
 function viewQuiz(id){withLearn(()=>{
   const m=LD.mods.find(x=>x.id===id); if(!m){location.hash="learn";return}
   const st=QA[id]||(QA[id]={a:{},sub:false}); const q=LP.quiz[m.id];
+  if(!st.o)st.o=m.quiz.map(x=>{const a=[...x[1].keys()];for(let k=a.length-1;k>0;k--){const r=Math.floor(Math.random()*(k+1));[a[k],a[r]]=[a[r],a[k]]}return a});
   const n=m.quiz.length, ok=m.quiz.filter((x,i)=>st.a[i]===x[2]).length, sc=Math.round(ok/n*100), pass=sc>=80;
   $("main").innerHTML=`<a class="back" href="#m-${m.id}">${ICON.back}${esc(m.t)}</a><article class="sheet"><div class="sh-head" style="--h:${m.h}"><div><div class="crumb">Module ${m.n} · Test</div><h1>${esc(m.t)}</h1>
     <div class="strip"><div><small>Questions</small><b>${n}</b></div><div><small>Pass mark</small><b>80%</b></div><div><small>Best score</small><b>${q?q.best+"%":"–"}</b></div></div></div></div>
-    <div class="lbody">${st.sub?`<div class="qres ${pass?"ok":"no"}">${msI(pass?"workspace_premium":"refresh",1)}<div><b>${sc}% · ${ok} of ${n} correct</b><p>${pass?"Passed. Add your name for the certificate.":"Below 80%. Review the lessons and try again."}</p></div></div>
-      ${pass?`<div class="certf"><label class="fld"><span>Name on the certificate</span><input id="cert-name" value="${esc(LP.name||"")}" placeholder="Your full name" autocomplete="name"></label><button class="btn pri" data-cert="${m.id}">${ICON.pdf}Certificate PDF</button></div>`:""}`:""}
-    <ol class="quiz">${m.quiz.map((x,i)=>`<li><p>${esc(x[0])}</p><div class="opts">${x[1].map((o,j)=>{const sel=st.a[i]===j;const cls=st.sub?(j===x[2]?"right":sel?"wrong":""):"";return `<button data-qa="${i}:${j}" aria-pressed="${sel}" class="${cls}" ${st.sub?"disabled":""}>${esc(o)}</button>`}).join("")}</div></li>`).join("")}</ol>
+    <div class="lbody">${st.sub?`<div class="qres ${pass?"ok":"no"}">${msI(pass?"workspace_premium":"refresh",1)}<div><b>${sc}% · ${ok} of ${n} correct</b><p>${pass?"Passed. Add your name for the certificate.":"Below 80%. Review the lessons and try again."}</p></div></div>`:""}
+      ${(st.sub?pass:q&&q.pass)?`<div class="certf"><label class="fld"><span>Name on the certificate</span><input id="cert-name" value="${esc(LP.name||"")}" placeholder="Your full name" autocomplete="name"></label><button class="btn pri" data-cert="${m.id}">${ICON.pdf}Certificate PDF</button></div>`:""}
+    <ol class="quiz">${m.quiz.map((x,i)=>`<li><p>${esc(x[0])}</p><div class="opts">${st.o[i].map(j=>{const o=x[1][j];const sel=st.a[i]===j;const cls=st.sub?(j===x[2]?"right":sel?"wrong":""):"";return `<button data-qa="${i}:${j}" aria-pressed="${sel}" class="${cls}" ${st.sub?"disabled":""}>${esc(o)}</button>`}).join("")}</div></li>`).join("")}</ol>
     <div class="lfoot">${st.sub?`<button class="btn" data-qreset="${m.id}">${msI("refresh")}Try again</button><a class="btn pri" href="#learn">Back to Learn</a>`:`<span class="note-line" style="margin:0">${Object.keys(st.a).length} of ${n} answered</span><button class="btn pri" data-qsub="${m.id}" ${Object.keys(st.a).length<n?"disabled":""}>Check answers</button>`}</div></div></article>`;
 })}
 function certPdf(id){
   if(!window.jspdf)return null; const all=id==="all"; const m=all?null:LD.mods.find(x=>x.id===id); if(!all&&!m)return null;
   const doc=new window.jspdf.jsPDF({unit:"mm",format:"a4",orientation:"landscape"}); const W=297,H=210;
   doc.setFillColor(250,247,242); doc.rect(0,0,W,H,"F"); doc.setDrawColor(226,85,43); doc.setLineWidth(1.4); doc.rect(10,10,W-20,H-20); doc.setLineWidth(.3); doc.rect(14,14,W-28,H-28);
-  doc.setTextColor(226,85,43); doc.setFont("helvetica","bold"); doc.setFontSize(12); doc.text("B A T C H B O O K   K I T C H E N   T R A I N I N G",W/2,38,{align:"center"});
+  doc.setTextColor(226,85,43); doc.setFont("helvetica","bold"); doc.setFontSize(12); doc.text("C H E F S H E E T   K I T C H E N   T R A I N I N G",W/2,38,{align:"center"});
   doc.setTextColor(23,24,27); doc.setFont("times","bold"); doc.setFontSize(34); doc.text(all?"Certificate of Completion":"Certificate of Achievement",W/2,60,{align:"center"});
   doc.setFont("helvetica","normal"); doc.setFontSize(12); doc.setTextColor(106,109,116); doc.text("This certifies that",W/2,78,{align:"center"});
   doc.setFont("times","bolditalic"); doc.setFontSize(30); doc.setTextColor(23,24,27); doc.text(pdfSafe(LP.name||"—"),W/2,96,{align:"center"});
@@ -989,7 +997,7 @@ function certPdf(id){
   const dt=new Date(all?Date.now():(LP.quiz[m.id].at||Date.now())).toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
   doc.setFontSize(10); doc.text("Date",70,172,{align:"center"}); doc.text("Certificate no.",W-70,172,{align:"center"});
   doc.setTextColor(23,24,27); doc.setFont("helvetica","bold"); doc.setFontSize(12); doc.text(dt,70,165,{align:"center"});
-  const no="BB-"+(all?"ALL":m.id.toUpperCase())+"-"+(Math.abs([...(LP.name||"x")+dt].reduce((h,c)=>(h*31+c.charCodeAt(0))|0,7))%1e6).toString().padStart(6,"0");
+  const no="CS-"+(all?"ALL":m.id.toUpperCase())+"-"+(Math.abs([...(LP.name||"x")+dt].reduce((h,c)=>(h*31+c.charCodeAt(0))|0,7))%1e6).toString().padStart(6,"0");
   doc.text(no,W-70,165,{align:"center"}); doc.setDrawColor(200,200,200); doc.line(40,168,100,168); doc.line(W-100,168,W-40,168);
   doc.setFillColor(226,85,43); doc.circle(W/2,166,11,"F"); doc.setTextColor(255,255,255); doc.setFontSize(9); doc.text(all?"COURSE":"PASSED",W/2,167.2,{align:"center"});
   return doc.output("arraybuffer");
@@ -1057,7 +1065,9 @@ function viewTool(id){withLearn(()=>{
   $("main").innerHTML=`<a class="back" href="#learn">${ICON.back}Learn</a><article class="sheet"><div class="sh-head" style="--h:${MH[TOOLS.indexOf(t)%MH.length]}"><div><div class="crumb">Kitchen tool</div><h1>${t[1]}</h1><div class="sub">${t[3]}</div></div><span class="plate">${msI(t[2],1)}</span></div>
   <div class="lbody" id="tool-body">${toolBody(id)}</div></article>`;
 })}
-function refreshTool(){const id=(location.hash||"").slice(6);const b=$("tool-body");if(!b)return;const a=document.activeElement, aid=a&&a.id;const pos=a&&a.selectionStart;b.innerHTML=toolBody(id);if(aid&&$(aid)){const el=$(aid);el.focus();try{if(el.type==="search")el.setSelectionRange(pos,pos)}catch(e){}}}
+function refreshTool(soft){const id=(location.hash||"").slice(6);const b=$("tool-body");if(!b)return;
+  if(soft){const tmp=document.createElement("div");tmp.innerHTML=toolBody(id);const o=b.querySelectorAll(".outs,.note-line"),n=tmp.querySelectorAll(".outs,.note-line");if(o.length===n.length){o.forEach((e,i)=>e.replaceWith(n[i]));return}}
+  const a=document.activeElement, aid=a&&a.id;const pos=a&&a.selectionStart;b.innerHTML=toolBody(id);if(aid&&$(aid)){const el=$(aid);el.focus();try{if(el.type==="search")el.setSelectionRange(pos,pos)}catch(e){}}}
 function toolInput(t){
   const id=(location.hash||"").slice(6), s=TS[id]||(TS[id]={}), v=t.value===""?"":Number(t.value);
   const k=t.id.slice(2);
@@ -1116,21 +1126,26 @@ function cacheAll(){
 if(navigator.serviceWorker)navigator.serviceWorker.addEventListener("message",e=>{if(e.data&&e.data.type==="cached")toast(`Offline ready: ${e.data.ok} of ${e.data.n} collections saved`)});
 
 /* ---------- routing + events ---------- */
+const listY={};
+try{history.scrollRestoration="manual"}catch(e){}
 function route(){
-  const h=location.hash||"";
+  const h=location.hash==="#"?"":location.hash||"", prev=route._last; route._last=h;
+  const back=prev!=null&&prev.startsWith("#r-")&&!h.startsWith("#r-");
+  if(prev!=null&&!prev.startsWith("#r-")&&h.startsWith("#r-"))listY[prev]=window.scrollY;
   $("rail").innerHTML=railHtml();
   if(h.startsWith("#r-")){setNav("home");viewRecipe(h.slice(3));return}
+  const restore=()=>{if(back&&listY[h]!=null)window.scrollTo(0,listY[h])};
   if(cook.on&&!h.startsWith("#r-"))setCook(false);
   if(h==="#learn"){setNav("learn");viewLearn();return}
   if(h.startsWith("#m-")){setNav("learn");viewModule(h.slice(3));return}
   if(h.startsWith("#l-")){setNav("learn");viewLesson(h.slice(3));return}
   if(h.startsWith("#quiz-")){setNav("learn");viewQuiz(h.slice(6));return}
   if(h.startsWith("#tool-")){setNav("learn");viewTool(h.slice(6));return}
-  if(h==="#fav"){setNav("fav");viewFav();return}
-  if(h==="#order"){setNav("order");viewOrder();return}
-  if(h==="#orders"){setNav("orders");viewOrders();return}
+  if(h==="#fav"){setNav("fav");viewFav();restore();return}
+  if(h==="#order"){setNav("order");viewOrder();restore();return}
+  if(h==="#orders"){setNav("orders");viewOrders();restore();return}
   if(h.startsWith("#c-")){const i=D.folders.findIndex(f=>f[1]===h.slice(3));ui.coll=i;} else ui.coll=-1;
-  setNav("home"); viewHome();
+  setNav("home"); viewHome(); restore();
 }
 function rerender(){const h=location.hash||"";if(h.startsWith("#r-")){const r=byId.get(h.slice(3));const sheet=$("main").querySelector(".sheet");if(r&&sheet){detail(r).then(d=>renderSheet(r,d)).catch(()=>{})}}else route()}
 function goBrowse(){ui.shown=PAGE;const want=ui.coll>=0?"#c-"+D.folders[ui.coll][1]:"";if((location.hash||"")!==want){if(want)location.hash=want;else{history.pushState(null,"",location.pathname+location.search);route()}}else route()}
@@ -1197,7 +1212,7 @@ function bind(){
   document.addEventListener("change",e=>{
     const t=e.target;
     if(t.id==="sort"){ui.sort=t.value;route();return}
-    if(t.dataset&&t.dataset.tool!=null){toolInput(t);refreshTool();return}
+    if(t.dataset&&t.dataset.tool!=null){toolInput(t);refreshTool(t.tagName==="INPUT"&&t.type!=="search");return}
     if(t.id==="sc-p"){scale.p=Math.max(1,Math.min(5000,Math.round(Number(t.value)||1)));rerender();return}
     const li=t.closest&&t.closest("[data-li]");
     if(li&&t.dataset.f){const l=ord.lines[+li.dataset.li];const v=t.value;
@@ -1208,7 +1223,7 @@ function bind(){
     if(["o-name","o-date","o-pax","o-res"].includes(t.id)){ord.name=$("o-name").value;ord.date=$("o-date").value;ord.pax=Number($("o-pax").value)||0;ord.reserve=Number($("o-res").value)||0;saveDraft();refreshTicket()}
   });
   document.addEventListener("input",e=>{const t=e.target;if(t.id==="o-name"){ord.name=t.value;saveDraft()}
-    if(t.dataset&&t.dataset.tool!=null&&t.tagName==="INPUT"){toolInput(t);clearTimeout(bind._tt);bind._tt=setTimeout(refreshTool,t.type==="search"?120:350)}
+    if(t.dataset&&t.dataset.tool!=null&&t.tagName==="INPUT"){toolInput(t);clearTimeout(bind._tt);const soft=t.type!=="search";bind._tt=setTimeout(()=>refreshTool(soft),soft?150:120)}
     if(t.id==="cert-name"){LP.name=t.value.trim();saveLP()}});
 }
 
