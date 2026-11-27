@@ -15,6 +15,9 @@
   import { toast, copyText, shareText } from "../core/ui.svelte";
   import { router } from "../core/router.svelte";
   import { H, dueToday } from "../core/haccp.svelte";
+  import { guestLink, qrSvg, guestPdf } from "../core/guest";
+  let showQr = $state(false);
+  const gLink = $derived.by(() => { void JSON.stringify(o.lines); return showQr ? guestLink(o.name || "", orderDishes()) : ""; });
   const nDue = $derived(H.v.on ? dueToday().length : 0);
   const tab = $derived(router.route.arg === "saved" ? 1 : 0);
   let rev = $state(0);
@@ -113,6 +116,12 @@
           <div class="mxw"><table><thead><tr><th>Dish</th>{#each AK as k}<th title={ALG[k]}>{k}</th>{/each}</tr></thead>
             <tbody>{#each dishes as r}<tr><td>{r.t}</td>{#each AK as k}<td class:y={r.algs.includes(k)} title={ALG[k]}>{r.algs.includes(k) ? "●" : ""}</td>{/each}</tr>{/each}</tbody></table></div>
           <p class="note">{AK.map((k) => k + " " + ALG[k]).join(" · ")}. From the listed ingredients: check product labels.</p>
+          <div class="qa"><Button small icon="share" pressed={showQr} onclick={() => (showQr = !showQr)}>QR for guests</Button></div>
+          {#if showQr}<div class="qr">
+            <div class="qimg">{@html qrSvg(gLink, 180)}</div>
+            <div class="qt"><b>Guests scan it and see the allergens of each dish</b><p class="note">No app or internet account needed. Print table cards, or share the link. If you change the dishes, print new cards.</p>
+              <div class="acts"><Button small kind="pri" icon="pdf" onclick={() => makePdf("Allergen_QR_" + base() + ".pdf", () => guestPdf(o.name || "", gLink))}>Table cards PDF</Button><Button small icon="copy" onclick={() => copyText(gLink, "Link copied")}>Copy link</Button><Button small href={gLink}>Preview</Button></div></div>
+          </div>{/if}
         </section>
       {/if}
       <p class="note">Gross (as-bought) quantities from the recipe net weights with standard trim losses. Deduct your stock on hand. Deep-frying oil is not included. Suppliers: <a href="#suppliers">{sup.v.list.length ? sup.v.list.length + " saved" : "add yours"}</a>.</p>
@@ -172,6 +181,9 @@
   .si b { font: 600 15.5px var(--f-display); white-space: nowrap; } .si i { font-style: normal; font-size: 12px; color: var(--muted); }
   .nosup { display: grid; gap: 6px; justify-items: start; margin-top: 12px; padding: 14px 16px; border-radius: var(--r-m); background: var(--sunk); }
   .mx { margin-top: 12px; }
+  .qa { margin-top: 12px; }
+  .qr { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-top: 12px; padding-top: 12px; box-shadow: inset 0 1px 0 var(--hair); }
+  .qimg { background: #fff; padding: 6px; border-radius: 12px; line-height: 0; } .qt { flex: 1 1 220px; display: grid; gap: 8px; } .qt b { font: 600 15.5px var(--f-display); }
   .mxw { overflow-x: auto; margin: 10px 0; }
   .mx table { border-collapse: collapse; font-size: 13px; min-width: 100%; }
   .mx th, .mx td { padding: 7px 6px; text-align: center; box-shadow: inset 0 -1px 0 var(--hair); }

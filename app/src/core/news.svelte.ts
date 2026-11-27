@@ -8,6 +8,7 @@ export const NEWS: News[] = [
     ["My notes", "Add your kitchen's notes to any recipe. They show in cook mode and in the PDF.", "#recipes"],
     ["Gels & thickeners", "Gelatin sheets or powder by bloom, agar, starch, roux and xanthan.", "#tool-gel"],
     ["Food safety logs", "Fridge temperatures, cooling and deliveries with a monthly PDF. Turn on in Settings.", "#settings"],
+    ["Allergens for guests", "Kitchen → Allergen matrix → QR for guests: table cards with a QR code.", "#kitchen"],
     ["Recipes without…", "Filters → Without: hide recipes with mushrooms, pork or anything else.", "#recipes"],
   ] },
 ];

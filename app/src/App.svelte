@@ -26,6 +26,7 @@
     Quiz: () => import("./screens/Quiz.svelte"),
     Review: () => import("./screens/Review.svelte"),
     Settings: () => import("./screens/Settings.svelte"),
+    Guest: () => import("./screens/Guest.svelte"),
     Learn: () => import("./screens/Learn.svelte"),
   };
   import { load } from "./core/catalog";
@@ -34,12 +35,13 @@
   const rt = $derived(router.route);
   addEventListener("keydown", (e) => { if ((e.key === "/" || (e.key === "k" && (e.metaKey || e.ctrlKey))) && !(e.target as HTMLElement)?.closest("input,textarea,select")) { e.preventDefault(); searching = true; } });
 </script>
-<TopBar onsearch={() => (searching = true)} />
+{#if rt.view !== "guest"}<TopBar onsearch={() => (searching = true)} />{/if}
 <main style="view-transition-name: main">
   {#if err}
     <div class="page boot"><h2>Could not load the recipe library</h2><p class="note">Check your connection and reload. ({err})</p></div>
   {:else if !ready}
     <div class="page boot"><div class="ink"></div><p class="note">Loading the recipe library…</p></div>
+  {:else if rt.view === "guest"}<Lazy load={L.Guest} />
   {:else if rt.view === "today"}<Today />
   {:else if rt.view === "tools"}<Tools />
   {:else if rt.view === "tool"}{#key rt.arg}<Tool id={rt.arg} />{/key}
@@ -60,11 +62,11 @@
   {:else if rt.view === "prices"}{#key rt.arg}<Lazy load={L.Prices} rid={rt.arg} />{/key}
   {/if}
 </main>
-<TabBar place="bottom" />
+{#if rt.view !== "guest"}<TabBar place="bottom" />{/if}
 <TimerBar />
 <Toast />
 <Search bind:open={searching} />
-{#if ready && tour.on && rt.view !== "cook"}<Tour />{/if}
+{#if ready && tour.on && rt.view !== "cook" && rt.view !== "guest"}<Tour />{/if}
 <style>
   .boot { display: grid; justify-items: center; gap: 14px; padding-top: 30vh; text-align: center; }
   .ink { width: 46px; height: 46px; border-radius: 50%; border: 2px solid var(--line); border-top-color: var(--accent); animation: spin 1s linear infinite; }

@@ -28,6 +28,7 @@ export function parse(h: string): Route {
   if ((a = m("#c-")) != null) return { tab: "recipes", view: "recipes", arg: "c:" + a, q };
   if ((a = m("#cook-")) != null) return { tab: "recipes", view: "cook", arg: a, q };
   if ((a = m("#r-")) != null) return { tab: "recipes", view: "recipe", arg: a, q };
+  if (h === "#guest") return { tab: "app", view: "guest", arg: "", q };
   if (h === "#settings") return { tab: "app", view: "settings", arg: "", q };
   if (h === "#learn") return { tab: "learn", view: "learn", arg: "", q };
   if (h === "#review") return { tab: "learn", view: "review", arg: "", q };
