@@ -14,7 +14,7 @@
   const fl = $derived(tot / (1 + (+s.h || 0) / 100 + (+s.sl || 0) / 100 + (+s.y || 0) / 100));
 </script>
 <Select label="Dough" options={rw.map((x) => x[0] + " · " + x[1])} bind:value={s.i} />
-<div class="g2"><Field label="Pieces" bind:value={s.n} /><Field label="Weight per piece" unit="g" bind:value={s.pw} /></div>
-<div class="g3"><Field label={isP ? "Liquid (egg/water) %" : "Water %"} bind:value={s.h} /><Field label="Salt %" bind:value={s.sl} /><Field label={isP ? "Yeast % (0)" : "Fresh yeast %"} bind:value={s.y} /></div>
-<Outs items={[["Flour", f0(fl), " g"], [isP ? "Egg / water" : "Water", f0((fl * s.h) / 100), " g"], ["Salt", f1((fl * s.sl) / 100), " g"], ["Yeast", f1((fl * s.y) / 100), " g"], ["Total dough", f0(tot), " g"]]} />
-<p class="note">All % are of flour weight. Rest: {r[2]}. Dry yeast = fresh ÷ 3.</p>
+<div class="g2"><Field label={isP ? "Portions" : "Pieces"} bind:value={s.n} /><Field label={isP ? "Dough per portion" : "Weight per piece"} unit="g" bind:value={s.pw} /></div>
+<div class={isP ? "g2" : "g3"}><Field label={isP ? "Liquid (egg / water) %" : "Water %"} bind:value={s.h} /><Field label="Salt %" bind:value={s.sl} />{#if !isP}<Field label="Fresh yeast %" bind:value={s.y} />{/if}</div>
+<Outs items={[["Flour", f0(fl), " g"], [isP ? "Egg / water" : "Water", f0((fl * (+s.h || 0)) / 100), " g"], ["Salt", f1((fl * (+s.sl || 0)) / 100), " g"], ...(isP ? [] : [["Fresh yeast", f1((fl * (+s.y || 0)) / 100), " g"] as [string, string, string]]), ["Total dough", f0(tot), " g"]]} />
+<p class="note">All % are of flour weight. Rest: {r[2]}.{isP ? " About 1 egg (55 g) per 100 g flour." : " Dry yeast = fresh ÷ 3."}</p>
