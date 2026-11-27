@@ -1,5 +1,6 @@
 <script lang="ts">
   // Learn path. Lessons and tests open in the current version during the alpha.
+  const BASE = import.meta.env.BASE_URL;
   import Icon from "../ui/Icon.svelte";
   import { LD, loadLearn } from "../core/learn";
   import { read, KEYS } from "../core/store.svelte";
@@ -14,7 +15,7 @@
 </script>
 <div class="page">
   <div class="head"><p class="eyebrow">Training</p><h1>Learn</h1></div>
-  <section class="card pad prog">
+  <section class="card pad prog" style="--img:url({BASE}bg/learn-dark.webp)">
     <div><b class="num">{nDone}</b><small>of {nAll} lessons</small></div>
     <div class="bar"><i style="width:{nAll ? (nDone / nAll) * 100 : 0}%"></i></div>
     <div class="pa"><a class="hb" href="{ROOT}#learn">Card of the day</a><a class="hb2" href="#review">Repeat mistakes</a><a class="hb2" href="#tool-glossary">Glossary</a></div>
@@ -40,7 +41,7 @@
 </div>
 <style>
   .head { margin: 22px 0 16px; display: grid; gap: 6px; }
-  .prog { display: grid; gap: 14px; background: var(--hero); color: var(--hero-ink); border-radius: 24px; box-shadow: var(--sh-3); }
+  .prog { display: grid; gap: 14px; background: linear-gradient(90deg, var(--hero) 35%, color-mix(in srgb, var(--hero) 50%, transparent) 65%, transparent 100%), var(--img) right center / auto 100% no-repeat, var(--hero); color: var(--hero-ink); border-radius: 24px; box-shadow: var(--sh-3); }
   .prog small { color: var(--hero-muted) !important; }
   .prog b { font: 600 30px var(--f-display); margin-right: 6px; } .prog small { color: var(--muted); }
   .bar { height: 6px; background: rgba(255, 240, 220, .14); border-radius: 999px; overflow: hidden; }

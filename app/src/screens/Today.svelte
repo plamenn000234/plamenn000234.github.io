@@ -1,4 +1,5 @@
 <script lang="ts">
+  const BASE = import.meta.env.BASE_URL;
   import ToolTile from "../ui/ToolTile.svelte";
   import RecipeRow from "../ui/RecipeRow.svelte";
   import Icon from "../ui/Icon.svelte";
@@ -27,7 +28,7 @@
 <div class="page">
   <div class="head"><p class="eyebrow">{dateStr}</p><h1>{hello}</h1></div>
 
-  <a class="hero press" href="#kitchen">
+  <a class="hero press" href="#kitchen" style="--img-d:url({BASE}bg/today-dark.webp);--img-l:url({BASE}bg/today-light.webp)">
     <div class="ht"><p class="eyebrow">Kitchen{o.lines.length ? " · current order" : ""}</p>
       <h2>{o.lines.length ? o.name || "Order" : "Start an order"}</h2>
       {#if o.lines.length && o.date}<p class="hs">{new Date(o.date + "T12:00").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })}</p>{/if}
@@ -61,7 +62,10 @@
   .head { margin: 22px 0 20px; display: grid; gap: 6px; }
   h1 { font-size: 36px; }
   .hero { position: relative; display: grid; gap: 18px; padding: 22px 22px 20px; border-radius: 24px; color: var(--hero-ink); overflow: hidden;
-    background: radial-gradient(120% 140% at 100% 0%, color-mix(in srgb, var(--accent) 22%, transparent) 0%, transparent 60%), var(--hero); box-shadow: var(--sh-3); }
+    background: linear-gradient(90deg, var(--hero) 30%, color-mix(in srgb, var(--hero) 55%, transparent) 62%, transparent 100%), var(--img-d) right center / auto 100% no-repeat, var(--hero); box-shadow: var(--sh-3); }
+  /* light theme: the daylight photo and a light card */
+  :global(:root[data-theme="light"]) .hero { --hero: #EEF1F4; --hero-ink: var(--ink); --hero-muted: var(--muted); background-image: linear-gradient(90deg, var(--hero) 30%, color-mix(in srgb, var(--hero) 55%, transparent) 62%, transparent 100%), var(--img-l); box-shadow: var(--sh-2); }
+  @media (prefers-color-scheme: light) { :global(:root:not([data-theme])) .hero { --hero: #EEF1F4; --hero-ink: var(--ink); --hero-muted: var(--muted); background-image: linear-gradient(90deg, var(--hero) 30%, color-mix(in srgb, var(--hero) 55%, transparent) 62%, transparent 100%), var(--img-l); box-shadow: var(--sh-2); } }
   .hero::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--accent); }
   .hero .eyebrow { color: var(--hero-muted); }
   .hero h2 { font-size: 26px; color: var(--hero-ink); margin-top: 6px; }
