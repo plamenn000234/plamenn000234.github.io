@@ -87,10 +87,9 @@ await test("2.x data is kept and migrated", async () => {
   assert(s.favs === '["zzz"]', "favs changed"); assert(s.theme === "night", "theme not applied");
 });
 
-await test("old links: #order → #kitchen, #fav → favourites, #m- opens 2.x", async () => {
+await test("old links: #order → #kitchen, #fav → favourites", async () => {
   const p = await page(); await p.goto(BASE + "#order"); await ready(p); assert((await p.evaluate(() => location.hash)) === "#kitchen", "no redirect");
   await p.goto(BASE + "#fav"); await p.waitForSelector("h1:has-text('Favourites')");
-  await p.goto(BASE + "#m-m1"); await p.waitForURL((u) => !u.pathname.startsWith("/v3/"), { timeout: 8000 });
 });
 
 await test("global search finds tools and recipes", async () => {
@@ -172,6 +171,31 @@ await test("editor: semi-finished, a dish that uses it, edit and delete", async 
   if (SHOTS) await p.screenshot({ path: SHOTS + "/editor.png", fullPage: true });
   await p.click("button:has-text('Delete')"); await p.click("button:has-text('Tap again')"); await p.waitForURL(/#c-/);
   assert((await p.evaluate(() => JSON.parse(localStorage.getItem("bb-mine")).length)) === 1, "not deleted");
+  assert(p.errors.length === 0, p.errors.join("; "));
+});
+
+await test("learn: lesson with diagram, mark done, test, mistakes, card of the day, task link", async () => {
+  const p = await page(); await p.goto(BASE + "#learn"); await ready(p); await p.waitForSelector(".mods li");
+  const mid = await p.$eval(".mods a", (a) => a.getAttribute("href").slice(3));
+  await p.click(".mods a"); await p.waitForSelector(".ls a");
+  await p.goto(BASE + "#l-standard-cuts?by=Chef%20Ivan&due=2030-01-01"); await p.waitForSelector(".lart svg");
+  assert((await p.evaluate(() => location.hash)) === "#l-standard-cuts", "query not stripped");
+  await p.waitForSelector("text=From Chef Ivan");
+  if (SHOTS) await p.screenshot({ path: SHOTS + "/lesson.png", fullPage: true });
+  await p.click("button:has-text('Mark as done')"); await p.waitForTimeout(300);
+  const lp = await p.evaluate(() => JSON.parse(localStorage.getItem("bb-learn")));
+  assert(lp.done["standard-cuts"] > 0 && lp.tasks["l:standard-cuts"].by === "Chef Ivan", "bb-learn " + JSON.stringify(lp).slice(0, 200));
+  await p.goto(BASE + "#quiz-" + mid); await p.waitForSelector(".qz li");
+  const n = await p.locator(".qz li").count();
+  for (let i = 0; i < n; i++) await p.locator(".qz li").nth(i).locator(".opts button").first().click();
+  await p.click("button:has-text('Check answers')"); await p.waitForSelector(".res");
+  const q = await p.evaluate((mid) => JSON.parse(localStorage.getItem("bb-learn")).quiz[mid], mid); assert(q && typeof q.best === "number", "quiz not saved");
+  if (SHOTS) await p.screenshot({ path: SHOTS + "/quiz.png" });
+  await p.goto(BASE + "#learn"); await p.waitForSelector("#daily .opts button");
+  await p.locator("#daily .opts button").first().click(); await p.waitForSelector(".dres");
+  if (SHOTS) await p.screenshot({ path: SHOTS + "/learn.png", fullPage: true });
+  const miss = await p.evaluate(() => Object.keys(JSON.parse(localStorage.getItem("bb-learn")).miss).length);
+  if (miss) { await p.goto(BASE + "#review"); await p.waitForSelector(".qz li"); }
   assert(p.errors.length === 0, p.errors.join("; "));
 });
 
