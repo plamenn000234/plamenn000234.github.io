@@ -27,7 +27,7 @@ KNOW WHAT IS IN EVERY DISH
 • Vegetarian and vegan filters, calories and nutrition per portion
 
 LEARN
-• 10 modules and 49 short lessons: knife skills, food safety, meat and fish, sauces, buffet sizing, food cost
+• 14 modules and 64 short lessons: knife skills, food safety, meat and fish, sauces, pastry, bar and coffee, special diets and IDDSI, buffet sizing, food cost, team management
 • Tests with PDF certificates
 • Kitchen tools: doneness, sous-vide, salt and brines, yield, baker's percentage, buffet planner, food cost, glossary EN · BG · RU
 
