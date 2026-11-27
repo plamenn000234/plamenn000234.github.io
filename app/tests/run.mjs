@@ -322,6 +322,20 @@ await test("tools: numbers match the tables (yield, buffet, bakers, sous-vide, c
   assert(p.errors.length === 0, p.errors.join("; "));
 });
 
+await test("gels: gelatin sheets by bloom, roux flour and butter", async () => {
+  const p = await page(); await p.goto(BASE + "#tool-gel"); await ready(p); await p.waitForSelector(".outs");
+  const sel = p.locator(".tool-body select");
+  await sel.nth(0).selectOption({ index: 2 }); // fruit jelly 2 %
+  await sel.nth(1).selectOption({ index: 1 }); // gold sheets 2 g, 200 bloom
+  await p.locator(".tool-body input[type=number]").first().fill("1000");
+  let v = await p.locator(".outs b").allInnerTexts(); assert(/^20\b/.test(v[0]) && /^10\b/.test(v[1]), "gelatin " + v.join("|"));
+  await sel.nth(1).selectOption({ index: 2 }); // silver 160 bloom → 20 × √1.25 = 22.4 g
+  v = await p.locator(".outs b").allInnerTexts(); assert(/^22\.4\b/.test(v[0]), "silver " + v[0]);
+  await p.click(".tool-body button:has-text('Starch')"); await p.locator(".tool-body select").first().selectOption({ index: 4 }); // béchamel 7 %
+  v = await p.locator(".outs b").allInnerTexts(); assert(/^70\b/.test(v[0]) && /^70\b/.test(v[1]), "roux " + v.join("|"));
+  assert(p.errors.length === 0, p.errors.join("; "));
+});
+
 await test("tool upgrades: doneness kinds, price rounding, brine to cover, dough water, buffet list", async () => {
   const p = await page(); const out = async () => (await p.locator(".tool-body .outs").allInnerTexts()).join(" | ").replace(/\s+/g, " ");
   const has = async (re) => { for (let k = 0; k < 30; k++) { if (re.test(await out())) return true; await p.waitForTimeout(100); } return false; };

@@ -24,6 +24,8 @@ export const TOOLS: ToolDef[] = [
     load: () => import("./SousVide.svelte"), fromRecipe: (x) => ({ w: x.raw || 1000 }) },
   { id: "salt", name: "Salt & brine", group: "Salt & texture", icon: "tool-salt", desc: "Dry salt, brines and salt by dish", kw: "brine cure seasoning percent", learn: true,
     load: () => import("./Salt.svelte"), fromRecipe: (x) => ({ m: 1, i: 0, w: x.cooked || x.raw || 1000 }) },
+  { id: "gel", name: "Gels & thickeners", group: "Salt & texture", icon: "tool-gel", desc: "Gelatin, agar, starch, roux, xanthan", kw: "gelatin gelatine sheets leaves bloom agar jelly panna cotta mousse terrine aspic starch cornstarch roux xanthan thicken sauce gel",
+    load: () => import("./Gel.svelte"), fromRecipe: (x) => ({ w: x.cooked || x.raw || 1000 }) },
   { id: "cost", name: "Food cost & price", group: "Money", icon: "tool-price", desc: "Menu price from cost and target %", kw: "food cost menu price margin vat profit",
     load: () => import("./Cost.svelte"), fromRecipe: (x) => (x.costPortion ? { c: Math.round(x.costPortion * 100) / 100 } : null) },
   { id: "glossary", name: "Kitchen glossary", group: "Reference", icon: "learn-glossary", desc: "EN · BG · RU terms", kw: "translate bulgarian russian terms dictionary", learn: true,
