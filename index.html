@@ -368,6 +368,15 @@ table.mx td.y{color:var(--warn);font-weight:800}
 .ed-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
 .ed .filters{flex-wrap:wrap}
 .ed-acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.daily{background:var(--surface);border-radius:24px;box-shadow:var(--shadow);padding:18px 18px 16px}
+.daily .ey{display:flex;justify-content:space-between;gap:8px;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.daily .ey span:last-child{color:var(--mark)}
+.daily .fact{margin:10px 0 12px;padding:12px 14px;border-radius:16px;background:var(--sunk);font-size:14.5px;line-height:1.5}
+.daily .fact a{display:block;margin-top:6px;font-size:12.5px;font-weight:700}
+.daily .dq{font-weight:700;margin:0 0 8px;font-size:15px}
+.daily .res{margin-top:10px;font-size:13.5px;font-weight:700}
+.rv-due{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:20px;background:var(--warn-soft);text-decoration:none;color:var(--ink)}
+.rv-due b{display:block}.rv-due small{color:var(--muted)}
 .rtools{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
 .rtools .btn{height:36px;padding:0 12px;font-size:13px}
 .sh-acts .btn.keep .bl{display:inline!important}
@@ -802,7 +811,8 @@ function viewHome(){
       <a class="qcard" href="#order">${msI("receipt_long",1)}<span><b>${ord.lines.length?ord.lines.length+(ord.lines.length===1?" dish":" dishes"):"New order"}</b><small>${ord.lines.length?esc((ord.name||"Current order")+(ord.date?" · "+ord.date:"")):"Turn a menu into a supplier list"}</small></span></a>
       <a class="qcard" href="#fav">${msI("star",1)}<span><b>${favs.length?favs.length+" saved":"Favourites"}</b><small>Your saved recipes</small></span></a>
       <a class="qcard" href="#c-${MINE_SLUG}">${msI("menu_book",1)}<span><b>${mine.length?mine.length+" my recipes":"My recipes"}</b><small>${mine.length?"Your house recipes":"Add your own"}</small></span></a>
-      <a class="qcard" href="#learn">${msI("school",1)}<span><b>Learn</b><small>${lDone?lDone+" lessons done":"Lessons and tests"}</small></span></a></div></div>
+      <a class="qcard" href="#learn">${msI("school",1)}<span><b>Learn</b><small>${streakNow()?streakNow()+"-day streak":lDone?lDone+" lessons done":"Lessons and tests"}</small></span></a></div></div>
+      <div class="sec" id="home-daily"></div>
       ${rec.length?`<div class="sec"><div class="sec-h"><h2>Recently viewed</h2></div><div class="list">${rec.map(rowHtml).join("")}</div></div>`:""}
       ${fl.length?`<div class="sec"><div class="sec-h"><h2>Favourites</h2>${favs.length>6?`<small><a href="#fav">All ${favs.length}</a></small>`:""}</div><div class="list">${fl.map(rowHtml).join("")}</div></div>`:""}`:"")+(returning?"":`<section class="hero"><div><span class="pro-tag">For chefs and kitchen teams</span><h1>Professional recipes <em>at any batch size</em></h1>
       <p>Technical recipe cards with batch yields, allergens and nutrition. Scale any recipe to your portions, then turn a menu into a supplier order list. Quantities and methods assume a professional kitchen and trained staff.</p>
@@ -830,6 +840,7 @@ function viewHome(){
       :ui.coll===MINE_F&&!mine.length?`<div class="empty"><b>No recipes of your own yet</b>Add your house recipes and use them with scaling, orders, prep lists and food cost.<br><br><a href="#new">Add your first recipe</a></div>`:`<div class="empty"><b>No recipes match</b>Try fewer words, another ingredient, or clear a filter.</div>`}</div>`;
   $("sort").value=ui.sort==="az"&&!ui.q?"rel":ui.sort;
 }
+function homeDaily(){const el=$("home-daily");if(!el)return;learnData().then(()=>{const e=$("home-daily");if(e)e.innerHTML=dailyHtml()}).catch(()=>{})}
 function viewFav(){
   const list=favs.map(id=>byId.get(id)).filter(Boolean);
   $("main").innerHTML=`<div class="rhead"><h2>Favourites</h2><span class="mono" style="color:var(--muted);font-size:13px">${list.length} ${favRemote?"· synced to your account":"· on this device"}</span></div>
@@ -1226,6 +1237,35 @@ async function learnData(){
   LD.byL=new Map(); LD.mods.forEach((m,mi)=>{m.h=MH[mi%MH.length];m.L.forEach((l,li)=>LD.byL.set(l.id,{m,l,li}))});
   return LD;
 }
+if(!LP.miss)LP.miss={}; if(!LP.streak)LP.streak={last:"",n:0};
+const dayKey=(t)=>{const d=new Date(t||Date.now());return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const DAY=864e5;
+function shuf(n,seed){const a=[...Array(n).keys()];let h=0;for(const ch of String(seed))h=(h*31+ch.charCodeAt(0))>>>0;for(let k=n-1;k>0;k--){h=(h*1103515245+12345)>>>0;const r=h%(k+1);[a[k],a[r]]=[a[r],a[k]]}return a}
+function allQs(){return LD.mods.flatMap(m=>m.quiz.map((x,i)=>[m,i,x]))}
+function dailyPick(){const n=Math.floor((Date.now()-new Date().getTimezoneOffset()*6e4)/DAY);const Q=allQs(),Ls=LD.mods.flatMap(m=>m.L.filter(l=>l.k).map(l=>[m,l]));
+  return {q:Q[(n*7919)%Q.length],f:Ls[(n*104729)%Ls.length]}}
+function streakNow(){const t=dayKey(),y=dayKey(Date.now()-DAY);return LP.streak.last===t||LP.streak.last===y?LP.streak.n:0}
+function dailyHtml(){const {q:[m,i,x],f:[fm,fl]}=dailyPick();const today=dayKey();const d=LP.daily&&LP.daily.d===today?LP.daily:null;const sn=streakNow();
+  return `<div class="daily" id="daily"><div class="ey"><span>${msI("lightbulb",1)} Card of the day</span><span>${sn?msI("local_fire_department",1)+" "+sn+(sn===1?" day":" days"):""}</span></div>
+  <div class="fact">${esc(fl.k)}<a href="#l-${fl.id}">${esc(fl.t)} · Module ${fm.n} ${msI("arrow_forward")}</a></div>
+  <p class="dq">${esc(x[0])}</p><div class="opts">${shuf(x[1].length,today+m.id+i).map(j=>[x[1][j],j]).map(([o,j])=>`<button data-dq="${j}" ${d?"disabled":""} class="${d?(j===x[2]?"right":j===d.a?"wrong":""):""}">${esc(o)}</button>`).join("")}</div>
+  ${d?`<p class="res" style="color:${d.a===x[2]?"var(--ok)":"var(--warn)"}">${d.a===x[2]?"Correct. See you tomorrow.":"Not this time. It is added to Repeat mistakes."}</p>`:`<p class="note-line" style="margin-top:8px">Answer every day to keep your streak.</p>`}</div>`}
+function answerDaily(j){const {q:[m,i,x]}=dailyPick();const today=dayKey();if(LP.daily&&LP.daily.d===today)return;LP.daily={d:today,a:j};
+  LP.streak={last:today,n:(LP.streak.last===dayKey(Date.now()-DAY)?LP.streak.n:0)+1};
+  if(j!==x[2])addMiss(m.id,i);else delete LP.miss[m.id+":"+i];saveLP()}
+function addMiss(mid,i){const k=mid+":"+i,e=LP.miss[k];LP.miss[k]={due:Date.now()+DAY,n:e?e.n+1:1}}
+function missDue(){return Object.entries(LP.miss).filter(([k,v])=>v.due<=Date.now()).map(([k])=>k)}
+let RV=null;
+function viewReview(){withLearn(()=>{
+  if(!RV){const due=missDue();const keys=(due.length?due:Object.keys(LP.miss)).sort((a,b)=>LP.miss[a].due-LP.miss[b].due).slice(0,10);RV={keys,a:{},early:!due.length}}
+  const items=RV.keys.map(k=>{const [mid,i]=k.split(":");const m=LD.mods.find(x=>x.id===mid);return m&&m.quiz[+i]?[k,m,+i,m.quiz[+i]]:null}).filter(Boolean);
+  const done=Object.keys(RV.a).length, ok=items.filter(([k,m,i,x])=>RV.a[k]===x[2]).length;
+  $("main").innerHTML=`<a class="back" href="#learn">${ICON.back}Learn</a><article class="sheet"><div class="sh-head" style="--h:8"><div><div class="crumb">Learn · Practice</div><h1>Repeat mistakes</h1><div class="sub">${RV.early&&items.length?"Nothing is due yet. Practise early if you like.":"Questions you got wrong come back after a day. Answer right to clear them."}</div>
+  <div class="strip"><div><small>In this round</small><b>${items.length}</b></div><div><small>Answered</small><b>${done}</b></div><div><small>Right</small><b>${ok}</b></div></div></div></div>
+  <div class="lbody">${items.length?`<ol class="quiz">${items.map(([k,m,i,x])=>{const a=RV.a[k];return `<li><p>${esc(x[0])}<small style="display:block;color:var(--muted);font-weight:600;font-size:12px">Module ${m.n} · ${esc(m.t)}</small></p><div class="opts">${shuf(x[1].length,k).map(j=>[x[1][j],j]).map(([o,j])=>`<button data-rv="${k}|${j}" ${a!=null?"disabled":""} class="${a!=null?(j===x[2]?"right":j===a?"wrong":""):""}">${esc(o)}</button>`).join("")}</div></li>`}).join("")}</ol>
+  <div class="lfoot"><button class="btn" id="rv-new">${msI("refresh")}New round</button><a class="btn pri" href="#learn">Done</a></div>`
+  :`<div class="empty" style="box-shadow:none;background:var(--sunk)"><b>Nothing to repeat</b>Wrong answers from tests and the card of the day appear here.</div>`}</div></article>`;
+})}
 const modDone=m=>m.L.filter(l=>LP.done[l.id]).length;
 const TOOLS=[
   ["doneness","Doneness & resting","thermostat","Pull temperatures and resting times"],
@@ -1256,6 +1296,8 @@ function viewLearn(){withLearn(()=>{
     <div class="stats"><span><b>${done}/${all}</b> lessons</span><span><b>${passed}/${LD.mods.length}</b> tests passed</span><span><b>${LD.gloss.reduce((a,s)=>a+s[1].length,0)}</b> terms</span></div>
     ${next?`<a class="go" href="#l-${next[1].id}">${done?"Continue":"Start"}: ${esc(next[1].t)} ${msI("arrow_forward")}</a>`:`<span class="go done">${msI("workspace_premium",1)} All lessons done</span>`}</div>
     <div class="ring" aria-hidden="true" style="--p:${all?done/all*100:0}"><b>${all?Math.round(done/all*100):0}%</b><small>complete</small></div></section>
+    <div class="sec">${dailyHtml()}</div>
+    ${Object.keys(LP.miss).length?`<div class="sec"><a class="rv-due" href="#review">${msI("refresh",1)}<span><b>Repeat mistakes</b><small>${missDue().length} due now · ${Object.keys(LP.miss).length} in total</small></span>${msI("arrow_forward")}</a></div>`:""}
     ${passed===LD.mods.length?`<div class="sec"><div class="cert-card">${msI("workspace_premium",1)}<div><b>Course complete</b><p>All ${LD.mods.length} tests passed. Download your course certificate.</p></div></div><div class="certf" style="margin-top:10px"><label class="fld"><span>Name on the certificate</span><input id="cert-name" value="${esc(LP.name||"")}" placeholder="Your full name" autocomplete="name"></label><button class="btn pri" data-cert="all">${ICON.pdf}Certificate PDF</button></div></div>`:""}
     <div class="sec"><div class="sec-h"><h2>Modules</h2><small>${LD.mods.length} modules</small></div><div class="mods">
     ${LD.mods.map(m=>{const d=modDone(m),q=LP.quiz[m.id];return `<a class="mod" href="#m-${m.id}" style="--h:${m.h}"><span class="mi">${msI(m.ic,1)}</span><span class="mt"><small>Module ${m.n}</small><b>${esc(m.t)}</b>
@@ -1459,6 +1501,7 @@ if(navigator.serviceWorker)navigator.serviceWorker.addEventListener("message",e=
 const listY={};
 try{history.scrollRestoration="manual"}catch(e){}
 function route(){
+  if(!D)return;
   const h=location.hash==="#"?"":location.hash||"", prev=route._last; route._last=h;
   const back=prev!=null&&prev.startsWith("#r-")&&!h.startsWith("#r-");
   if(prev!=null&&!prev.startsWith("#r-")&&h.startsWith("#r-"))listY[prev]=window.scrollY;
@@ -1469,6 +1512,7 @@ function route(){
   if(h==="#learn"){setNav("learn");viewLearn();return}
   if(h.startsWith("#m-")){setNav("learn");viewModule(h.slice(3));return}
   if(h.startsWith("#l-")){setNav("learn");viewLesson(h.slice(3));return}
+  if(h==="#review"){setNav("learn");RV=null;viewReview();return}
   if(h.startsWith("#quiz-")){setNav("learn");viewQuiz(h.slice(6));return}
   if(h.startsWith("#tool-")){setNav("learn");viewTool(h.slice(6));return}
   if(h==="#fav"){setNav("fav");viewFav();restore();return}
@@ -1479,7 +1523,7 @@ function route(){
   if(h==="#new"||h.startsWith("#edit-")){setNav("home");viewEditor(h==="#new"?"":h.slice(6));return}
   if(h==="#prices"||h.startsWith("#prices-")){if(route._pr!==h){prOnly=null;prQ=""}route._pr=h;setNav("order");viewPrices(h.slice(8));return}
   if(h.startsWith("#c-")){const i=D.folders.findIndex(f=>f[1]===h.slice(3));ui.coll=i;} else ui.coll=-1;
-  setNav("home"); viewHome(); restore();
+  setNav("home"); viewHome(); homeDaily(); restore();
 }
 function rerender(){const h=location.hash||"";if(h.startsWith("#r-")){const r=byId.get(h.slice(3));const sheet=$("main").querySelector(".sheet");if(r&&sheet){detail(r).then(d=>renderSheet(r,d)).catch(()=>{})}}else route()}
 function goBrowse(){ui.shown=PAGE;const want=ui.coll>=0?"#c-"+D.folders[ui.coll][1]:"";if((location.hash||"")!==want){if(want)location.hash=want;else{history.pushState(null,"",location.pathname+location.search);route()}}else route()}
@@ -1497,6 +1541,10 @@ function bind(){
     if(t.id==="o-mx"){const b=mxPdf();if(!b){toast("PDF tool did not load");return}saveFile("Allergen_Matrix_"+fileBase(ord.name||"menu")+(ord.date?"_"+ord.date:"")+".pdf",b);return}
     if(t.id==="p-lbl"){labelsPdf().then(b=>{if(!b){toast("PDF tool did not load");return}saveFile("Labels_"+fileBase(ord.name||"prep")+"_"+new Date().toISOString().slice(0,10)+".pdf",b)});return}
     if(t.id==="o-menu"){saveMenu();return}
+    if(t.dataset.dq!=null){answerDaily(+t.dataset.dq);const el=$("daily");if(el)el.outerHTML=dailyHtml();return}
+    if(t.dataset.rv){const [k,j]=t.dataset.rv.split("|");const [mid,i]=k.split(":");const m=LD.mods.find(x=>x.id===mid);const right=m.quiz[+i][2]===+j;RV.a[k]=+j;
+      if(right)delete LP.miss[k];else LP.miss[k]={due:Date.now()+DAY,n:(LP.miss[k]?LP.miss[k].n:0)+1};saveLP();const y=window.scrollY;viewReview();window.scrollTo(0,y);return}
+    if(t.id==="rv-new"){RV=null;viewReview();return}
     if(t.dataset.rtool){const r=byId.get(scale.id);if(!r)return;detail(r).then(d=>openToolFor(t.dataset.rtool,r,d));return}
     if(t.id==="tool-fav"){const id=(location.hash||"").slice(6);toolFavs=toolFavs.includes(id)?toolFavs.filter(x=>x!==id):[id,...toolFavs];lsSet("bb-toolfav",toolFavs);toast(toolFavs.includes(id)?"Pinned to the top of Kitchen tools":"Unpinned");viewTool(id);return}
     if(t.dataset.ordby){ordBy=t.dataset.ordby;refreshTicket();return}
@@ -1531,7 +1579,7 @@ function bind(){
     if(t.dataset.ldone){const k=t.dataset.ldone;if(LP.done[k])delete LP.done[k];else LP.done[k]=Date.now();saveLP();const e=LD.byL.get(k);if(LP.done[k]&&e&&e.m.L[e.li+1]){toast("Lesson done");location.hash="l-"+e.m.L[e.li+1].id}else{if(LP.done[k])toast("Module lessons done. Take the test");viewLesson(k)}return}
     if(t.dataset.qa){const [i,j]=t.dataset.qa.split(":").map(Number);const mid=location.hash.slice(6);const st=QA[mid]||(QA[mid]={a:{},sub:false});if(st.sub)return;st.a[i]=j;const y=window.scrollY;viewQuiz(mid);window.scrollTo(0,y);return}
     if(t.dataset.qsub){const mid=t.dataset.qsub,m=LD.mods.find(x=>x.id===mid),st=QA[mid];st.sub=true;const sc=Math.round(m.quiz.filter((x,i)=>st.a[i]===x[2]).length/m.quiz.length*100);
-      const prev=LP.quiz[mid]||{best:0,pass:false};LP.quiz[mid]={best:Math.max(prev.best,sc),pass:prev.pass||sc>=80,at:sc>=80&&!prev.pass?Date.now():(prev.at||null),last:sc};saveLP();viewQuiz(mid);return}
+      const prev=LP.quiz[mid]||{best:0,pass:false};LP.quiz[mid]={best:Math.max(prev.best,sc),pass:prev.pass||sc>=80,at:sc>=80&&!prev.pass?Date.now():(prev.at||null),last:sc};m.quiz.forEach((x,i)=>{if(st.a[i]!==x[2])addMiss(mid,i);else delete LP.miss[mid+":"+i]});saveLP();viewQuiz(mid);return}
     if(t.dataset.qreset){QA[t.dataset.qreset]={a:{},sub:false};viewQuiz(t.dataset.qreset);return}
     if(t.dataset.cert){const n=$("cert-name");if(n){LP.name=n.value.trim();saveLP()}if(!LP.name){toast("Add your name first");if(n)n.focus();else{location.hash="quiz-"+(t.dataset.cert==="all"?LD.mods[0].id:t.dataset.cert)}return}
       const b=certPdf(t.dataset.cert);if(!b){toast("PDF tool did not load");return}saveFile("Certificate_"+fileBase(LP.name)+"_"+(t.dataset.cert==="all"?"Course":"Module_"+LD.mods.find(x=>x.id===t.dataset.cert).n)+".pdf",b);return}
