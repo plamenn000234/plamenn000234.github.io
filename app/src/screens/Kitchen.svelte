@@ -87,35 +87,35 @@
   {/if}
 </div>
 <style>
-  .head { margin: 14px 0 10px; display: grid; gap: 4px; }
-  .tabs2 { display: flex; gap: 18px; border-bottom: 1px solid var(--line); margin-bottom: 14px; }
-  .tabs2 a { padding: 8px 0; color: var(--muted); font-size: 14px; border-bottom: 2px solid transparent; margin-bottom: -1px; }
-  .tabs2 a[aria-current="page"] { color: var(--ink); border-color: var(--accent); font-weight: 600; }
+  .head { margin: 22px 0 16px; display: grid; gap: 6px; }
+  .tabs2 { display: flex; gap: 2px; padding: 3px; border-radius: 12px; background: var(--sunk); margin-bottom: 18px; width: max-content; max-width: 100%; }
+  .tabs2 a { padding: 8px 14px; border-radius: 9px; color: var(--muted); font-size: 13.5px; font-weight: 500; white-space: nowrap; }
+  .tabs2 a[aria-current="page"] { background: var(--raised); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.08), 0 2px 8px rgba(0,0,0,.06); }
   .ea { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 12px; }
   .ev { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); align-items: end; }
   .tf { display: grid; gap: 5px; min-width: 0; }
   .tf span { font-size: 12px; color: var(--muted); }
-  .tf input, .tf select { width: 100%; min-width: 0; border: 0; border-bottom: 1px solid var(--muted); background: transparent; padding: 8px 0 6px; font-size: 16px; outline: none; }
-  .tf select { border: 1px solid var(--line); border-radius: 3px; padding: 7px 8px; background: var(--surface); }
-  .tf input:focus { border-color: var(--accent); }
-  .lines { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); }
-  .ln { padding: 12px; display: grid; gap: 10px; }
+  .tf input, .tf select { width: 100%; min-width: 0; border: 0; border-radius: var(--r-s); background: var(--sunk); padding: 11px 14px; font-size: 16px; outline: none; }
+  .tf input:focus, .tf select:focus { box-shadow: inset 0 0 0 2px var(--ink); background: var(--raised); }
+  .lines { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); }
+  .ln { padding: 16px; display: grid; gap: 14px; }
   .lt { display: flex; align-items: center; gap: 10px; }
   .lt a { flex: 1; min-width: 0; display: grid; color: var(--ink); }
   .lt b { font: 600 15px var(--f-display); } .lt small { font-size: 12.5px; color: var(--muted); }
-  .x { width: 34px; height: 34px; border: 1px solid var(--line); border-radius: 50%; background: transparent; display: grid; place-items: center; color: var(--muted); }
-  .ticket { padding: 18px 16px 14px; background-image: repeating-linear-gradient(transparent 0 31px, var(--line-2) 31px 32px); }
+  .x { width: 34px; height: 34px; border: 0; border-radius: 50%; background: var(--sunk); display: grid; place-items: center; color: var(--muted); }
+  .ticket { padding: 22px 20px 18px; position: relative; }
+  .ticket::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; border-radius: var(--r) var(--r) 0 0; background: var(--accent); }
   .th { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; align-items: flex-start; margin-bottom: 6px; }
   .ta { display: flex; gap: 6px; }
   .ticket h3 { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin: 16px 0 4px; font-family: var(--f-body); }
   .ticket ul { list-style: none; margin: 0; padding: 0; }
-  .ticket li button { width: 100%; display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border: 0; border-bottom: 1px dashed var(--line); background: transparent; text-align: left; font-size: 14.5px; }
+  .ticket li button { width: 100%; display: flex; justify-content: space-between; gap: 12px; padding: 11px 0; border: 0; box-shadow: inset 0 -1px 0 var(--hair); background: transparent; text-align: left; font-size: 15px; }
   .ticket li span { display: grid; } .ticket li small { font-size: 11.5px; color: var(--muted); }
   .ticket li b { font: 600 15.5px var(--f-display); white-space: nowrap; } .ticket li i { font-style: normal; font-size: 12px; color: var(--muted); }
   .ticket li.got button { color: var(--muted); text-decoration: line-through; }
   .al { margin-top: 12px; } .cost { margin-top: 10px; font-size: 14px; } .cost b { font: 600 18px var(--f-display); }
   .acts { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 8px; }
-  .sl { display: grid; gap: 6px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); }
-  .sl button { display: grid; gap: 2px; text-align: left; padding: 12px 14px; }
+  .sl { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); }
+  .sl button { display: grid; gap: 4px; text-align: left; padding: 16px 18px; border: 0; color: var(--ink); }
   .sl b { font: 600 15px var(--f-display); } .sl small { font-size: 12.5px; color: var(--muted); }
 </style>

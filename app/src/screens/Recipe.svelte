@@ -64,26 +64,23 @@
 <article class="page sheet">
   <a class="back" href="#recipes" onclick={(e) => { if (history.length > 1) { e.preventDefault(); history.back(); } }}><Icon name="back" size={16} />Back</a>
   <header class="hd">
-    <div class="ht">
-      <p class="eyebrow"><a href="#c-{D.folders[r.f][1]}">{D.folders[r.f][0]}</a>{r.sub ? " / " + r.sub : ""}</p>
-      <h1>{r.t}</h1>
-      {#if r.s}<p class="sub">{r.s}</p>{/if}
-      <dl class="pass">
-        <div><dt>Batch</dt><dd>{r.N} portions</dd></div>
-        <div><dt>Portion</dt><dd>{r.pg ? r.pg + " " + (r.pu || "g") : "–"}</dd></div>
-        {#if r.kcal}<div><dt>Energy</dt><dd>{r.kcal} kcal</dd></div>{/if}
-        {#if sh.txt || sh.temp}<div><dt>Keeps</dt><dd>{[sh.temp, sh.txt].filter(Boolean).join(", ")}</dd></div>{/if}
-        {#if d?.c?.length}<div><dt>Card</dt><dd>{d.c.length} part{d.c.length === 1 ? "" : "s"} · {nItems} items</dd></div>{/if}
-      </dl>
-    </div>
-    <Dish kind={r.ty[1]} size={112} />
+    <div class="art"><Dish kind={r.ty[1]} size={168} /></div>
+    <p class="eyebrow"><a href="#c-{D.folders[r.f][1]}">{D.folders[r.f][0]}</a>{r.sub ? " · " + r.sub : ""}</p>
+    <h1>{r.t}</h1>
+    {#if r.s}<p class="sub">{r.s}</p>{/if}
   </header>
+  <dl class="pass">
+    <div><dt>Batch</dt><dd>{r.N}<small> portions</small></dd></div>
+    <div><dt>Portion</dt><dd>{r.pg ? r.pg : "–"}<small> {r.pg ? r.pu || "g" : ""}</small></dd></div>
+    {#if r.kcal}<div><dt>Energy</dt><dd>{r.kcal}<small> kcal</small></dd></div>{/if}
+    {#if sh.txt || sh.temp}<div class="k"><dt>Keeps</dt><dd class="sm">{[sh.temp, sh.txt].filter(Boolean).join(" · ")}</dd></div>{/if}
+  </dl>
   <div class="acts">
     <Button kind={io ? "line" : "pri"} icon={io ? "check" : "plus"} onclick={() => toast.show(addLine(r.id) ? "Added to the order" : "Removed from the order")}>{io ? "In the order" : "Add to order"}</Button>
-    <Button icon="star" pressed={fav} label="Favourite" onclick={() => toast.show(toggleFav(r.id) ? "Added to favourites" : "Removed from favourites")}>{fav ? "Saved" : "Favourite"}</Button>
-    <Button icon="share" label="Share" onclick={() => shareText(r.t, text())}>Share</Button>
-    <Button icon="copy" label="Copy" onclick={() => copyText(text(), "Recipe copied")}>Copy</Button>
-    {#if r.mine}<Button icon="edit" href="#edit-{r.id}">Edit</Button>{/if}
+    <button class="rb" class:on={fav} aria-pressed={fav} aria-label="Favourite" onclick={() => toast.show(toggleFav(r.id) ? "Added to favourites" : "Removed from favourites")}><Icon name="star" size={20} /></button>
+    <button class="rb" aria-label="Share" onclick={() => shareText(r.t, text())}><Icon name="share" size={20} /></button>
+    <button class="rb" aria-label="Copy" onclick={() => copyText(text(), "Recipe copied")}><Icon name="copy" size={20} /></button>
+    {#if r.mine}<a class="rb" aria-label="Edit" href="#edit-{r.id}"><Icon name="edit" size={20} /></a>{/if}
   </div>
 
   <section class="bench" aria-label="Tools for this recipe">
@@ -141,57 +138,67 @@
 </article>
 {/if}
 <style>
-  .back { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; color: var(--muted); margin: 12px 0 4px; }
-  .hd { display: flex; gap: 16px; align-items: flex-start; justify-content: space-between; padding: 10px 0 4px; }
-  .ht { min-width: 0; display: grid; gap: 6px; }
-  .ht .eyebrow a { color: inherit; }
-  h1 { font-size: clamp(24px, 6vw, 34px); }
-  .sub { color: var(--muted); font-size: 14px; }
-  .pass { display: flex; flex-wrap: wrap; gap: 0; margin: 8px 0 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-  .pass div { padding: 7px 14px 7px 0; margin-right: 14px; }
-  .pass div + div { border-left: 1px solid var(--line-2); padding-left: 14px; margin-left: -14px; }
+  .back { display: inline-flex; align-items: center; gap: 4px; font-size: 14px; color: var(--ink-2); margin: 16px 0 4px; padding: 6px 12px 6px 8px; border-radius: 999px; background: var(--surface); box-shadow: var(--sh-1); }
+  .hd { display: grid; justify-items: center; text-align: center; gap: 8px; padding: 8px 0 4px; max-width: 680px; margin: 0 auto; }
+  .art { width: 220px; height: 220px; display: grid; place-items: center; border-radius: 50%; margin-bottom: 8px;
+    background: radial-gradient(closest-side, var(--surface) 0%, var(--surface) 62%, transparent 63%), radial-gradient(closest-side, transparent 70%, var(--hair) 71%, transparent 72%); }
+  .art :global(.dish) { box-shadow: var(--sh-2); }
+  .hd .eyebrow a { color: inherit; }
+  h1 { font-size: clamp(28px, 7.5vw, 42px); line-height: 1.12; }
+  .sub { color: var(--muted); font-size: 15px; }
+  .pass { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); grid-auto-flow: dense; margin: 22px auto 0; max-width: 680px; background: var(--surface); border-radius: var(--r); box-shadow: var(--sh-1); overflow: hidden; }
+  .pass div { padding: 14px 12px; text-align: center; display: grid; gap: 4px; align-content: center; }
+  .pass div + div { box-shadow: inset 1px 0 0 var(--hair); }
+  .pass div.k { grid-column: 1 / -1; box-shadow: inset 0 1px 0 var(--hair); }
   dt { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
-  dd { margin: 0; font: 600 14px var(--f-display); }
-  .hd :global(.dish) { margin-top: 10px; }
-  @media (max-width: 520px) { .hd :global(.dish) { width: 76px !important; height: 76px !important; } }
-  .acts { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 4px; }
-  .bench { margin: 18px 0 6px; }
-  .bench .eyebrow { margin-bottom: 8px; }
-  .strip { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px; }
+  dd { margin: 0; font: 600 22px/1.1 var(--f-display); font-variant-numeric: tabular-nums; }
+  dd small { font: 500 12px var(--f-body); color: var(--muted); }
+  dd.sm { font-size: 14px; }
+  .acts { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin: 20px 0 4px; }
+  .rb { width: 46px; height: 46px; border: 0; border-radius: 50%; display: grid; place-items: center; background: var(--surface); color: var(--ink); box-shadow: var(--sh-1), inset 0 0 0 1px var(--hair); transition: transform .18s var(--ease); }
+  .rb:active { transform: scale(.9); }
+  .rb.on { color: var(--accent); background: var(--accent-soft); box-shadow: none; }
+  .rb.on :global(path) { fill: currentColor; }
+  .bench { margin: 30px 0 6px; }
+  .bench .eyebrow { margin-bottom: 12px; }
+  .strip { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; margin: 0 calc(-1 * var(--gap)); padding: 2px var(--gap) 10px; }
   .strip::-webkit-scrollbar { display: none; }
-  .strip > * { flex: none; display: grid; justify-items: center; gap: 6px; width: 92px; padding: 12px 6px 10px; border: 1px solid var(--line-2); background: var(--surface); border-radius: var(--r); color: var(--ink); font-size: 12px; text-align: center; line-height: 1.2; transition: border-color .15s, transform .15s; }
-  .strip > *:hover { border-color: var(--accent); }
-  .strip > *:active { transform: scale(.97); }
-  .scaler { position: sticky; top: calc(var(--sat) + 55px); z-index: 5; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 10px 12px; margin: 14px 0; background: color-mix(in srgb, var(--surface) 96%, transparent); backdrop-filter: blur(8px); }
-  .lb { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .strip > * { flex: none; display: grid; justify-items: center; align-content: center; gap: 8px; width: 96px; height: 96px; padding: 10px 6px; border: 0; background: var(--surface); box-shadow: var(--sh-1); border-radius: var(--r); color: var(--ink); font-size: 12px; font-weight: 500; text-align: center; line-height: 1.2; transition: transform .18s var(--ease), box-shadow .2s; }
+  @media (hover: hover) { .strip > *:hover { box-shadow: var(--sh-2); transform: translateY(-2px); } }
+  .strip > *:active { transform: scale(.95); }
+  .scaler { position: sticky; top: calc(var(--sat) + 64px); z-index: 5; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding: 12px 14px; margin: 18px 0 22px; border-radius: 22px;
+    background: color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter: saturate(1.6) blur(16px); -webkit-backdrop-filter: saturate(1.6) blur(16px); box-shadow: var(--sh-2); }
+  .lb { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
   .qk { display: flex; gap: 4px; flex-wrap: wrap; }
-  .qk button { min-width: 40px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 3px; background: transparent; font-size: 13px; }
-  .qk button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .qk button { min-width: 44px; padding: 8px 10px; border: 0; border-radius: 999px; background: var(--sunk); font-size: 13.5px; font-weight: 500; font-variant-numeric: tabular-nums; transition: background .2s, color .2s; }
+  .qk button[aria-pressed="true"] { background: var(--pri); color: var(--pri-ink); }
   .fx { margin-left: auto; }
-  @media (max-width: 520px) { .fx { margin-left: 0; width: 100%; } }
-  .skel { height: 260px; border-radius: var(--r); background: linear-gradient(90deg, var(--sunk), var(--surface), var(--sunk)); background-size: 200% 100%; animation: sk 1.2s infinite; }
+  @media (max-width: 560px) { .fx { margin-left: 0; width: 100%; } }
+  .skel { height: 300px; border-radius: var(--r); background: linear-gradient(90deg, var(--sunk), var(--surface), var(--sunk)); background-size: 200% 100%; animation: sk 1.2s infinite; }
   @keyframes sk { to { background-position: -200% 0; } }
-  .body { display: grid; gap: 28px; grid-template-columns: minmax(0, 1fr); margin-top: 8px; }
+  .body { display: grid; gap: 32px; grid-template-columns: minmax(0, 1fr); margin-top: 8px; }
   @media (min-width: 860px) { .body { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); } }
-  .body h2 { font-size: 20px; padding-bottom: 6px; border-bottom: 2px solid var(--ink); margin-bottom: 10px; }
-  .comp { margin-bottom: 18px; } .comp h3 { font-size: 15.5px; margin: 6px 0 4px; } .comp > .note { margin-bottom: 6px; }
-  .ing { list-style: none; margin: 0; padding: 0; }
-  .ing li { border-bottom: 1px solid var(--line-2); }
-  .ing button { width: 100%; display: flex; justify-content: space-between; gap: 12px; padding: 9px 2px; border: 0; background: transparent; text-align: left; font-size: 14.5px; }
-  .ing b { font: 600 15px var(--f-display); white-space: nowrap; }
+  .body h2 { font-size: 24px; margin-bottom: 14px; }
+  .comp { margin-bottom: 22px; } .comp h3 { font-size: 13px; font-family: var(--f-body); letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin: 4px 0 8px; } .comp > .note { margin-bottom: 8px; }
+  .ing { list-style: none; margin: 0; padding: 0 16px; background: var(--surface); border-radius: var(--r); box-shadow: var(--sh-1); }
+  .ing li + li { box-shadow: inset 0 1px 0 var(--hair); }
+  .ing button { width: 100%; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 13px 0; border: 0; background: transparent; text-align: left; font-size: 15px; color: var(--ink); }
+  .ing b { font: 600 16px var(--f-display); white-space: nowrap; font-variant-numeric: tabular-nums; }
   .ing li.yl { color: var(--muted); font-style: italic; }
   .ing li.got button { color: var(--muted); text-decoration: line-through; }
-  .steps { margin: 0; padding: 0; list-style: none; counter-reset: s; display: grid; gap: 4px; }
-  .steps li { counter-increment: s; display: flex; gap: 12px; padding: 9px 4px; border-radius: 3px; cursor: pointer; font-size: 15px; line-height: 1.55; }
-  .steps li::before { content: counter(s); flex: none; width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--ink); display: grid; place-items: center; font: 600 13px var(--f-display); margin-top: 1px; }
+  .steps { margin: 0; padding: 0; list-style: none; counter-reset: s; display: grid; gap: 2px; }
+  .steps li { counter-increment: s; display: flex; gap: 16px; padding: 12px 6px; border-radius: var(--r-m); cursor: pointer; font-size: 15.5px; line-height: 1.6; transition: background .15s; }
+  .steps li:active { background: var(--sunk); }
+  .steps li::before { content: counter(s); flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--surface); box-shadow: var(--sh-1); display: grid; place-items: center; font: 600 14px var(--f-display); margin-top: 0; transition: background .2s, color .2s; }
   .steps li.done { color: var(--muted); }
-  .steps li.done::before { content: "✓"; background: var(--ok); border-color: var(--ok); color: var(--bg); }
-  .facts { display: grid; gap: 1px; margin-top: 18px; background: var(--line-2); border: 1px solid var(--line-2); border-radius: var(--r); overflow: hidden; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
-  .facts > div { background: var(--surface); padding: 14px 16px; display: grid; gap: 6px; align-content: start; font-size: 14px; }
-  .big { font: 600 20px var(--f-display); }
-  .alist { display: flex; flex-wrap: wrap; gap: 6px 12px; }
-  .alist i { font-style: normal; display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--accent); color: var(--accent); font-size: 11px; font-weight: 700; margin-right: 5px; }
-  .nut { border-collapse: collapse; font-size: 13px; } .nut th, .nut td { padding: 4px 8px 4px 0; text-align: left; } .nut th { font-weight: 500; color: var(--muted); font-size: 11.5px; }
-  .disc { font-size: 12px; color: var(--muted); margin: 16px 0 0; }
+  .steps li.done::before { content: "✓"; background: var(--ok); color: var(--bg); box-shadow: none; }
+  .facts { display: grid; gap: 12px; margin-top: 26px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
+  .facts > div { background: var(--surface); border-radius: var(--r); box-shadow: var(--sh-1); padding: 18px 20px; display: grid; gap: 8px; align-content: start; font-size: 14.5px; }
+  .facts h4 { font-family: var(--f-body); font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  .big { font: 600 24px var(--f-display); }
+  .alist { display: flex; flex-wrap: wrap; gap: 8px 14px; }
+  .alist i { font-style: normal; display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font-size: 11px; font-weight: 700; margin-right: 6px; }
+  .nut { border-collapse: collapse; font-size: 13.5px; } .nut th, .nut td { padding: 5px 10px 5px 0; text-align: left; font-variant-numeric: tabular-nums; } .nut th { font-weight: 500; color: var(--muted); font-size: 11.5px; }
+  .disc { font-size: 12px; color: var(--muted); margin: 20px 0 0; }
   .pad { padding: 20px 0; }
 </style>

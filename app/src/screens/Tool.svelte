@@ -8,6 +8,7 @@
   import { toolFavs, toggleTool } from "../core/kitchen.svelte";
   import { toast } from "../core/ui.svelte";
   let { id }: { id: string } = $props();
+  // svelte-ignore state_referenced_locally
   if (!TS[id]) TS[id] = {};
   const t = $derived(toolById(id));
   const s = $derived(TS[id]);
@@ -39,9 +40,11 @@
   {/if}
 </div>
 <style>
-  .back { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; color: var(--muted); margin: 12px 0 8px; }
-  .hd { display: flex; gap: 14px; align-items: center; margin-bottom: 10px; }
-  .ic { width: 64px; height: 64px; border-radius: 50%; background: var(--sunk); display: grid; place-items: center; flex: none; }
-  .acts { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-bottom: 14px; }
+  .back { display: inline-flex; align-items: center; gap: 4px; font-size: 14px; color: var(--ink-2); margin: 16px 0 12px; padding: 6px 12px 6px 8px; border-radius: 999px; background: var(--surface); box-shadow: var(--sh-1); }
+  .hd { display: flex; gap: 16px; align-items: center; margin-bottom: 16px; }
+  .hd div { display: grid; gap: 4px; }
+  .ic { width: 72px; height: 72px; border-radius: 22px; background: var(--surface); box-shadow: var(--sh-2); display: grid; place-items: center; flex: none; }
+  .acts { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-bottom: 18px; }
+  .tool-body { border-radius: 24px; padding: 22px; }
   .for { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--accent); }
 </style>

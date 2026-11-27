@@ -16,8 +16,8 @@
   </div>
 {/if}
 <style>
-  .tbar { position: fixed; z-index: 25; left: 8px; right: 8px; bottom: calc(var(--tabh) + var(--sab) + 8px); display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
-  .t { flex: none; display: flex; align-items: center; gap: 8px; padding: 6px 6px 6px 12px; background: var(--ink); color: var(--bg); border-radius: 3px; min-width: 200px; max-width: 280px; animation: up .25s var(--ease); }
+  .tbar { position: fixed; z-index: 25; left: 12px; right: 12px; bottom: calc(var(--tabh) + var(--sab) + 20px); display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+  .t { flex: none; display: flex; align-items: center; gap: 8px; padding: 6px 6px 6px 14px; background: var(--hero); color: var(--hero-ink); border-radius: 999px; box-shadow: var(--sh-3); min-width: 200px; max-width: 280px; animation: up .25s var(--ease); }
   .t.fired { background: var(--accent); color: var(--accent-ink); animation: pulse 1s infinite; }
   .t.paused { opacity: .75; }
   .tx { flex: 1; min-width: 0; display: grid; line-height: 1.2; }

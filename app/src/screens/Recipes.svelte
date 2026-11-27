@@ -46,7 +46,7 @@
   {#if browsing}
     <p class="count note">{list.length.toLocaleString("en")} recipe{list.length === 1 ? "" : "s"}</p>
     {#if list.length}
-      <div class="list">{#each list.slice(0, shown) as r (r.id)}<RecipeRow {r} />{/each}</div>
+      <div class="list group">{#each list.slice(0, shown) as r (r.id)}<RecipeRow {r} />{/each}</div>
       {#if list.length > shown}<div class="more"><Button onclick={() => (shown += 60)}>Show more ({list.length - shown})</Button></div>{/if}
     {:else if onlyFav && !favs.v.length}
       <Empty art="fav" title="No favourites yet">Tap the star on a recipe to keep it here.</Empty>
@@ -57,34 +57,38 @@
     <p class="count note">{R.length.toLocaleString("en")} recipes in {D.folders.length} collections</p>
     {#each groups as [g, ids]}
       <section class="sec"><div class="sec-h"><h2>{g}</h2><small class="muted">{ids.length}</small></div>
-        <div class="rack">{#each ids as i}<a class="coll" href="#c-{D.folders[i][1]}"><img src={dishImg(folderStyle(i)[1])} alt="" width="44" height="44" loading="lazy" /><span><b>{D.folders[i][0]}</b><small>{folderCount[i]} recipes</small></span></a>{/each}</div>
+        <div class="rack">{#each ids as i}<a class="coll" href="#c-{D.folders[i][1]}"><img src={dishImg(folderStyle(i)[1])} alt="" width="72" height="72" loading="lazy" /><span><b>{D.folders[i][0]}</b><small>{folderCount[i]} recipes</small></span></a>{/each}</div>
       </section>
     {/each}
   {/if}
 </div>
 <style>
-  .head { margin: 14px 0 12px; display: grid; gap: 4px; }
+  .head { margin: 22px 0 16px; display: grid; gap: 6px; }
   .back { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; color: var(--muted); }
   .sbar { display: flex; gap: 10px; align-items: center; }
-  .sq { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--muted); color: var(--muted); }
-  .sq:focus-within { border-color: var(--accent); color: var(--ink); }
-  .sq input { flex: 1; min-width: 0; border: 0; background: transparent; padding: 10px 0; font-size: 16px; outline: none; color: var(--ink); }
-  .chips { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin: 12px 0 4px; padding-bottom: 2px; }
-  .chip { flex: none; display: inline-flex; align-items: center; gap: 5px; padding: 6px 11px; border: 1px solid var(--line); border-radius: 3px; color: var(--ink); font-size: 13px; }
-  .chip.on { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .sq { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 16px; border-radius: 999px; background: var(--surface); box-shadow: var(--sh-1); color: var(--muted); transition: box-shadow .2s; }
+  .sq:focus-within { box-shadow: var(--sh-2), inset 0 0 0 2px var(--ink); color: var(--ink); }
+  .sq input { flex: 1; min-width: 0; border: 0; background: transparent; font-size: 16px; outline: none; color: var(--ink); }
+  .chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin: 14px calc(-1 * var(--gap)) 4px; padding: 2px var(--gap) 4px; }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip { flex: none; display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 999px; background: var(--surface); box-shadow: var(--sh-1); color: var(--ink); font-size: 13.5px; font-weight: 500; transition: transform .15s var(--ease); }
+  .chip:active { transform: scale(.95); }
+  .chip.on { background: var(--pri); color: var(--pri-ink); }
   .filters { display: grid; gap: 14px; margin-top: 10px; }
   .filters .eyebrow { margin-bottom: 6px; }
   .algs { display: flex; flex-wrap: wrap; gap: 6px; }
-  .algs button { border: 1px solid var(--line); background: transparent; border-radius: 3px; padding: 5px 9px; font-size: 12.5px; }
+  .algs button { border: 0; background: var(--sunk); border-radius: 999px; padding: 7px 12px; font-size: 13px; }
   .algs button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); text-decoration: line-through; }
   .fr { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
   .ck { display: flex; gap: 6px; align-items: center; font-size: 14px; }
-  .count { margin: 12px 0 8px; }
-  .list { display: grid; gap: 6px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); }
+  .count { margin: 16px 0 10px; }
+  .list { display: grid; max-width: 760px; }
   .more { display: flex; justify-content: center; margin-top: 14px; }
-  .rack { display: grid; gap: 6px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); }
-  .coll { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid var(--line-2); background: var(--surface); border-radius: var(--r); color: var(--ink); }
-  .coll:hover { border-color: var(--line); }
-  .coll img { width: 44px; height: 44px; object-fit: contain; border-radius: 50%; background: var(--ill-bg); flex: none; }
-  .coll span { display: grid; min-width: 0; } .coll b { font: 600 14.5px/1.25 var(--f-display); } .coll small { font-size: 12px; color: var(--muted); }
+  .rack { display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; margin: 0 calc(-1 * var(--gap)); padding: 2px var(--gap) 12px; scroll-snap-type: x mandatory; }
+  .rack::-webkit-scrollbar { display: none; }
+  .coll { flex: none; width: 150px; display: grid; gap: 10px; padding: 16px 14px 14px; background: var(--surface); border-radius: var(--r); box-shadow: var(--sh-1); color: var(--ink); scroll-snap-align: start; transition: transform .2s var(--ease), box-shadow .2s; }
+  .coll:active { transform: scale(.97); }
+  @media (hover: hover) { .coll:hover { box-shadow: var(--sh-2); transform: translateY(-2px); } }
+  .coll img { width: 72px; height: 72px; object-fit: contain; border-radius: 50%; background: var(--ill-bg); padding: 6px; }
+  .coll span { display: grid; gap: 2px; min-width: 0; } .coll b { font: 600 15px/1.25 var(--f-display); } .coll small { font-size: 12px; color: var(--muted); }
 </style>

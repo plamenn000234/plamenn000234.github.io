@@ -38,7 +38,7 @@ class Router {
       if (REDIRECT[base]) history.replaceState(null, "", REDIRECT[base] + (qi >= 0 ? h.slice(qi) : ""));
       const next = location.hash; if (next === this.hash) return;
       const d: any = document;
-      if (anim && d.startViewTransition && !matchMedia("(prefers-reduced-motion: reduce)").matches) d.startViewTransition(() => flushSync(() => (this.hash = next)));
+      if (anim && d.startViewTransition && !matchMedia("(prefers-reduced-motion: reduce)").matches) { const t = d.startViewTransition(() => flushSync(() => (this.hash = next))); t.ready?.catch(() => {}); t.finished?.catch(() => {}); t.updateCallbackDone?.catch(() => {}); }
       else this.hash = next;
     };
     fix(false);
