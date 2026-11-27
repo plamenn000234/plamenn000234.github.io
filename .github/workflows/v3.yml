@@ -1,0 +1,30 @@
+name: Chefsheet 3.0 checks
+on:
+  pull_request:
+    paths: ["app/**", "v3/**", "index.json", "learn.json", "r/**", ".github/workflows/v3.yml"]
+  push:
+    branches: [main]
+    paths: ["app/**", "v3/**"]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults: { run: { working-directory: app } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: app/package-lock.json }
+      - run: npm ci
+      - name: Type check
+        run: npm run check
+      - name: Build
+        run: npm run build
+      - name: Built /v3/ matches the sources
+        run: git diff --stat --exit-code -- ../v3 || (echo "Run 'npm run build' in app/ and commit v3/." && exit 1)
+      - name: Install browser
+        run: npm i --no-save playwright@1 && npx playwright install --with-deps chromium
+      - name: Smoke tests (phone and desktop, light and dark)
+        run: |
+          (cd .. && python3 -m http.server 8765 >/dev/null 2>&1 &)
+          sleep 1
+          npm test
