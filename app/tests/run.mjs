@@ -292,6 +292,11 @@ await test("tools: numbers match the tables (yield, buffet, bakers, sous-vide, c
   await p.goto(BASE + "#tool-sousvide"); await p.reload(); await ready(p); await p.waitForSelector(".tool-body select");
   await p.selectOption(".tool-body select", { label: "Carrots" }); await p.waitForSelector("text=No salt in the bag");
   assert(!/–\s*g|NaN/.test(await p.locator(".tool-body").innerText()), "broken salt");
+  // Sous-vide by thickness (Baldwin/NSW): chicken breast 25 mm slab → 75 min + 18 min hold at 63 °C
+  await p.selectOption(".tool-body select", { label: "Chicken breast" }); await p.locator(".tool-body input").first().fill("25");
+  assert(await has(/CORE REACHES BATH 1 h 15 min.*HOLD AT 63 °C 18 min.*MINIMUM IN BATH 1 h 33 min/i), "sv " + await out());
+  await p.click(".tool-body .seg button:has-text('Cylinder')"); assert(await has(/CORE REACHES BATH 40 min/i), "cyl " + await out());
+  await p.locator(".tool-body input").first().fill("120"); await p.waitForSelector("text=past the table");
   // Cost: 3.20 at 30 % → 10.67 net, 12.80 with 20 % VAT; menu price 15 → 25.6 %
   await p.goto(BASE + "#tool-cost"); await p.reload(); await ready(p); await p.waitForSelector(".tool-body input");
   assert(await has(/10.67/) && await has(/12.80/), "got " + await out());
