@@ -153,6 +153,20 @@ await test("prices: set a price, food cost appears; save as menu and delete it",
   await p.waitForTimeout(200); assert((await p.evaluate(() => JSON.parse(localStorage.getItem("bb-menus")).length)) === 0, "menu not deleted");
 });
 
+await test("guest allergens: QR in the allergen matrix, link opens a clean page, table cards PDF", async () => {
+  const { p } = await withOrder(); await p.goto(BASE + "#kitchen"); await p.reload(); await p.waitForSelector(".ticket li");
+  await p.click(".acts button:has-text('Allergen matrix')"); await p.click("button:has-text('QR for guests')"); await p.waitForSelector(".qimg svg");
+  const link = await p.getAttribute(".qt a:has-text('Preview')", "href"); assert(/#guest\?d=/.test(link), link);
+  const f = await download(p, () => p.click("button:has-text('Table cards PDF')")); assert(/^Allergen_QR_/.test(f), f);
+  const g = await page({ tour: true }); await g.goto(link); await g.waitForSelector(".gp li");
+  assert(await g.locator("nav.tabs").count() === 0 && await g.locator(".tour, [role=dialog]").count() === 0, "app chrome or tour on the guest page");
+  assert(await g.locator(".gp li").count() === 2, "dishes"); assert((await g.locator(".gp h1").innerText()) === "Test banquet", "name");
+  const a = await g.locator(".tags span").first().innerText();
+  if (a && !/None/.test(a)) { await g.click(`.al button:has-text('${a}')`); await g.waitForSelector(".gp li.bad"); }
+  if (SHOTS) await g.screenshot({ path: SHOTS + "/guest.png", fullPage: true });
+  assert(g.errors.length === 0 && p.errors.length === 0, g.errors.concat(p.errors).join("; "));
+});
+
 await test("recipe PDF and service card", async () => {
   const { p, ids } = await withOrder(); await p.goto(BASE + "#r-" + ids[0]); await p.waitForSelector(".ing li");
   let f = await download(p, () => p.click("button[aria-label='PDF']")); assert(/p\.pdf$/.test(f), f);
