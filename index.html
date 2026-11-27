@@ -828,6 +828,7 @@ ol.steps li.done::before{color:var(--muted)!important}
 .tk-no{border-radius:2px!important}
 .empty .ea .o{stroke:var(--ink)}
 .toast{border-radius:2px!important;background:var(--ink)!important;color:var(--bg)!important;letter-spacing:.06em}
+.ed-semi{margin-top:4px}
 </style>
 </head><body>
 <header class="top">
@@ -958,15 +959,26 @@ function prodIndex(name){
   D.products.push([name.trim(),D.sections.indexOf(OTHER_SEC),"kg",1,1000,"My product"]);prodHay.push(f);
   const i=D.products.length-1;userProd.set(f,i);PNAME.set(f,i);return i;
 }
+let SEMI=new Map();
+function semiYield(u){if(Number(u.y)>0)return Number(u.y);let t=0;for(const [,q] of u.ing)if(typeof q==="number"&&q>0)t+=q;return t}
+function semiOf(n,self){const s=SEMI.get(fold(String(n)).replace(/\s+/g," ").trim());return s&&s.id!==self?s:null}
+function mineExpand(u,k,acc,info,depth,seen){
+  for(const [n,q] of u.ing){if(!(typeof q==="number"&&q>0))continue;const sm=depth<3?semiOf(n,u.id):null;
+    if(sm&&!seen.has(sm.id)){const y=semiYield(sm);if(!(y>0))continue;sm.algs.forEach(a=>info.algs.add(a));info.diet=Math.min(info.diet,Number(sm.diet)||0);
+      if(!depth)info.semis.push([sm.id,q]);seen.add(sm.id);mineExpand(sm,k*q/y,acc,info,depth+1,seen);seen.delete(sm.id);continue}
+    const pi=prodIndex(n);if(pi<0)continue;acc.set(pi,(acc.get(pi)||0)+q*k)}
+}
 function mineToR(u){
-  const N=Math.max(1,Number(u.N)||1), acc=new Map();
-  for(const [n,q] of u.ing){if(!(typeof q==="number"&&q>0))continue;const pi=prodIndex(n);if(pi<0)continue;acc.set(pi,(acc.get(pi)||0)+q/N)}
+  const N=Math.max(1,Number(u.N)||1), acc=new Map(), info={algs:new Set(u.algs),diet:Number(u.diet)||0,semis:[]};
+  mineExpand(u,1/N,acc,info,0,new Set([u.id]));
   const [t,s0]=splitName(u.name);
-  const o={id:u.id,name:u.name,t,s:s0,f:MINE_F,sub:"",N,pg:Number(u.pg)||0,pu:"g",algs:[...u.algs].sort((a,b)=>a-b),kcal:Number(u.kcal)||0,also:[],lines:[...acc].map(([pi,g])=>[pi,g]),diet:Number(u.diet)||0,mine:true};
-  o.hay=fold(u.name+" My recipes "+u.ing.map(x=>x[0]).join(" "));o.tl=fold(t);o.ty=dishType(o);return o;
+  const o={id:u.id,name:u.name,t,s:s0,f:MINE_F,sub:u.semi?"Semi-finished":"",N,pg:Number(u.pg)||0,pu:"g",algs:[...info.algs].sort((a,b)=>a-b),kcal:Number(u.kcal)||0,also:[],lines:[...acc].map(([pi,g])=>[pi,g]),diet:info.diet,mine:true,
+    semi:!!u.semi,y:u.semi?semiYield(u):0,semis:info.semis.map(([id,q])=>[id,q/N])};
+  o.hay=fold(u.name+" My recipes "+(u.semi?"semi-finished prep ":"")+u.ing.map(x=>x[0]).join(" "));o.tl=fold(t);o.ty=dishType(o);return o;
 }
 function mineSync(){
   mine=lsGet("bb-mine",[]).filter(u=>u&&u.id&&u.name&&Array.isArray(u.ing));
+  SEMI=new Map();for(const u of mine)if(u.semi)SEMI.set(fold(u.name).replace(/\s+/g," ").trim(),u);prodListHtml=null;
   R=R.filter(r=>!r.mine);for(const [id,r] of byId)if(r.mine)byId.delete(id);
   for(const u of mine){const o=mineToR(u);R.push(o);byId.set(o.id,o)}
   folderCount[MINE_F]=mine.length;
@@ -979,19 +991,23 @@ let prodListHtml=null;
 function viewEditor(id){
   const u=id?mine.find(x=>x.id===id):null; const m=$("main");
   if(id&&!u){m.innerHTML=`<div class="empty" style="margin-top:20px"><b>Recipe not found</b><a href="#c-${MINE_SLUG}">My recipes</a></div>`;return}
-  const x=u||{name:"",N:10,pg:"",diet:0,algs:[],kcal:"",ing:[["",""],["",""],["",""]],steps:[],st:""};
-  if(!prodListHtml)prodListHtml=`<datalist id="prodlist">${D.products.filter(p=>p[5]!=="My product").map(p=>`<option value="${esc(p[0])}">`).join("")}</datalist>`;
+  const x=u||{name:"",N:10,pg:"",diet:0,algs:[],kcal:"",ing:[["",""],["",""],["",""]],steps:[],st:"",semi:location.hash==="#new-semi",y:""};
+  const usedIn=u?mine.filter(v=>v.id!==u.id&&v.ing.some(i=>fold(String(i[0])).replace(/\s+/g," ").trim()===fold(u.name).replace(/\s+/g," ").trim())).length:0;
+  if(!prodListHtml)prodListHtml=`<datalist id="prodlist">${mine.filter(v=>v.semi&&v.id!==id).map(v=>`<option value="${esc(v.name)}" label="Semi-finished">`).join("")}${D.products.filter(p=>p[5]!=="My product").map(p=>`<option value="${esc(p[0])}">`).join("")}</datalist>`;
   const row=(n,q)=>`<div class="ed-row"><input class="ed-n" list="prodlist" placeholder="Ingredient, e.g. Butter" value="${esc(n)}" autocomplete="off"><input class="ed-q" type="number" inputmode="decimal" step="any" min="0" placeholder="g / ml" value="${esc(q)}"><button class="ib" data-edrm="1" aria-label="Remove ingredient">×</button></div>`;
-  m.innerHTML=`<a class="back" href="${u?"#r-"+u.id:"#c-"+MINE_SLUG}">${ICON.back}${u?esc(u.name):"My recipes"}</a><section class="panel ed"><h2>${u?"Edit recipe":"New recipe"}</h2>
+  m.innerHTML=`<a class="back" href="${u?"#r-"+u.id:"#c-"+MINE_SLUG}">${ICON.back}${u?esc(u.name):"My recipes"}</a><section class="panel ed"><h2>${u?"Edit recipe":x.semi?"New semi-finished":"New recipe"}</h2>
   <p class="note-line" style="margin-top:4px">Saved on this device only. Your recipe works with scaling, orders, prep lists, labels, allergens and food cost.</p>
   <label class="fld"><span>Dish name</span><input id="ed-name" value="${esc(x.name)}" placeholder="e.g. Chicken liver pâté" maxlength="120"></label>
+  <div class="fld"><span>Type</span><span class="seg" id="ed-semi">${[["Dish",0],["Semi-finished",1]].map(([l,v])=>`<button data-eds="${v}" aria-pressed="${!!x.semi===!!v}">${l}</button>`).join("")}</span></div>
+  <div class="ed-semi" ${x.semi?"":"hidden"}><p class="note-line" style="margin-top:0">A sauce, stock, dough or marinade you make in a batch. Type its name as an ingredient in another recipe and Chefsheet counts its products, cost and allergens there.${usedIn?` Used in ${usedIn} of your recipes, so keep the name.`:""}</p>
+  <label class="fld"><span>Batch yield, g or ml</span><input id="ed-y" type="number" inputmode="decimal" min="0" step="any" value="${esc(x.y||"")}" placeholder="empty = sum of the ingredients"></label></div>
   <div class="ed-grid"><label class="fld"><span>Portions in this batch</span><input id="ed-N" type="number" inputmode="numeric" min="1" value="${esc(x.N)}"></label>
   <label class="fld"><span>Portion, g</span><input id="ed-pg" type="number" inputmode="numeric" min="0" value="${esc(x.pg)}" placeholder="optional"></label>
   <label class="fld"><span>kcal per portion</span><input id="ed-kcal" type="number" inputmode="numeric" min="0" value="${esc(x.kcal||"")}" placeholder="optional"></label></div>
   <div class="fld"><span>Ingredients for the whole batch (net, g or ml)</span></div>
   <div class="ed-ing" id="ed-ing">${x.ing.map(i=>row(i[0],i[1])).join("")}</div>
   <button class="btn" id="ed-add">${ICON.plus}Add ingredient</button>
-  <p class="note-line">Pick a name from the list to link it to the product catalogue and its prices. A new name goes to "${OTHER_SEC}" in the order list.</p>
+  <p class="note-line">Pick a name from the list to link it to the product catalogue and its prices. Your semi-finished recipes are in the list too. A new name goes to "${OTHER_SEC}" in the order list.</p>
   <label class="fld"><span>Method, one step per line</span><textarea id="ed-steps" placeholder="Melt the butter.&#10;Add the onions and cook for 10 min.">${esc(x.steps.join("\n"))}</textarea></label>
   <label class="fld"><span>Storage</span><input id="ed-st" value="${esc(x.st)}" placeholder="e.g. 0–4 °C 3 days"></label>
   <div class="fld"><span>Diet</span><span class="seg" id="ed-diet">${[["None",0],["Vegetarian",1],["Vegan",2]].map(([l,v])=>`<button data-edd="${v}" aria-pressed="${Number(x.diet)===v}">${l}</button>`).join("")}</span></div>
@@ -1008,6 +1024,8 @@ function editorSave(){
   const u={id,name,N:Math.max(1,Math.round(Number($("ed-N").value)||1)),pg:Number($("ed-pg").value)||0,kcal:Number($("ed-kcal").value)||0,
     diet:dd?+dd.dataset.edd:0,algs:[...document.querySelectorAll("#ed-al [aria-pressed='true']")].map(b=>+b.dataset.eda),ing,
     steps:$("ed-steps").value.split("\n").map(x=>x.trim()).filter(Boolean),st:$("ed-st").value.trim()};
+  const sb=document.querySelector("#ed-semi [aria-pressed='true']");if(sb&&sb.dataset.eds==="1"){u.semi=true;const y=parseFloat(String($("ed-y").value).replace(",","."));if(isFinite(y)&&y>0)u.y=Math.round(y*100)/100}
+  if(u.semi&&mine.some(v=>v.id!==id&&v.semi&&fold(v.name).trim()===fold(name).trim())){toast("Another semi-finished recipe has this name");$("ed-name").focus();return}
   mineSave(u); cache.delete(MINE_SLUG); toast("Recipe saved"); scale={id:null,p:0}; location.hash="#r-"+id;
 }
 function mineExport(){saveFile("Chefsheet_My_Recipes_"+new Date().toISOString().slice(0,10)+".json",JSON.stringify({app:"chefsheet",kind:"my-recipes",v:1,recipes:lsGet("bb-mine",[])},null,1))}
@@ -1126,7 +1144,7 @@ function viewHome(){
     <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:flex-start"><div style="min-width:0;flex:1">${filtersHtml()}</div>
     <select id="sort" aria-label="Sort"><option value="rel">${ui.q?"Best match":"A–Z"}</option>${ui.q?`<option value="az">A–Z</option>`:""}<option value="kcal">Lowest kcal</option></select></div>
     ${ui.coll>=0?`<div style="margin-top:8px"><button class="chip" id="coll-clr">× ${esc(D.folders[ui.coll][0])}</button></div>`:""}
-    ${ui.coll===MINE_F?`<div class="mine-bar"><a class="btn pri" href="#new">${ICON.plus}New recipe</a>${mine.length?`<button class="btn" id="mine-exp">${msI("download")}Back up</button>`:""}<label class="btn" style="cursor:pointer">${msI("upload")}Restore<input type="file" id="mine-imp" accept=".json,application/json" hidden></label></div><p class="note-line" style="margin-top:0">Your recipes are saved on this device. Use Back up to keep a copy or move them to another phone.</p>`:""}
+    ${ui.coll===MINE_F?`<div class="mine-bar"><a class="btn pri" href="#new">${ICON.plus}New recipe</a><a class="btn" href="#new-semi">${ICON.plus}New semi-finished</a>${mine.length?`<button class="btn" id="mine-exp">${msI("download")}Back up</button>`:""}<label class="btn" style="cursor:pointer">${msI("upload")}Restore<input type="file" id="mine-imp" accept=".json,application/json" hidden></label></div><p class="note-line" style="margin-top:0">Your recipes are saved on this device. Use Back up to keep a copy or move them to another phone.</p>`:""}
     <div style="margin-top:12px">${list.length?`<div class="list">${list.slice(0,ui.shown).map(rowHtml).join("")}</div>${list.length>ui.shown?`<button class="more" id="more">Show more (${(list.length-ui.shown).toLocaleString("en")} left)</button>`:""}`
       :ui.coll===MINE_F&&!mine.length?`<div class="empty">${EART.book}<b>No recipes of your own yet</b>Add your house recipes and use them with scaling, orders, prep lists and food cost.<br><br><a href="#new">Add your first recipe</a></div>`:`<div class="empty">${EART.search}<b>No recipes match</b>Try fewer words, another ingredient, or clear a filter.</div>`}</div>`;
   $("sort").value=ui.sort==="az"&&!ui.q?"rel":ui.sort;
@@ -1175,7 +1193,7 @@ function renderSheet(r,d){
       <p class="note-line">Tap an ingredient or a step to tick it off. Tap a time to start a timer.</p></div>
     <div class="col"><h2 class="mh">Method</h2>
       ${d.c.map((c,ci)=>c[3].length?`<div class="comp">${d.c.length>1?`<h3>${esc(c[0])}</h3>`:""}<ol class="steps">${c[3].map((s,i)=>`<li class="${ticks.st.has(ci+":"+i)?"done":""}" data-st="${ci}:${i}"><span>${tmHtml(esc(s))}</span></li>`).join("")}</ol></div>`:"").join("")}</div></div>
-    <div class="facts">${costBox(r,f)}${d.c.length?rtoolsHtml(r):""}<div><h4>Storage</h4><p>${esc(d.st||"Not stated.")}</p></div>
+    <div class="facts">${semiBox(r,f)}${costBox(r,f)}${d.c.length?rtoolsHtml(r):""}<div><h4>Storage</h4><p>${esc(d.st||"Not stated.")}</p></div>
       <div><h4>Allergens</h4>${r.algs.length?`<div class="alist">${r.algs.map(a=>`<div><span class="al">${a}</span>${ALG[a]}</div>`).join("")}</div>${d.al?`<p style="margin-top:8px;font-size:12.5px;color:var(--muted)">${esc(d.al)}</p>`:""}`:`<p>No allergens from the list of 14.</p>`}</div>
       ${nut?`<div><h4>Nutrition</h4><table class="nut"><thead><tr><th></th><th>Protein</th><th>Fat</th><th>Carbs</th><th>kcal</th></tr></thead><tbody>
       <tr><td>Portion</td>${nut.p.map(v=>`<td>${v}</td>`).join("")}</tr>${nut.h?`<tr><td>100 g</td>${nut.h.map(v=>`<td>${v}</td>`).join("")}</tr>`:""}</tbody></table></div>`:""}</div>
@@ -1208,6 +1226,11 @@ function openToolFor(tool,r,d){const f=scale.p/r.N,b=batchG(r,d,f),c=recipeCost(
   if(tool==="sousvide"){s.w=b.raw||1000}
   if(tool==="cost"){if(c.n)s.c=Math.round(c.sum*100)/100}
   s.from=r.id;s.fromLabel=r.t+" · "+scale.p+" portions";location.hash="#tool-"+tool}
+function semiBox(r,f){if(!r.mine||(!r.semi&&!r.semis.length))return"";let h="";
+  if(r.semi){const k=fold(r.name).replace(/\s+/g," ").trim();const used=R.filter(x=>x.mine&&x.semis.some(s=>s[0]===r.id));const c=recipeCost(r);
+    h+=`<p>Semi-finished · batch yield <b>${fmtG(r.y*f)}</b></p>${c.n&&r.y?`<p style="margin-top:4px">${money(c.sum*r.N/r.y*1000)} per kg</p>`:""}${used.length?`<p style="margin-top:6px;font-size:12.5px;color:var(--muted)">Used in ${used.map(x=>`<a href="#r-${x.id}">${esc(x.t)}</a>`).join(", ")}</p>`:`<p style="margin-top:6px;font-size:12.5px;color:var(--muted)">Type its name as an ingredient in another of your recipes to use it there.</p>`}`}
+  if(r.semis.length)h+=`<p ${r.semi?'style="margin-top:8px"':""}>Made with</p>${r.semis.map(([id,g])=>{const s=byId.get(id);return s?`<p style="margin-top:4px"><a href="#r-${id}">${esc(s.t)}</a> · ${fmtG(g*scale.p)}</p>`:""}).join("")}<p style="margin-top:6px;font-size:12.5px;color:var(--muted)">Its products, cost and allergens are counted in this recipe.</p>`;
+  return `<div><h4>Semi-finished</h4>${h}</div>`}
 function costBox(r,f){if(!r.lines.length)return"";const c=recipeCost(r);
   return `<div><h4>Food cost</h4>${c.n?`<p><span class="cost">${money(c.sum)}</span> per portion · ${money(c.sum*scale.p)} for ${scale.p}</p><p style="margin-top:6px;font-size:12.5px;color:var(--muted)">${c.n<c.of?`Prices set for ${c.n} of ${c.of} products, so the real cost is higher. `:""}Gross as-bought quantities.</p>`:`<p style="color:var(--muted)">Add your product prices to see the cost per portion.</p>`}<p style="margin-top:8px"><a href="#prices-${r.id}">${c.n?"Edit prices":"Set prices"}</a></p></div>`}
 
@@ -1308,6 +1331,8 @@ async function viewPrep(){const m=$("main");
   const P=await prepData(); if(location.hash!=="#prep")return;
   m.innerHTML=`<a class="back" href="#order">${ICON.back}Order</a><section class="panel"><div class="tk-h"><h2>Prep list</h2><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="p-lbl">${msI("label")}Labels</button><button class="btn" id="p-pdf">${ICON.pdf}PDF</button></span></div>
   <div class="tk-sum">${esc(ord.name||"Order")} · ${esc(ord.date||"no date")} · ${ord.pax} guests · reserve ${ord.reserve}%. Tap a line to tick it off. Labels: A4 sheet of 14 (99 × 38 mm), use-by from the storage note.</div>
+  ${(()=>{const need=new Map();P.forEach(({r,p})=>(r.semis||[]).forEach(([id,g])=>need.set(id,(need.get(id)||0)+g*p)));if(!need.size)return"";
+    return `<div class="pp-d"><h3>Semi-finished to make first</h3><small>For the dishes below. Open one to scale its batch.</small><div class="pp-c">${[...need].map(([id,g])=>{const s=byId.get(id);return s?`<div class="ln2" data-pk="1"><span><a href="#r-${id}">${esc(s.t)}</a></span><b>${fmtG(g)}</b></div>`:""}).join("")}</div></div>`})()}
   ${P.map(({r,d,p},di)=>{const f=p/r.N;return `<div class="pp-d"><h3>${esc(r.t)}</h3><small>${(Math.round(p*10)/10).toLocaleString("en")} portions${r.pg?" × "+r.pg+" "+(r.pu||"g"):""} · ${esc(D.folders[r.f][0])}</small>
     ${!d||!d.c.length?`<p class="note-line">No recipe card yet.</p>`:d.c.map((c,ci)=>{const yl=c[2].find(x=>/^(cooked )?yield/i.test(x[0]));const ing=c[2].filter(x=>!/^(cooked )?yield/i.test(x[0]));
       return `<div class="pp-c"><h4>${esc(c[0]||"Ingredients")}</h4>${ing.map((x,i)=>`<div class="ln2" data-pk="1"><span>${esc(x[0])}</span><b>${typeof x[1]==="number"?fmtG(x[1]*f):esc(x[1])}</b></div>`).join("")}${yl&&typeof yl[1]==="number"?`<div class="yl">Yield ≈ ${fmtG(yl[1]*f)}</div>`:""}</div>`}).join("")}
@@ -1922,7 +1947,7 @@ function route(){
   if(h==="#orders"){setNav("orders");viewOrders();restore();return}
   if(h==="#prep"){setNav("order");viewPrep();return}
   if(h==="#suppliers"){setNav("order");viewSuppliers();return}
-  if(h==="#new"||h.startsWith("#edit-")){setNav("home");viewEditor(h==="#new"?"":h.slice(6));return}
+  if(h==="#new"||h==="#new-semi"||h.startsWith("#edit-")){setNav("home");viewEditor(h.startsWith("#new")?"":h.slice(6));return}
   if(h==="#prices"||h.startsWith("#prices-")){if(route._pr!==h){prOnly=null;prQ=""}route._pr=h;setNav("order");viewPrices(h.slice(8));return}
   if(h.startsWith("#c-")){const i=D.folders.findIndex(f=>f[1]===h.slice(3));ui.coll=i;} else ui.coll=-1;
   setNav("home"); viewHome(); homeDaily(); restore();
@@ -1960,6 +1985,7 @@ function bind(){
     if(t.dataset.delmenu){delMenu(t.dataset.delmenu);return}
     if(t.id==="ed-add"){const w=$("ed-ing");w.insertAdjacentHTML("beforeend",w.dataset.row);w.lastElementChild.querySelector("input").focus();return}
     if(t.dataset.edrm){const rw=t.closest(".ed-row");if(document.querySelectorAll(".ed-row").length>1)rw.remove();else rw.querySelectorAll("input").forEach(i=>i.value="");return}
+    if(t.dataset.eds!=null){t.parentNode.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b===t));const w=document.querySelector(".ed-semi");if(w)w.hidden=t.dataset.eds!=="1";return}
     if(t.dataset.edd!=null){t.parentNode.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b===t));return}
     if(t.dataset.eda){t.setAttribute("aria-pressed",t.getAttribute("aria-pressed")!=="true");return}
     if(t.id==="ed-save"){editorSave();return}
