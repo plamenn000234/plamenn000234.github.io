@@ -31,6 +31,8 @@ export function parse(h: string): Route {
   if (h === "#guest") return { tab: "app", view: "guest", arg: "", q };
   if (h === "#settings") return { tab: "app", view: "settings", arg: "", q };
   if (h === "#learn") return { tab: "learn", view: "learn", arg: "", q };
+  if (h === "#onboard-new") return { tab: "learn", view: "onboard", arg: "", q };
+  if (h === "#welcome") return { tab: "learn", view: "welcome", arg: "", q };
   if (h === "#review") return { tab: "learn", view: "review", arg: "", q };
   if ((a = m("#m-")) != null) return { tab: "learn", view: "module", arg: a, q };
   if ((a = m("#l-")) != null) return { tab: "learn", view: "lesson", arg: a, q };

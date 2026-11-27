@@ -380,6 +380,26 @@ await test("food safety logs: off by default, turn on, temperatures, cooling, de
   assert(p.errors.length === 0, p.errors.join("; "));
 });
 
+await test("onboarding: chef makes a link, cook opens it, tests become tasks, ticks are saved", async () => {
+  const p = await page({ init: () => { if (!sessionStorage.z) { sessionStorage.z = 1; localStorage.setItem("bb-favs", JSON.stringify([])); } } });
+  await p.goto(BASE + "#recipes"); await ready(p); await p.fill("input[aria-label='Search recipes']", "risotto"); await p.waitForSelector("a.row");
+  const rid = (await p.locator("a.row").first().getAttribute("href")).slice(3);
+  await p.evaluate((rid) => localStorage.setItem("bb-favs", JSON.stringify([rid])), rid);
+  await p.goto(BASE + "#onboard-new"); await p.reload(); await p.waitForSelector(".ch button");
+  await p.fill("input[placeholder='e.g. Chef Ivan']", "Chef Ivan"); await p.fill("input[placeholder='e.g. Cold kitchen']", "Cold kitchen");
+  await p.locator(".blk").nth(1).locator(".ch button").first().click(); await p.locator(".blk").nth(2).locator(".ch button").first().click();
+  await p.evaluate(() => { window.__clip = ""; navigator.clipboard.writeText = async (t) => { window.__clip = t; }; });
+  await p.click("button:has-text('Copy link')"); const link = await p.evaluate(() => window.__clip); assert(/#welcome\?d=/.test(link), "link " + link);
+  const c = await page(); await c.goto(link); await c.waitForSelector("h1:has-text('Welcome to Cold kitchen')"); await c.waitForSelector(".it b:has-text('Module')");
+  assert((await c.evaluate(() => location.hash)) === "#welcome", "query not stripped");
+  await c.locator(".ckl").first().click(); await c.locator("button[aria-label^='I know']").click();
+  const s = await c.evaluate(() => ({ o: JSON.parse(localStorage.getItem("bb-onboard")), l: JSON.parse(localStorage.getItem("bb-learn")) }));
+  assert(s.o.packs[0].ticks.length === 1 && s.o.packs[0].known.length === 1 && Object.values(s.l.tasks)[0].by === "Chef Ivan", JSON.stringify(s).slice(0, 300));
+  await c.goto(BASE + "#learn"); await c.waitForSelector("a.ob:has-text('2 of')"); await c.waitForSelector("text=Assigned to you");
+  if (SHOTS) { await c.goto(BASE + "#welcome"); await c.waitForSelector(".it"); await c.screenshot({ path: SHOTS + "/welcome.png", fullPage: true }); }
+  assert(c.errors.length === 0 && p.errors.length === 0, c.errors.concat(p.errors).join("; "));
+});
+
 await test("gels: gelatin sheets by bloom, roux flour and butter", async () => {
   const p = await page(); await p.goto(BASE + "#tool-gel"); await ready(p); await p.waitForSelector(".outs");
   const sel = p.locator(".tool-body select");

@@ -5,13 +5,11 @@ import { byId, type Recipe } from "./catalog";
 import { pdfDoc, pdfSafe } from "./files";
 
 export interface GuestDish { t: string; s: string; algs: number[]; diet: number }
-const b64 = (s: string) => btoa(String.fromCharCode(...new TextEncoder().encode(s))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-const unb64 = (s: string) => new TextDecoder().decode(Uint8Array.from(atob(s.replace(/-/g, "+").replace(/_/g, "/")), (c) => c.charCodeAt(0)));
+import { b64u as b64, unb64u as unb64, appBase } from "./util";
 
 export function guestLink(name: string, dishes: Recipe[]) {
   const d = dishes.map((r) => (r.mine ? [r.t, r.algs, r.diet] : r.id));
-  const base = location.href.replace(/[#?].*$/, "");
-  return base + "#guest?d=" + b64(JSON.stringify({ n: name.slice(0, 60), d }));
+  return appBase() + "#guest?d=" + b64(JSON.stringify({ n: name.slice(0, 60), d }));
 }
 export function readGuest(q: string | null): { name: string; dishes: GuestDish[] } | null {
   if (!q) return null;

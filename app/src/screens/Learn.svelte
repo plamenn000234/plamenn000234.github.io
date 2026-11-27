@@ -9,6 +9,7 @@
   import { LP, modDone, passed, dailyPick, streakNow, answerDaily, missDue, shuf, dayKey, taskTitle, taskDone, taskHref, dueTxt, certPdf } from "../core/learnProgress.svelte";
   import { makePdf, fileBase } from "../core/files";
   import { toast } from "../core/ui.svelte";
+  import { OB, progress } from "../core/onboard.svelte";
   const v = LP.v;
   function courseCert() {
     v.name = v.name.trim(); LP.save();
@@ -38,6 +39,9 @@
     </section>
 
     <div class="cols"><div class="main">
+    {#if OB.v.packs.length}{@const pk = OB.v.packs[0]}{@const pp = progress(pk)}
+      <a class="sec card ob press" href="#welcome"><span class="ri"><Icon name="cap" size={22} /></span><span><b>Your first weeks{pk.st ? " · " + pk.st : ""}</b><small>From {pk.by} · {pp.done} of {pp.total} done</small></span><Icon name="fwd" size={16} /></a>
+    {/if}
     {#if tks.length}
       <section class="sec"><div class="sec-h"><h2>Assigned to you</h2><small class="muted">{tks.filter((k) => !taskDone(k)).length} open</small></div>
         <div class="group">{#each tks as k (k)}{@const tk = v.tasks[k]}{@const dn = taskDone(k)}{@const late = !dn && tk.due && tk.due < dayKey()}
@@ -81,6 +85,7 @@
       </ol>
     </section>
     </div></div>
+    <a class="sec card rv press chefs" href="#onboard-new"><span class="ri"><Icon name="share" size={20} /></span><span><b>For chefs: onboard a new cook</b><small>One link with tests, recipes and a first-week checklist</small></span><Icon name="fwd" size={16} /></a>
     <p class="note">Progress and test results are saved on this device.</p>
   </LearnLoad>
 </div>
@@ -113,6 +118,9 @@
   .opts button.wrong { background: var(--accent-soft); box-shadow: inset 0 0 0 2px var(--warn); }
   .opts button:disabled { cursor: default; }
   .dres { font-weight: 600; color: var(--warn); } .dres.good { color: var(--ok); }
+  .ob { display: flex; align-items: center; gap: 14px; padding: 14px 16px; color: var(--ink); box-shadow: var(--sh-1), inset 3px 0 0 var(--accent); }
+  .ob span:nth-child(2) { flex: 1; display: grid; } .ob b { font-weight: 600; } .ob small { font-size: 12.5px; color: var(--muted); }
+  .chefs { max-width: 760px; margin-bottom: 12px; }
   .rv { display: flex; align-items: center; gap: 14px; padding: 14px 16px; color: var(--ink); }
   .ri { width: 44px; height: 44px; border-radius: 12px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; flex: none; }
   .rv span:nth-child(2) { flex: 1; display: grid; } .rv b { font-weight: 600; } .rv small { font-size: 12.5px; color: var(--muted); }

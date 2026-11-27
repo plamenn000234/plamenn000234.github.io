@@ -77,3 +77,9 @@ export function shelf(st: unknown) {
   }
   return r;
 }
+
+/** URL-safe base64 of UTF-8 text, for data packed into a link. */
+export const b64u = (s: string) => btoa(String.fromCharCode(...new TextEncoder().encode(s))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+export const unb64u = (s: string) => new TextDecoder().decode(Uint8Array.from(atob(s.replace(/-/g, "+").replace(/_/g, "/")), (c) => c.charCodeAt(0)));
+/** This app's own address without the hash, for links that open a screen of it. */
+export const appBase = () => location.href.replace(/[#?].*$/, "");

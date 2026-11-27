@@ -27,6 +27,8 @@
     Review: () => import("./screens/Review.svelte"),
     Settings: () => import("./screens/Settings.svelte"),
     Guest: () => import("./screens/Guest.svelte"),
+    Onboard: () => import("./screens/Onboard.svelte"),
+    Welcome: () => import("./screens/Welcome.svelte"),
     Learn: () => import("./screens/Learn.svelte"),
   };
   import { load } from "./core/catalog";
@@ -54,6 +56,8 @@
   {:else if rt.view === "lesson"}{#key rt.arg}<Lazy load={L.Lesson} id={rt.arg} />{/key}
   {:else if rt.view === "quiz"}{#key rt.arg}<Lazy load={L.Quiz} id={rt.arg} />{/key}
   {:else if rt.view === "review"}<Lazy load={L.Review} />
+  {:else if rt.view === "onboard"}<Lazy load={L.Onboard} />
+  {:else if rt.view === "welcome"}<Lazy load={L.Welcome} />
   {:else if rt.view === "settings"}<Lazy load={L.Settings} />
   {:else if rt.view === "prep"}<Lazy load={L.Prep} />
   {:else if rt.view === "suppliers"}<Lazy load={L.Suppliers} />
