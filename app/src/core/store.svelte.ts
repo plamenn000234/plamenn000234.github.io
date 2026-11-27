@@ -4,7 +4,7 @@
 export const KEYS = {
   theme: "bb-theme", favs: "bb-favs", recent: "bb-recent", order: "bb-order", saved: "bb-saved", menus: "bb-menus",
   mine: "bb-mine", prices: "bb-prices", cur: "bb-cur", sup: "bb-sup", learn: "bb-learn", toolfav: "bb-toolfav",
-  schema: "bb-schema", tools: "bb-tools3", tour: "bb-tour3", notes: "bb-notes",
+  schema: "bb-schema", tools: "bb-tools3", tour: "bb-tour3", notes: "bb-notes", news: "bb-news3",
 } as const;
 export type Key = (typeof KEYS)[keyof typeof KEYS];
 

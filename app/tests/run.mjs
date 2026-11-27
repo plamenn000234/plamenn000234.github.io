@@ -322,6 +322,26 @@ await test("tools: numbers match the tables (yield, buffet, bakers, sous-vide, c
   assert(p.errors.length === 0, p.errors.join("; "));
 });
 
+await test("recipes without a product: no mushrooms", async () => {
+  const p = await page(); await p.goto(BASE + "#recipes"); await ready(p);
+  await p.fill("input[aria-label='Search recipes']", "risotto"); await p.waitForSelector("a.row");
+  const before = Number((await p.locator(".count").innerText()).replace(/\D/g, ""));
+  await p.click("button:has-text('Filters')"); await p.fill("input[aria-label='Recipes without this product']", "mushr");
+  await p.click(".sg .any"); await p.waitForSelector(".av .hc:has-text('Without mushroom')");
+  const after = Number((await p.locator(".count").innerText()).replace(/\D/g, ""));
+  assert(after > 0 && after < before, `risotto ${before} → ${after}`);
+  const hrefs = await p.$$eval("a.row", (a) => a.map((x) => x.getAttribute("href")));
+  for (const h of hrefs.slice(0, 5)) { await p.goto(BASE + h); await p.waitForSelector(".ing li"); const t = (await p.locator(".ing").allInnerTexts()).join(" "); assert(!/mushroom/i.test(t), "mushroom in " + h); }
+  assert(p.errors.length === 0, p.errors.join("; "));
+});
+
+await test("what's new: card on Today for an updated app, gone after Got it; not on a first start", async () => {
+  let p = await page({ tour: true }); await p.goto(BASE); await ready(p); assert(await p.locator(".news").count() === 0, "news on a first start");
+  p = await page({ init: () => { if (!sessionStorage.y) { sessionStorage.y = 1; localStorage.removeItem("bb-news3"); } } }); await p.goto(BASE); await ready(p);
+  await p.waitForSelector(".news li"); await p.click(".news button:has-text('Got it')"); await p.reload(); await ready(p);
+  assert(await p.locator(".news").count() === 0, "news still shown"); assert(p.errors.length === 0, p.errors.join("; "));
+});
+
 await test("gels: gelatin sheets by bloom, roux flour and butter", async () => {
   const p = await page(); await p.goto(BASE + "#tool-gel"); await ready(p); await p.waitForSelector(".outs");
   const sel = p.locator(".tool-body select");

@@ -11,7 +11,7 @@
   import { favs } from "../core/kitchen.svelte";
   import { router } from "../core/router.svelte";
   import { saveOffline } from "../core/offline";
-  import { pantry } from "../core/have.svelte";
+  import { pantry, avoid } from "../core/have.svelte";
   let q = $state(router.route.q.get("q") || "");
   let diet = $state(0), sort = $state(0), free = $state(new Set<number>()), low = $state(false), showF = $state(false), shown = $state(40);
   const arg = $derived(router.route.arg);
@@ -21,18 +21,25 @@
   const word = $derived(completeWord(pq));
   const wordN = $derived(word.length >= 3 && !pantry.v.includes(word) ? pickSet(word).size : 0);
   const sugg = $derived(findProducts(pq).filter((i) => !pantry.v.includes(i)));
+  // "Without": products the cook does not want (no mushrooms, no pork…).
+  let aq = $state("");
+  const aword = $derived(completeWord(aq));
+  const awordN = $derived(aword.length >= 3 && !avoid.v.includes(aword) ? pickSet(aword).size : 0);
+  const asugg = $derived(findProducts(aq, 6).filter((i) => !avoid.v.includes(i)));
+  const notSet = $derived.by(() => { const n = new Set<number>(); for (const k of avoid.v) pickSet(k).forEach((i) => n.add(i)); return n; });
+  function avoidPick(i: number | string) { avoid.add(i); aq = ""; }
   function pick(i: number | string) { pantry.add(i); pq = ""; (document.getElementById("pq") as HTMLInputElement)?.focus(); }
-  const haves = $derived.by(() => { void rev; return haveMode ? byProducts(pantry.v, filtered({ q: "", coll: -1, diet: [0, 1, 2][diet], free, low, sort: "az", only: null })) : []; });
+  const haves = $derived.by(() => { void rev; return haveMode ? byProducts(pantry.v, filtered({ q: "", coll: -1, diet: [0, 1, 2][diet], free, low, sort: "az", only: null, not: notSet })) : []; });
   const coll = $derived(arg.startsWith("c:") ? D.folders.findIndex((f) => f[1] === arg.slice(2)) : -1);
-  const browsing = $derived(!!q.trim() || coll >= 0 || onlyFav || diet > 0 || free.size > 0 || low);
+  const browsing = $derived(!!q.trim() || coll >= 0 || onlyFav || diet > 0 || free.size > 0 || low || avoid.v.length > 0);
   let rev = $state(0);
   function restore(e: Event) {
     const inp = e.target as HTMLInputElement, f = inp.files?.[0]; if (!f) return;
     f.text().then((t) => { const n = mineRestore(t); toast.show(n < 0 ? "This file is not a Chefsheet backup" : n + " recipes restored"); rev++; inp.value = ""; });
   }
-  const list = $derived.by(() => { void rev; return filtered({ q, coll, diet: [0, 1, 2][diet], free, low, sort: (["rel", "az", "kcal"] as const)[sort], only: onlyFav ? new Set(favs.v) : null }); });
-  $effect(() => { q; coll; onlyFav; diet; sort; free; low; pantry.v; shown = 40; });
-  const nFilters = $derived((diet ? 1 : 0) + free.size + (low ? 1 : 0));
+  const list = $derived.by(() => { void rev; return filtered({ q, coll, diet: [0, 1, 2][diet], free, low, sort: (["rel", "az", "kcal"] as const)[sort], only: onlyFav ? new Set(favs.v) : null, not: notSet }); });
+  $effect(() => { q; coll; onlyFav; diet; sort; free; low; pantry.v; avoid.v; shown = 40; });
+  const nFilters = $derived((diet ? 1 : 0) + free.size + (low ? 1 : 0) + avoid.v.length);
   function toggleAlg(a: number) { const s = new Set(free); s.has(a) ? s.delete(a) : s.add(a); free = s; }
   const groups = GROUPS.map(([g, names]) => [g, names.map((n) => D.folders.findIndex((f) => f[0] === n)).filter((i) => i >= 0)] as [string, number[]]);
 </script>
@@ -67,10 +74,14 @@
       <label class="btnf"><Icon name="plus" size={16} />Restore from a file<input type="file" accept=".json,application/json" onchange={restore} hidden /></label></div>
     <p class="note">Your recipes live on this device. Back them up to a file to move them to a new phone.</p>
   {/if}
+  {#if avoid.v.length}<div class="have av">{#each avoid.v as i}<button class="hc" onclick={() => avoid.del(i)} aria-label="Allow {pickName(i)} again">Without {pickName(i).replace(/^Any /, "")}<Icon name="close" size={14} /></button>{/each}</div>{/if}
   {#if showF}
     <div class="filters card pad">
       <div><p class="eyebrow">Diet</p><Seg options={["Any", "Vegetarian", "Vegan"]} bind:value={diet} /></div>
       <div><p class="eyebrow">Free from</p><div class="algs">{#each Object.entries(ALG) as [a, n]}<button aria-pressed={free.has(+a)} onclick={() => toggleAlg(+a)}>{n}</button>{/each}</div></div>
+      <div><p class="eyebrow">Without</p>
+        <div class="pk"><label class="sq sm"><Icon name="minus" size={16} /><input type="search" bind:value={aq} placeholder="e.g. mushroom, pork, garlic" autocomplete="off" aria-label="Recipes without this product" onkeydown={(e) => { if (e.key === "Enter") { if (awordN > 1) avoidPick(aword); else if (asugg.length) avoidPick(asugg[0]); } }} /></label>
+          {#if awordN > 1 || asugg.length}<ul class="sg" role="listbox">{#if awordN > 1}<li><button class="any" role="option" aria-selected="false" onclick={() => avoidPick(aword)}>Any {aword}<small>{awordN} products</small></button></li>{/if}{#each asugg as i}<li><button role="option" aria-selected="false" onclick={() => avoidPick(i)}>{D.products[i][0]}</button></li>{/each}</ul>{/if}</div></div>
       <div class="fr"><label class="ck"><input type="checkbox" bind:checked={low} /> Up to 400 kcal</label><span><span class="eyebrow">Sort</span> <Seg options={["Best match", "A–Z", "Lightest"]} bind:value={sort} /></span></div>
     </div>
   {/if}
@@ -117,6 +128,8 @@
   .sg button:hover, .sg button:focus-visible { background: var(--sunk); }
   .have { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
   .hc { display: inline-flex; align-items: center; gap: 6px; border: 0; padding: 8px 10px 8px 14px; border-radius: 999px; background: var(--pri); color: var(--pri-ink); font-size: 13.5px; font-weight: 500; }
+  .av .hc { background: var(--accent-soft); color: var(--accent); }
+  .sq.sm { height: 42px; box-shadow: none; background: var(--sunk); }
   .clr { border: 0; background: none; color: var(--muted); font-size: 13.5px; padding: 8px; }
   .chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin: 14px calc(-1 * var(--gap)) 4px; padding: 2px var(--gap) 4px; }
   .chips::-webkit-scrollbar { display: none; }
