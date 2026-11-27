@@ -204,6 +204,16 @@ main{min-width:0}
 .crumb button{color:#fff;font-weight:800;letter-spacing:inherit;text-transform:inherit;text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(255,255,255,.5)}
 .sh-head h1{font-family:var(--f-display);font-weight:800;font-size:clamp(28px,4.2vw,44px);line-height:1;letter-spacing:-.03em;margin:8px 0 0;text-wrap:balance;text-shadow:0 1px 3px rgba(0,0,0,.12)}
 .sh-head .sub{font-size:17px;color:rgba(255,255,255,.88);margin-top:8px;text-wrap:balance}
+.pp{position:relative;margin-top:16px;border-radius:18px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.24);padding:12px 14px 12px;overflow:hidden}
+.pp-h{display:flex;justify-content:space-between;align-items:center;font-family:var(--f-mono);font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.85);padding-bottom:8px;margin-bottom:8px;border-bottom:1.5px dashed rgba(255,255,255,.35)}
+.pp-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:8px 14px}
+.pp-g small{display:block;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.78)}
+.pp-g b{font-family:var(--f-mono);font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
+.pp-a{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px;padding-top:9px;border-top:1.5px dashed rgba(255,255,255,.35)}
+.pp-a span{display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px 0 3px;border-radius:999px;background:rgba(255,255,255,.92);color:#8E2A12;font-size:11.5px;font-weight:800}
+.pp-a span i{font-style:normal;display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#C0392B;color:#fff;font-size:10px;font-family:var(--f-mono)}
+.pp-a em{font-style:normal;font-size:12px;font-weight:700;color:rgba(255,255,255,.9)}
+.pp-st{position:absolute;right:10px;bottom:10px;transform:rotate(-10deg);border:2px solid currentColor;border-radius:8px;padding:2px 8px;font-family:var(--f-mono);font-size:11px;font-weight:800;letter-spacing:.12em;color:#DFF7E4;opacity:.9}
 .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
 .strip div{display:flex;flex-direction:column;gap:0;padding:7px 12px;border-radius:14px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22)}
 .strip small{font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.8)}
@@ -488,6 +498,15 @@ table.mx td.y{color:var(--warn);font-weight:800}
 .ring b{font-family:var(--f-display);font-size:34px;font-weight:800;line-height:1}
 .ring small{font-size:12px;color:var(--hero-muted);font-weight:700}
 .mods{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.mods.path{grid-template-columns:minmax(0,1fr);position:relative;padding-left:40px;max-width:720px}
+.mods.path::before{content:"";position:absolute;left:16px;top:28px;bottom:28px;width:3px;border-radius:3px;background:repeating-linear-gradient(var(--line) 0 7px,transparent 7px 13px)}
+.mods.path .mod{position:relative;overflow:visible}
+.mods.path .mod::before{content:attr(data-n);position:absolute;left:-40px;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;background:var(--surface);border:3px solid var(--line);display:grid;place-items:center;font:800 12px var(--f-mono);color:var(--muted);box-sizing:border-box}
+.mods.path .mod.done::before{content:"✓";background:var(--ok);border-color:var(--ok);color:#fff;font-size:15px}
+.mods.path .mod.part::before{border-color:var(--ok);color:var(--ok)}
+.mods.path .mod.cur::before{border-color:var(--accent);color:var(--accent);box-shadow:0 0 0 6px var(--accent-soft)}
+.mods.path .mod.cur{outline:2px solid var(--accent);outline-offset:-2px}
+.mod .here{align-self:flex-start;font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);background:var(--accent);border-radius:999px;padding:2px 8px;margin-bottom:2px}
 .mod{--h:20;display:flex;gap:14px;align-items:flex-start;padding:16px;border-radius:22px;background:var(--surface);box-shadow:var(--shadow);text-decoration:none;color:inherit;min-width:0}
 .mod:hover{box-shadow:var(--shadow-h)}
 .mod .mi{flex:none;width:52px;height:52px;border-radius:16px;display:grid;place-items:center;color:#fff;background:linear-gradient(140deg,hsl(var(--h) var(--g-s) var(--g1-l)),hsl(calc(var(--h) + 18) var(--g-s) var(--g2-l)))}
@@ -934,6 +953,11 @@ async function viewRecipe(id){
   if(location.hash!=="#r-"+id)return;
   renderSheet(r,d); window.scrollTo(0,0);
 }
+function passportHtml(r,d,portion){const sh=shelf(d&&d.st),cost=recipeCost(r),nI=d&&d.c?d.c.reduce((a,c)=>a+c[2].length,0):0;
+  const no=(r.mine?"OWN-":"TTK-")+(Math.abs([...r.id].reduce((h,c)=>(h*31+c.charCodeAt(0))|0,7))%1e5).toString().padStart(5,"0");
+  const cells=[["Batch",r.N+" portions"],["Portion",portion],r.kcal?["Energy",r.kcal+" kcal"]:null,d&&d.c&&d.c.length?["Card",d.c.length+(d.c.length===1?" part":" parts")+" · "+nI+" items"]:null,sh.txt||sh.temp?["Keeps",[sh.temp,sh.txt].filter(Boolean).join(", ")]:null,cost.n&&cost.n===cost.of?["Cost / portion",money(cost.sum/r.N)]:null].filter(Boolean);
+  return `<div class="pp"><div class="pp-h"><span>Recipe passport</span><span>${no}</span></div><div class="pp-g">${cells.map(([k,v])=>`<div><small>${k}</small><b>${esc(v)}</b></div>`).join("")}</div>
+  <div class="pp-a">${r.algs.length?r.algs.map(a=>`<span><i>${a}</i>${ALG[a]}</span>`).join(""):`<em>${msI("check")} No listed allergens</em>`}</div>${r.diet?`<span class="pp-st">${r.diet===2?"VEGAN":"VEGETARIAN"}</span>`:""}</div>`}
 function renderSheet(r,d){
   const sheet=$("main").querySelector(".sheet"); if(!sheet)return;
   const f=scale.p/r.N, fav=favs.includes(r.id), io=inOrder(r.id);
@@ -942,7 +966,7 @@ function renderSheet(r,d){
   const nut=d&&d.nu&&d.nu.p?d.nu:null;
   sheet.innerHTML=`<div class="sh-head" style="--h:${fst(r.f)[0]}"><div><div class="crumb"><button data-coll="${r.f}">${esc(D.folders[r.f][0])}</button>${r.sub?" / "+esc(r.sub):""}</div>
     <h1>${esc(r.t)}</h1>${r.s?`<div class="sub">${esc(r.s)}</div>`:""}
-    <div class="strip"><div><small>Base batch</small><b>${r.N} portions</b></div><div><small>Portion</small><b>${esc(portion)}</b></div>${r.kcal?`<div><small>Energy</small><b>${r.kcal} kcal</b></div>`:""}<div><small>Allergens</small><b>${r.algs.length?r.algs.map(a=>ALG[a]).join(", "):"none"}</b></div>${r.diet?`<div><small>Diet</small><b>${r.diet===2?"Vegan":"Vegetarian"}</b></div>`:""}</div>
+    ${passportHtml(r,d,portion)}
     <div class="sh-acts"><button class="btn pri" data-add="${r.id}">${io?ICON.check+'<span class="bl">In the order</span>':ICON.plus+'<span class="bl">Add to order</span>'}</button>
     <button class="btn fav ${fav?"on":""}" data-fav="${r.id}" aria-pressed="${fav}" aria-label="Favourite">${fav?ICON.starOn:ICON.star}<span class="bl">${fav?"Saved":"Favourite"}</span></button>
     <button class="btn ${cook.on?"on":""}" id="r-cook" aria-pressed="${cook.on}" aria-label="Cook mode">${msI("cooking")}<span class="bl">Cook mode</span></button><button class="btn" id="r-share" aria-label="Share">${msI("share")}<span class="bl">Share</span></button><button class="btn" id="r-copy" aria-label="Copy">${ICON.copy}<span class="bl">Copy</span></button><button class="btn" id="r-pdf" aria-label="PDF">${ICON.pdf}<span class="bl">PDF</span></button><button class="btn" id="r-svc" aria-label="Service card">${msI("room_service")}<span class="bl">Service card</span></button>${r.mine?`<a class="btn" href="#edit-${r.id}" aria-label="Edit">${msI("edit")}<span class="bl">Edit</span></a><button class="btn" id="r-del" aria-label="Delete">${msI("delete")}<span class="bl">Delete</span></button>`:`<a class="btn" href="${reportHref(r)}" aria-label="Report a problem">${msI("flag")}<span class="bl">Report a problem</span></a>`}</div></div>${plate(r.ty)}</div>
@@ -1416,9 +1440,9 @@ function viewLearn(){withLearn(()=>{
     <div class="sec">${dailyHtml()}</div>
     ${Object.keys(LP.miss).length?`<div class="sec"><a class="rv-due" href="#review">${msI("refresh",1)}<span><b>Repeat mistakes</b><small>${missDue().length} due now · ${Object.keys(LP.miss).length} in total</small></span>${msI("arrow_forward")}</a></div>`:""}
     ${passed===LD.mods.length?`<div class="sec"><div class="cert-card">${msI("workspace_premium",1)}<div><b>Course complete</b><p>All ${LD.mods.length} tests passed. Download your course certificate.</p></div></div><div class="certf" style="margin-top:10px"><label class="fld"><span>Name on the certificate</span><input id="cert-name" value="${esc(LP.name||"")}" placeholder="Your full name" autocomplete="name"></label><button class="btn pri" data-cert="all">${ICON.pdf}Certificate PDF</button></div></div>`:""}
-    <div class="sec"><div class="sec-h"><h2>Modules</h2><small>${LD.mods.length} modules</small></div><div class="mods">
-    ${LD.mods.map(m=>{const d=modDone(m),q=LP.quiz[m.id];return `<a class="mod" href="#m-${m.id}" style="--h:${m.h}"><span class="mi">${msI(m.ic,1)}</span><span class="mt"><small>Module ${m.n}</small><b>${esc(m.t)}</b>
-      <span class="mm">${m.L.length} lessons${q&&q.pass?` · ${msI("workspace_premium",1)}test ${q.best}%`:""}</span>${pbar(d,m.L.length)}</span></a>`}).join("")}</div></div>
+    <div class="sec"><div class="sec-h"><h2>Modules</h2><small>${LD.mods.length} modules</small></div><div class="mods path">
+    ${(()=>{const cur=LD.mods.find(m=>!(LP.quiz[m.id]&&LP.quiz[m.id].pass));return LD.mods.map(m=>{const d=modDone(m),q=LP.quiz[m.id],ps=q&&q.pass;return `<a class="mod ${ps?"done":m===cur?"cur":d?"part":""}" data-n="${m.n}" href="#m-${m.id}" style="--h:${m.h}"><span class="mi">${msI(m.ic,1)}</span><span class="mt">${m===cur?`<span class="here">You are here</span>`:""}<small>Module ${m.n}</small><b>${esc(m.t)}</b>
+      <span class="mm">${m.L.length} lessons${q&&q.pass?` · ${msI("workspace_premium",1)}test ${q.best}%`:""}</span>${pbar(d,m.L.length)}</span></a>`}).join("")})()}</div></div>
     <div class="sec" id="tools-sec"><div class="sec-h"><h2>Kitchen tools</h2><small>${toolFavs.length?toolFavs.length+" pinned":"Pin the ones you use"}</small></div>
     <label class="fld" style="margin-bottom:10px"><span>Find a tool</span><input id="tool-q" type="search" placeholder="e.g. salt, brine, yield, price" autocomplete="off"></label><div class="tools">
     ${[...TOOLS].sort((a,b)=>(toolFavs.includes(b[0])?1:0)-(toolFavs.includes(a[0])?1:0)).map(t=>`<a class="tool ${toolFavs.includes(t[0])?"fav":""}" href="#tool-${t[0]}" data-tk="${esc(fold(t[1]+" "+t[3]+" "+(TOOLKW[t[0]]||"")))}">${msI(t[2],1)}<span><b>${t[1]}</b><small>${t[3]}</small></span>${toolFavs.includes(t[0])?`<span class="ts">${ICON.starOn}</span>`:""}</a>`).join("")}</div>
