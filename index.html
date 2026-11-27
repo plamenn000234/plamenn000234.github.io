@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap">
 <link rel="manifest" href="manifest.json"><meta name="theme-color" content="#E2552B">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&icon_names=ac_unit,add,arrow_back,arrow_forward,auto_awesome,bakery_dining,bento,blender,breakfast_dining,cake,calculate,celebration,check,check_circle,checklist,chef_hat,child_care,close,content_copy,cookie,cooking,delete,dinner_dining,download,download_for_offline,eco,edit,egg_alt,euro,fastfood,flag,grain,health_and_safety,icecream,insights,inventory_2,kebab_dining,kitchen,label,lightbulb,local_bar,local_cafe,local_fire_department,local_pizza,lunch_dining,menu_book,more_horiz,nutrition,outdoor_grill,pause,picture_as_pdf,play_arrow,quiz,ramen_dining,receipt_long,refresh,restaurant,restaurant_menu,rice_bowl,room_service,scale,school,science,search,set_meal,share,skillet,soup_kitchen,spa,sports_bar,star,stockpot,sunny,tapas,thermostat,timer,translate,tune,upload,warning,water_drop,wine_bar,workspace_premium&display=block">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&icon_names=ac_unit,add,arrow_back,arrow_forward,assignment_ind,auto_awesome,bakery_dining,bento,blender,breakfast_dining,cake,calculate,celebration,check,check_circle,checklist,chef_hat,child_care,close,content_copy,cookie,cooking,delete,dinner_dining,download,download_for_offline,eco,edit,egg_alt,euro,fastfood,flag,grain,group,health_and_safety,icecream,insights,inventory_2,kebab_dining,kitchen,label,lightbulb,local_bar,local_cafe,local_fire_department,local_pizza,lunch_dining,menu_book,more_horiz,nutrition,outdoor_grill,pause,picture_as_pdf,play_arrow,quiz,ramen_dining,receipt_long,refresh,restaurant,restaurant_menu,rice_bowl,room_service,scale,school,science,search,send,set_meal,share,skillet,soup_kitchen,spa,sports_bar,star,stockpot,sunny,tapas,thermostat,timer,translate,tune,upload,warning,water_drop,wine_bar,workspace_premium&display=block">
 <style>
 /* Layout: a modern food app. Paprika-orange brand, every collection gets its own gradient "app icon" colour; recipes read as clean cards; the recipe page opens on a colour banner, then a tech-card body with a scaled quantity column. */
 :root{--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);
@@ -378,6 +378,17 @@ table.mx td.y{color:var(--warn);font-weight:800}
 .rv-due{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:20px;background:var(--warn-soft);text-decoration:none;color:var(--ink)}
 .rv-due b{display:block}.rv-due small{color:var(--muted)}
 .lrec .row{box-shadow:none;background:var(--sunk)}
+.masg{padding:14px 18px 0}
+.asgf{display:grid;gap:10px;margin-top:10px;padding:14px;border-radius:18px;background:var(--sunk);width:100%}
+.asgf p{margin:0;font-size:13px;color:var(--muted)}
+.tasks{display:grid;gap:8px}
+.task{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;background:var(--surface);box-shadow:var(--shadow)}
+.task>a{flex:1;min-width:0;text-decoration:none;color:var(--ink)}
+.task b{display:block;font-size:14.5px}.task small{display:block;color:var(--muted);font-size:12.5px}
+.task small.late{color:var(--warn);font-weight:700}.task small.ok{color:var(--ok);font-weight:700}
+.task .btn{height:36px;padding:0 12px;font-size:13px;flex:none}
+.tban{display:flex;gap:10px;align-items:center;margin:0 0 14px;padding:10px 14px;border-radius:16px;background:var(--sunk);font-size:13.5px}
+.tban .btn{margin-left:auto;height:34px;padding:0 12px;font-size:13px;flex:none}
 .rtools{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
 .rtools .btn{height:36px;padding:0 12px;font-size:13px}
 .sh-acts .btn.keep .bl{display:inline!important}
@@ -1232,6 +1243,38 @@ let LD=null, LP=lsGet("bb-learn",{done:{},quiz:{},name:""}), QA={};
 if(!LP.done)LP.done={}; if(!LP.quiz)LP.quiz={};
 const MH=[150,24,0,8,205,32,95,285,262,222];
 function saveLP(){lsSet("bb-learn",LP)}
+if(!LP.tasks)LP.tasks={};
+const SITE="https://plamenn000234.github.io/";
+const tParts=k=>{const i=k.indexOf(":");return [k.slice(0,i),k.slice(i+1)]};
+function taskTitle(k){const [ty,id]=tParts(k);if(ty==="q"){const m=LD.mods.find(x=>x.id===id);return m?`Test · Module ${m.n}: ${m.t}`:null}const e=LD.byL.get(id);return e?`Lesson · ${e.l.t}`:null}
+function taskDone(k){const [ty,id]=tParts(k);return ty==="q"?!!(LP.quiz[id]&&LP.quiz[id].pass):!!LP.done[id]}
+function taskHref(k){const [ty,id]=tParts(k);return ty==="q"?"#quiz-"+id:"#l-"+id}
+const dueTxt=d=>d?new Date(d+"T12:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short"}):"";
+function assignBtn(k){return `<span id="asg"><button class="btn" data-asgopen="${k}">${msI("group")}Send to a cook</button></span>`}
+function assignForm(k){const q=k[0]==="q";return `<div class="asgf"><b>Send to a cook</b><p>The cook opens the link, ${q?"takes the test and sends you the certificate":"reads the lesson and tells you when it is done"}. No account needed.</p>
+  <label class="fld"><span>Your name</span><input id="asg-by" value="${esc(LP.chef||LP.name||"")}" placeholder="e.g. Chef Ivan" autocomplete="name" maxlength="60"></label>
+  <label class="fld"><span>Due</span><select id="asg-due"><option value="">No date</option><option value="1">Tomorrow</option><option value="3">In 3 days</option><option value="7" selected>In a week</option><option value="14">In 2 weeks</option></select></label>
+  <button class="btn pri" data-asgsend="${k}">${msI("share")}Share link</button></div>`}
+function assignSend(k){const by=($("asg-by").value||"").trim();if(!by){toast("Add your name first");$("asg-by").focus();return}LP.chef=by;saveLP();
+  const n=$("asg-due").value, due=n?dayKey(Date.now()+n*DAY):"", t=taskTitle(k);
+  const link=SITE+taskHref(k)+"?by="+encodeURIComponent(by)+(due?"&due="+due:"");
+  shareText("Chefsheet training",`${by} asks you to ${k[0]==="q"?"pass the test":"read the lesson"} “${t.replace(/^\w+ · /,"")}” in Chefsheet${due?" by "+dueTxt(due):""}.\n${k[0]==="q"?"When you pass, tap “Send certificate” and send it back.":"When you finish, tap “Tell "+by+"” and send it back."}\n${link}`)}
+function taskBanner(k){const tk=LP.tasks[k];if(!tk)return "";const dn=taskDone(k);
+  return `<div class="tban">${msI("assignment_ind",1)}<span>From <b>${esc(tk.by)}</b>${tk.due?" · due "+dueTxt(tk.due):""}</span>${dn?`<button class="btn pri" data-tasksend="${esc(k)}">${msI("send")}${k[0]==="q"?"Send certificate":"Tell "+esc(tk.by)}</button>`:""}</div>`}
+function tasksHtml(){const ks=Object.keys(LP.tasks).filter(taskTitle);if(!ks.length)return "";const today=dayKey();
+  ks.sort((a,b)=>(taskDone(a)-taskDone(b))||((LP.tasks[a].due||"9")<(LP.tasks[b].due||"9")?-1:1));
+  return `<div class="sec"><div class="sec-h"><h2>Assigned to you</h2><small>${ks.filter(k=>!taskDone(k)).length} open</small></div><div class="tasks">${ks.map(k=>{const tk=LP.tasks[k],dn=taskDone(k),late=!dn&&tk.due&&tk.due<today;
+    return `<div class="task">${msI(k[0]==="q"?"quiz":"school",1)}<a href="${taskHref(k)}"><b>${esc(taskTitle(k))}</b><small>From ${esc(tk.by)}${tk.due?" · due "+dueTxt(tk.due):""}</small>${dn?`<small class="ok">Done${tk.sent?" · sent":""}</small>`:late?`<small class="late">Overdue</small>`:""}</a>
+    ${dn?`<button class="btn ${tk.sent?"":"pri"}" data-tasksend="${esc(k)}">${msI("send")}${tk.sent?"Again":"Send"}</button>`:""}<button class="ib" data-taskrm="${esc(k)}" aria-label="Remove">${msI("close")}</button></div>`}).join("")}</div></div>`}
+async function taskSend(k){const tk=LP.tasks[k];if(!tk)return;const [ty,id]=tParts(k);
+  if(ty==="l"){const e=LD.byL.get(id);tk.sent=Date.now();saveLP();shareText("Lesson done",`${tk.by}, I have read the lesson “${e.l.t}” (Module ${e.m.n}) in Chefsheet on ${new Date(LP.done[id]||Date.now()).toLocaleDateString("en-GB")}.${LP.name?"\n"+LP.name:""}`);refreshLearnView();return}
+  if(!LP.name){toast("Add your name for the certificate first");location.hash="quiz-"+id;return}
+  const m=LD.mods.find(x=>x.id===id),b=certPdf(id);if(!b){toast("PDF tool did not load");return}
+  const fn="Certificate_"+fileBase(LP.name)+"_Module_"+m.n+".pdf",txt=`${tk.by}, I passed the test “Module ${m.n}: ${m.t}” in Chefsheet with ${LP.quiz[id].best}%. ${LP.name}`;
+  tk.sent=Date.now();saveLP();
+  try{const f=new File([b],fn,{type:"application/pdf"});if(!window.ChefsheetApp&&navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:"Certificate",text:txt});refreshLearnView();return}}catch(e){if(e&&e.name==="AbortError")return}
+  await saveFile(fn,b);toast("Certificate saved. Attach it to the message.");setTimeout(()=>shareText("Certificate",txt+"\nThe certificate PDF is attached."),900);refreshLearnView()}
+function refreshLearnView(){const h=location.hash;if(h==="#learn")viewLearn();else if(h.startsWith("#quiz-"))viewQuiz(h.slice(6));else if(h.startsWith("#l-"))viewLesson(h.slice(3))}
 async function learnData(){
   if(LD)return LD;
   const r=await fetch("learn.json"); if(!r.ok)throw new Error("http"); LD=await r.json();
@@ -1297,6 +1340,7 @@ function viewLearn(){withLearn(()=>{
     <div class="stats"><span><b>${done}/${all}</b> lessons</span><span><b>${passed}/${LD.mods.length}</b> tests passed</span><span><b>${LD.gloss.reduce((a,s)=>a+s[1].length,0)}</b> terms</span></div>
     ${next?`<a class="go" href="#l-${next[1].id}">${done?"Continue":"Start"}: ${esc(next[1].t)} ${msI("arrow_forward")}</a>`:`<span class="go done">${msI("workspace_premium",1)} All lessons done</span>`}</div>
     <div class="ring" aria-hidden="true" style="--p:${all?done/all*100:0}"><b>${all?Math.round(done/all*100):0}%</b><small>complete</small></div></section>
+    ${tasksHtml()}
     <div class="sec">${dailyHtml()}</div>
     ${Object.keys(LP.miss).length?`<div class="sec"><a class="rv-due" href="#review">${msI("refresh",1)}<span><b>Repeat mistakes</b><small>${missDue().length} due now · ${Object.keys(LP.miss).length} in total</small></span>${msI("arrow_forward")}</a></div>`:""}
     ${passed===LD.mods.length?`<div class="sec"><div class="cert-card">${msI("workspace_premium",1)}<div><b>Course complete</b><p>All ${LD.mods.length} tests passed. Download your course certificate.</p></div></div><div class="certf" style="margin-top:10px"><label class="fld"><span>Name on the certificate</span><input id="cert-name" value="${esc(LP.name||"")}" placeholder="Your full name" autocomplete="name"></label><button class="btn pri" data-cert="all">${ICON.pdf}Certificate PDF</button></div></div>`:""}
@@ -1316,7 +1360,7 @@ function viewModule(id){withLearn(()=>{
     <div class="strip"><div><small>Lessons done</small><b>${d} of ${m.L.length}</b></div><div><small>Test</small><b>${m.quiz.length} questions</b></div><div><small>Best score</small><b>${q?q.best+"%":"–"}</b></div></div>
     <div class="sh-acts"><a class="btn pri" href="#l-${(m.L.find(l=>!LP.done[l.id])||m.L[0]).id}">${msI("school")}${d?(d===m.L.length?"Review lessons":"Continue"):"Start module"}</a><a class="btn" href="#quiz-${m.id}">${msI("quiz")}Take the test</a>
     ${q&&q.pass?`<button class="btn" data-cert="${m.id}">${ICON.pdf}Certificate</button>`:""}</div></div><span class="plate">${msI(m.ic,1)}</span></div>
-    <ol class="lessons">${m.L.map((l,i)=>`<li><a href="#l-${l.id}" class="${LP.done[l.id]?"done":""}"><span class="n">${LP.done[l.id]?msI("check"):i+1}</span><span><b>${esc(l.t)}</b><small>${esc(l.k)}</small></span>${l.tool?`<span class="tg">${msI("calculate")}</span>`:""}</a></li>`).join("")}</ol></article>`;
+    <div class="masg">${assignBtn("q:"+m.id)}</div><ol class="lessons">${m.L.map((l,i)=>`<li><a href="#l-${l.id}" class="${LP.done[l.id]?"done":""}"><span class="n">${LP.done[l.id]?msI("check"):i+1}</span><span><b>${esc(l.t)}</b><small>${esc(l.k)}</small></span>${l.tool?`<span class="tg">${msI("calculate")}</span>`:""}</a></li>`).join("")}</ol></article>`;
 })}
 function tableHtml(tb){return `<div class="ltw"><table class="lt"><caption>${esc(tb.c)}</caption>${tb.h&&tb.h.some(Boolean)?`<thead><tr>${tb.h.map(h=>`<th>${esc(h)}</th>`).join("")}</tr></thead>`:""}<tbody>${tb.r.map(r=>`<tr>${r.map(c=>`<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`}
 const LREC={"pass-language":"plated","knife-safety":"julienne","mise-en-place":"salad","allergy-orders":"gluten free","service-flow":"canape","culinary-systems":"roasted","food-cost":"yield test","kitchen-economics":"stew","inventory":"stock","quality":"sauce","training-team":"omelette"};
@@ -1330,11 +1374,11 @@ function viewLesson(id){withLearn(()=>{
   const e=LD.byL.get(id); if(!e){$("main").innerHTML=`<div class="empty" style="margin-top:20px"><b>Lesson not found</b><a href="#learn">Back to Learn</a></div>`;return}
   const {m,l,li}=e, nx=m.L[li+1], pv=m.L[li-1], dn=!!LP.done[l.id];
   $("main").innerHTML=`<a class="back" href="#m-${m.id}">${ICON.back}${esc(m.t)}</a><article class="sheet lesson"><div class="sh-head" style="--h:${m.h}"><div><div class="crumb">Module ${m.n} · Lesson ${li+1} of ${m.L.length}</div><h1>${esc(l.t)}</h1></div></div>
-    <div class="lbody"><div class="key">${msI("lightbulb",1)}<p>${esc(l.k)}</p></div>
+    <div class="lbody">${taskBanner("l:"+l.id)}<div class="key">${msI("lightbulb",1)}<p>${esc(l.k)}</p></div>
     ${l.p&&l.p.length?`<h2 class="mh">Key points</h2><ul class="pts">${l.p.map(p=>`<li>${tmHtml(esc(p))}</li>`).join("")}</ul>`:""}
     ${(l.tb||[]).map(tableHtml).join("")}
     ${l.x&&l.x.length?`<div class="mist"><h3>${msI("warning",1)}Common mistakes</h3><ul>${l.x.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`:""}
-    <div class="lacts">${l.tool?`<a class="tool" href="#tool-${l.tool}">${msI((TOOLS.find(t=>t[0]===l.tool)||[0,0,"calculate"])[2],1)}<span><b>Try it: ${esc(toolName(l.tool))}</b><small>Interactive table</small></span></a>`:""}
+    <div class="lacts">${assignBtn("l:"+l.id)}${l.tool?`<a class="tool" href="#tool-${l.tool}">${msI((TOOLS.find(t=>t[0]===l.tool)||[0,0,"calculate"])[2],1)}<span><b>Try it: ${esc(toolName(l.tool))}</b><small>Interactive table</small></span></a>`:""}
 </div>${(()=>{const lr=lessonRecipes(l);return lr.top.length?`<h2 class="mh">Recipes to practise</h2><div class="list lrec">${lr.top.map(rowHtml).join("")}</div>${lr.n>lr.top.length?`<button class="btn" style="margin-top:10px" data-lq="${esc(lr.q)}">${msI("menu_book")}See all ${lr.n} recipes with “${esc(lr.q)}”</button>`:""}`:""})()}</div>
     <div class="lfoot">${pv?`<a class="btn" href="#l-${pv.id}">${ICON.back}Previous</a>`:`<span></span>`}
     <button class="btn ${dn?"":"pri"}" data-ldone="${l.id}" aria-pressed="${dn}">${dn?msI("check")+"Done":"Mark as done"}</button>
@@ -1347,7 +1391,7 @@ function viewQuiz(id){withLearn(()=>{
   const n=m.quiz.length, ok=m.quiz.filter((x,i)=>st.a[i]===x[2]).length, sc=Math.round(ok/n*100), pass=sc>=80;
   $("main").innerHTML=`<a class="back" href="#m-${m.id}">${ICON.back}${esc(m.t)}</a><article class="sheet"><div class="sh-head" style="--h:${m.h}"><div><div class="crumb">Module ${m.n} · Test</div><h1>${esc(m.t)}</h1>
     <div class="strip"><div><small>Questions</small><b>${n}</b></div><div><small>Pass mark</small><b>80%</b></div><div><small>Best score</small><b>${q?q.best+"%":"–"}</b></div></div></div></div>
-    <div class="lbody">${st.sub?`<div class="qres ${pass?"ok":"no"}">${msI(pass?"workspace_premium":"refresh",1)}<div><b>${sc}% · ${ok} of ${n} correct</b><p>${pass?"Passed. Add your name for the certificate.":"Below 80%. Review the lessons and try again."}</p></div></div>`:""}
+    <div class="lbody">${taskBanner("q:"+m.id)}${st.sub?`<div class="qres ${pass?"ok":"no"}">${msI(pass?"workspace_premium":"refresh",1)}<div><b>${sc}% · ${ok} of ${n} correct</b><p>${pass?"Passed. Add your name for the certificate.":"Below 80%. Review the lessons and try again."}</p></div></div>`:""}
       ${(st.sub?pass:q&&q.pass)?`<div class="certf"><label class="fld"><span>Name on the certificate</span><input id="cert-name" value="${esc(LP.name||"")}" placeholder="Your full name" autocomplete="name"></label><button class="btn pri" data-cert="${m.id}">${ICON.pdf}Certificate PDF</button></div>`:""}
     <ol class="quiz">${m.quiz.map((x,i)=>`<li><p>${esc(x[0])}</p><div class="opts">${st.o[i].map(j=>{const o=x[1][j];const sel=st.a[i]===j;const cls=st.sub?(j===x[2]?"right":sel?"wrong":""):"";return `<button data-qa="${i}:${j}" aria-pressed="${sel}" class="${cls}" ${st.sub?"disabled":""}>${esc(o)}</button>`}).join("")}</div></li>`).join("")}</ol>
     <div class="lfoot">${st.sub?`<button class="btn" data-qreset="${m.id}">${msI("refresh")}Try again</button><a class="btn pri" href="#learn">Back to Learn</a>`:`<span class="note-line" style="margin:0">${Object.keys(st.a).length} of ${n} answered</span><button class="btn pri" data-qsub="${m.id}" ${Object.keys(st.a).length<n?"disabled":""}>Check answers</button>`}</div></div></article>`;
@@ -1510,6 +1554,10 @@ const listY={};
 try{history.scrollRestoration="manual"}catch(e){}
 function route(){
   if(!D)return;
+  {const h0=location.hash||"",qi=h0.indexOf("?");if(qi>0){const base=h0.slice(0,qi),ps=new URLSearchParams(h0.slice(qi+1)),by=(ps.get("by")||"").trim().slice(0,60),due=(ps.get("due")||"").slice(0,10);
+    const k=base.startsWith("#quiz-")?"q:"+base.slice(6):base.startsWith("#l-")?"l:"+base.slice(3):null;
+    if(k&&by){LP.tasks[k]={by,due:/^\d{4}-\d\d-\d\d$/.test(due)?due:"",at:Date.now()};saveLP();setTimeout(()=>toast(by+" sent you this "+(k[0]==="q"?"test":"lesson")),600)}
+    history.replaceState(null,"",location.pathname+location.search+base)}}
   const h=location.hash==="#"?"":location.hash||"", prev=route._last; route._last=h;
   const back=prev!=null&&prev.startsWith("#r-")&&!h.startsWith("#r-");
   if(prev!=null&&!prev.startsWith("#r-")&&h.startsWith("#r-"))listY[prev]=window.scrollY;
@@ -1584,7 +1632,11 @@ function bind(){
     if(t.id==="o-share"){shareText("Order list"+(ord.name?" - "+ord.name:""),orderText(compute()));return}
     if(t.id==="offl"){cacheAll();return}
     if(t.dataset.lq){ui.q=t.dataset.lq;$("q").value=ui.q;$("q-clr").hidden=false;ui.coll=-1;ui.shown=PAGE;history.pushState(null,"",location.pathname+location.search);route();window.scrollTo(0,0);return}
-    if(t.dataset.ldone){const k=t.dataset.ldone;if(LP.done[k])delete LP.done[k];else LP.done[k]=Date.now();saveLP();const e=LD.byL.get(k);if(LP.done[k]&&e&&e.m.L[e.li+1]){toast("Lesson done");location.hash="l-"+e.m.L[e.li+1].id}else{if(LP.done[k])toast("Module lessons done. Take the test");viewLesson(k)}return}
+    if(t.dataset.asgopen){const el=$("asg");if(el)el.outerHTML=assignForm(t.dataset.asgopen);const i=$("asg-by");if(i&&!i.value)i.focus();return}
+    if(t.dataset.asgsend){assignSend(t.dataset.asgsend);return}
+    if(t.dataset.tasksend){taskSend(t.dataset.tasksend);return}
+    if(t.dataset.taskrm){delete LP.tasks[t.dataset.taskrm];saveLP();toast("Removed");viewLearn();return}
+    if(t.dataset.ldone){const k=t.dataset.ldone;if(LP.done[k])delete LP.done[k];else LP.done[k]=Date.now();saveLP();const e=LD.byL.get(k);if(LP.done[k]&&LP.tasks["l:"+k]){toast("Done. Now tell "+LP.tasks["l:"+k].by);viewLesson(k)}else if(LP.done[k]&&e&&e.m.L[e.li+1]){toast("Lesson done");location.hash="l-"+e.m.L[e.li+1].id}else{if(LP.done[k])toast("Module lessons done. Take the test");viewLesson(k)}return}
     if(t.dataset.qa){const [i,j]=t.dataset.qa.split(":").map(Number);const mid=location.hash.slice(6);const st=QA[mid]||(QA[mid]={a:{},sub:false});if(st.sub)return;st.a[i]=j;const y=window.scrollY;viewQuiz(mid);window.scrollTo(0,y);return}
     if(t.dataset.qsub){const mid=t.dataset.qsub,m=LD.mods.find(x=>x.id===mid),st=QA[mid];st.sub=true;const sc=Math.round(m.quiz.filter((x,i)=>st.a[i]===x[2]).length/m.quiz.length*100);
       const prev=LP.quiz[mid]||{best:0,pass:false};LP.quiz[mid]={best:Math.max(prev.best,sc),pass:prev.pass||sc>=80,at:sc>=80&&!prev.pass?Date.now():(prev.at||null),last:sc};m.quiz.forEach((x,i)=>{if(st.a[i]!==x[2])addMiss(mid,i);else delete LP.miss[mid+":"+i]});saveLP();viewQuiz(mid);return}
