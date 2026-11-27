@@ -10,7 +10,7 @@
   const c = curSym();
 </script>
 <div class="g3"><Field label="Portion cost" unit={c} bind:value={s.c} /><Field label="Target food cost %" bind:value={s.fc} /><Field label="VAT %" bind:value={s.v} /></div>
-<Outs items={[["Price, net", m2(net), " " + c], ["Menu price, with VAT", m2(gr), " " + c], ["Gross profit", m2(net - s.c), " " + c]]} />
+<Outs items={[["Price, net", m2(net), " " + c], ["Menu price, with VAT", m2(gr), " " + c], ["Gross profit", m2(net - (+s.c || 0)), " " + c]]} />
 <h3>Check a menu price</h3>
-<div class="g2"><Field label="Menu price with VAT" unit={c} placeholder="e.g. 18" bind:value={s.mp} /><Outs items={[["Food cost", s.mp ? f1((s.c / (s.mp / (1 + s.v / 100))) * 100) : "–", " %"]]} /></div>
+<div class="g2"><Field label="Menu price with VAT" unit={c} placeholder="e.g. 18" bind:value={s.mp} />{#if +s.mp > 0}<Outs items={[["Food cost", f1(((+s.c || 0) / (+s.mp / (1 + (+s.v || 0) / 100))) * 100), " %"]]} />{/if}</div>
 <p class="note">Portion cost = recipe cost ÷ portions, using yield-adjusted (as-bought) prices.</p>
