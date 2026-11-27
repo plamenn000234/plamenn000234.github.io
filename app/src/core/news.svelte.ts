@@ -10,6 +10,8 @@ export const NEWS: News[] = [
     ["Food safety logs", "Fridge temperatures, cooling and deliveries with a monthly PDF. Turn on in Settings.", "#settings"],
     ["Allergens for guests", "Kitchen → Allergen matrix → QR for guests: table cards with a QR code.", "#kitchen"],
     ["Onboard a new cook", "Learn → For chefs: one link with tests, recipes and a first-week checklist.", "#onboard-new"],
+    ["Stock and write-offs", "What you have, write-offs with a reason and value, what to buy for an order. Turn on in Settings.", "#settings"],
+    ["Menu engineering", "Tools → Menu engineering: which dishes are stars and which to rework, from your sales.", "#tool-menu"],
     ["Recipes without…", "Filters → Without: hide recipes with mushrooms, pork or anything else.", "#recipes"],
   ] },
 ];

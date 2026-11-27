@@ -13,6 +13,7 @@
   import { tour } from "../core/tour.svelte";
   import { NEWS } from "../core/news.svelte";
   import { H } from "../core/haccp.svelte";
+  import { S } from "../core/stock.svelte";
   let showNews = $state(false);
   const VERSION = __APP_VERSION__;
   let ti = $state(Math.max(0, THEMES.findIndex((t) => t[0] === theme.v)));
@@ -56,6 +57,8 @@
     <h2>Extra sections</h2>
     <label class="sw"><input type="checkbox" checked={H.v.on} onchange={(e) => { H.v.on = (e.target as HTMLInputElement).checked; H.save(); toast.show(H.v.on ? "Food safety logs are in Kitchen now" : "Food safety logs hidden. Records are kept"); }} />
       <span><b>Food safety logs (HACCP)</b><small>Fridge and freezer temperatures, cooling, deliveries, a monthly PDF. Shows in Kitchen.</small></span></label>
+    <label class="sw"><input type="checkbox" checked={S.v.on} onchange={(e) => { S.v.on = (e.target as HTMLInputElement).checked; S.save(); toast.show(S.v.on ? "Stock is in Kitchen now" : "Stock hidden. Records are kept"); }} />
+      <span><b>Stock and write-offs</b><small>What you have on hand, write-offs with a reason and their value, what to buy for an order. Shows in Kitchen.</small></span></label>
   </section>
 
   <section class="card pad st" id="data">

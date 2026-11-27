@@ -12,6 +12,8 @@
   import { news, NEWS } from "../core/news.svelte";
   import { H, dueToday } from "../core/haccp.svelte";
   const nDue = H.v.on ? dueToday().length : 0;
+  import { S, low } from "../core/stock.svelte";
+  const nLow = S.v.on ? low().length : 0;
   const DEFAULT = ["yield", "salt", "cost", "doneness"];
   const pinned = $derived((toolFavs.v.length ? toolFavs.v : DEFAULT).map((id) => TOOLS.find((t) => t.id === id)).filter(Boolean));
   const rec = $derived(recent.v.map((id) => byId.get(id)).filter(Boolean).slice(0, 5));
@@ -43,8 +45,9 @@
     {#if o.lines.length}<div class="stats"><div><b>{o.lines.length}</b><small>dishes</small></div><div><b>{o.pax}</b><small>guests</small></div><div><b>{items}</b><small>products</small></div></div>{/if}
     <span class="go">{o.lines.length ? "Open order" : "Pick dishes"}<Icon name="fwd" size={16} /></span>
   </a>
-  {#if o.lines.length || timers.list.length || nDue}<div class="minis">
+  {#if o.lines.length || timers.list.length || nDue || nLow}<div class="minis">
     {#if nDue}<a class="mini card press" href="#haccp"><span class="mi"><Icon name="thermo" size={22} /></span><span><b>Temperature check</b><small>{nDue} unit{nDue > 1 ? "s" : ""} not checked today</small></span></a>{/if}
+    {#if nLow}<a class="mini card press" href="#stock"><span class="mi"><Icon name="stock" size={22} /></span><span><b>Running low</b><small>{nLow} product{nLow > 1 ? "s" : ""} under the minimum</small></span></a>{/if}
     {#if o.lines.length}<a class="mini card press" href="#prep"><span class="mi"><Icon name="tool-prep" size={22} /></span><span><b>Prep list</b><small>For this order</small></span></a>{/if}
     {#if timers.list.length}<div class="mini card"><span class="mi"><Icon name="timer" size={22} /></span><span><b>{timers.list.length} timer{timers.list.length > 1 ? "s" : ""}</b><small>Running now</small></span></div>{/if}
   </div>{/if}
