@@ -377,6 +377,7 @@ table.mx td.y{color:var(--warn);font-weight:800}
 .daily .res{margin-top:10px;font-size:13.5px;font-weight:700}
 .rv-due{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:20px;background:var(--warn-soft);text-decoration:none;color:var(--ink)}
 .rv-due b{display:block}.rv-due small{color:var(--muted)}
+.lrec .row{box-shadow:none;background:var(--sunk)}
 .rtools{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
 .rtools .btn{height:36px;padding:0 12px;font-size:13px}
 .sh-acts .btn.keep .bl{display:inline!important}
@@ -1318,6 +1319,13 @@ function viewModule(id){withLearn(()=>{
     <ol class="lessons">${m.L.map((l,i)=>`<li><a href="#l-${l.id}" class="${LP.done[l.id]?"done":""}"><span class="n">${LP.done[l.id]?msI("check"):i+1}</span><span><b>${esc(l.t)}</b><small>${esc(l.k)}</small></span>${l.tool?`<span class="tg">${msI("calculate")}</span>`:""}</a></li>`).join("")}</ol></article>`;
 })}
 function tableHtml(tb){return `<div class="ltw"><table class="lt"><caption>${esc(tb.c)}</caption>${tb.h&&tb.h.some(Boolean)?`<thead><tr>${tb.h.map(h=>`<th>${esc(h)}</th>`).join("")}</tr></thead>`:""}<tbody>${tb.r.map(r=>`<tr>${r.map(c=>`<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`}
+const LREC={"pass-language":"plated","knife-safety":"julienne","mise-en-place":"salad","allergy-orders":"gluten free","service-flow":"canape","culinary-systems":"roasted","food-cost":"yield test","kitchen-economics":"stew","inventory":"stock","quality":"sauce","training-team":"omelette"};
+function lessonRecipes(l){const q=l.q||LREC[l.id];if(!q)return {q:"",n:0,top:[]};const toks=fold(q).split(/[^\p{L}\p{N}%]+/u).filter(t=>t.length>1);if(!toks.length)return {q,n:0,top:[]};
+  const wm=(w,t)=>w===t||w===t+"s"||w===t+"es"||(t.length>=5&&w.startsWith(t));
+  const T=[],H=[];for(const r of R){if(r.mine)continue;const ws=r.tl.split(/[^\p{L}\p{N}]+/u);
+    if(toks.every(t=>ws.some(w=>wm(w,t))))T.push(r);else if(toks.every(t=>r.tl.includes(t)||r.hay.includes(t)))H.push(r)}
+  T.sort((a,b)=>a.t.length-b.t.length);const all=[...T,...H],seen=new Set(),top=[];for(const r of all){const k=fold(r.t).slice(0,14);if(seen.has(k))continue;seen.add(k);top.push(r);if(top.length>=4)break}
+  return {q,n:all.length,top}}
 function viewLesson(id){withLearn(()=>{
   const e=LD.byL.get(id); if(!e){$("main").innerHTML=`<div class="empty" style="margin-top:20px"><b>Lesson not found</b><a href="#learn">Back to Learn</a></div>`;return}
   const {m,l,li}=e, nx=m.L[li+1], pv=m.L[li-1], dn=!!LP.done[l.id];
@@ -1327,7 +1335,7 @@ function viewLesson(id){withLearn(()=>{
     ${(l.tb||[]).map(tableHtml).join("")}
     ${l.x&&l.x.length?`<div class="mist"><h3>${msI("warning",1)}Common mistakes</h3><ul>${l.x.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`:""}
     <div class="lacts">${l.tool?`<a class="tool" href="#tool-${l.tool}">${msI((TOOLS.find(t=>t[0]===l.tool)||[0,0,"calculate"])[2],1)}<span><b>Try it: ${esc(toolName(l.tool))}</b><small>Interactive table</small></span></a>`:""}
-    ${l.q?`<button class="tool" data-lq="${esc(l.q)}">${msI("menu_book",1)}<span><b>Practise: recipes with “${esc(l.q)}”</b><small>Open matching recipe cards</small></span></button>`:""}</div></div>
+</div>${(()=>{const lr=lessonRecipes(l);return lr.top.length?`<h2 class="mh">Recipes to practise</h2><div class="list lrec">${lr.top.map(rowHtml).join("")}</div>${lr.n>lr.top.length?`<button class="btn" style="margin-top:10px" data-lq="${esc(lr.q)}">${msI("menu_book")}See all ${lr.n} recipes with “${esc(lr.q)}”</button>`:""}`:""})()}</div>
     <div class="lfoot">${pv?`<a class="btn" href="#l-${pv.id}">${ICON.back}Previous</a>`:`<span></span>`}
     <button class="btn ${dn?"":"pri"}" data-ldone="${l.id}" aria-pressed="${dn}">${dn?msI("check")+"Done":"Mark as done"}</button>
     ${nx?`<a class="btn" href="#l-${nx.id}">Next ${msI("arrow_forward")}</a>`:`<a class="btn" href="#quiz-${m.id}">${msI("quiz")}Test</a>`}</div></article>`;
