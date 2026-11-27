@@ -19,6 +19,10 @@
     Suppliers: () => import("./screens/Suppliers.svelte"),
     Haccp: () => import("./screens/Haccp.svelte"),
     Stock: () => import("./screens/Stock.svelte"),
+    Account: () => import("./screens/Account.svelte"),
+    Team: () => import("./screens/Team.svelte"),
+    Board: () => import("./screens/Board.svelte"),
+    Community: () => import("./screens/Community.svelte"),
     Prices: () => import("./screens/Prices.svelte"),
     Editor: () => import("./screens/Editor.svelte"),
     Cook: () => import("./screens/Cook.svelte"),
@@ -33,9 +37,11 @@
     Learn: () => import("./screens/Learn.svelte"),
   };
   import { load } from "./core/catalog";
+  import { track } from "./core/cloud.svelte";
   let ready = $state(false), err = $state(""), searching = $state(false);
   load().then(() => (ready = true)).catch((e) => (err = String(e?.message || e)));
   const rt = $derived(router.route);
+  $effect(() => { const v = rt.view; track(v === "tool" ? "tool:" + rt.arg : "view:" + v); });
   addEventListener("keydown", (e) => { if ((e.key === "/" || (e.key === "k" && (e.metaKey || e.ctrlKey))) && !(e.target as HTMLElement)?.closest("input,textarea,select")) { e.preventDefault(); searching = true; } });
 </script>
 {#if rt.view !== "guest"}<TopBar onsearch={() => (searching = true)} />{/if}
@@ -64,6 +70,10 @@
   {:else if rt.view === "suppliers"}<Lazy load={L.Suppliers} />
   {:else if rt.view === "haccp"}<Lazy load={L.Haccp} />
   {:else if rt.view === "stock"}<Lazy load={L.Stock} />
+  {:else if rt.view === "account"}<Lazy load={L.Account} />
+  {:else if rt.view === "team"}{#key rt.arg}<Lazy load={L.Team} id={rt.arg} />{/key}
+  {:else if rt.view === "board"}{#key rt.arg}<Lazy load={L.Board} id={rt.arg} />{/key}
+  {:else if rt.view === "community"}{#key rt.arg}<Lazy load={L.Community} id={rt.arg} />{/key}
   {:else if rt.view === "editor"}{#key rt.arg}<Lazy load={L.Editor} id={rt.arg.startsWith("+") ? "" : rt.arg} semi={rt.arg === "+semi"} />{/key}
   {:else if rt.view === "prices"}{#key rt.arg}<Lazy load={L.Prices} rid={rt.arg} />{/key}
   {/if}

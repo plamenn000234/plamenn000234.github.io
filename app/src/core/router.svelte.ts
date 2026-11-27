@@ -30,6 +30,11 @@ export function parse(h: string): Route {
   if ((a = m("#cook-")) != null) return { tab: "recipes", view: "cook", arg: a, q };
   if ((a = m("#r-")) != null) return { tab: "recipes", view: "recipe", arg: a, q };
   if (h === "#guest") return { tab: "app", view: "guest", arg: "", q };
+  if (h === "#account") return { tab: "app", view: "account", arg: "", q };
+  if ((a = m("#team-")) != null) return { tab: "kitchen", view: "team", arg: a, q };
+  if ((a = m("#board-")) != null) return { tab: "kitchen", view: "board", arg: a, q };
+  if (h === "#community") return { tab: "recipes", view: "community", arg: "", q };
+  if ((a = m("#community-")) != null) return { tab: "recipes", view: "community", arg: a, q };
   if (h === "#settings") return { tab: "app", view: "settings", arg: "", q };
   if (h === "#learn") return { tab: "learn", view: "learn", arg: "", q };
   if (h === "#onboard-new") return { tab: "learn", view: "onboard", arg: "", q };

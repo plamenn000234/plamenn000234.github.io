@@ -16,9 +16,10 @@ const b = await chromium.launch();
 async function page(opts = {}) {
   const ctx = await b.newContext({ viewport: opts.vp || { width: 390, height: 844 }, deviceScaleFactor: process.env.SHOTS ? 2 : 1, colorScheme: opts.dark ? "dark" : "light" });
   const p = await ctx.newPage();
-  await p.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
+  await p.route(/fonts\.(googleapis|gstatic)\.com|accounts\.google\.com/, (r) => r.abort());
   p.errors = [];
   p.on("pageerror", (e) => p.errors.push(e.message));
+  await p.addInitScript(() => { if (!localStorage.getItem("cs-api")) localStorage.setItem("cs-api", "http://localhost:8787"); });
   if (!opts.tour) await p.addInitScript(() => localStorage.setItem("bb-tour3", "1"));
   if (opts.init) await p.addInitScript(opts.init);
   return p;
@@ -477,6 +478,49 @@ await test("menu engineering: classes from price, sold and cost", async () => {
   assert(/PORTIONS SOLD 120/i.test(o) && /AVERAGE PROFIT 13.17/i.test(o), o);
   if (SHOTS) await p.screenshot({ path: SHOTS + "/menu-eng.png", fullPage: true });
   assert(p.errors.length === 0, p.errors.join("; "));
+});
+
+// The optional account against the local API (node server/dev.mjs on 8787, sign-in with dev tokens).
+const API = "http://localhost:8787", RUN = Date.now().toString(36);
+async function signIn(p, who, name) {
+  const j = await p.evaluate(async ([api, c]) => (await fetch(api + "/auth/google", { method: "POST", body: JSON.stringify({ credential: c }) })).json(), [API, `dev:${who}${RUN}:${who}${RUN}@example.com:${name}`]);
+  await p.evaluate((j) => localStorage.setItem("cs-account", JSON.stringify({ token: j.token, user: j.user, kitchens: [], syncAt: 0, auto: true, stats: true })), j);
+  return j;
+}
+await test("account: optional, cloud copy, kitchen with code, live prep board with roles", async () => {
+  const p = await page(); await p.goto(BASE + "#settings"); await ready(p); await p.waitForSelector("text=Send anonymous usage counts");
+  await p.click("a:has-text('Sign in')"); await p.waitForSelector("text=Sign in to keep your kitchen in the cloud");
+  await signIn(p, "chef", "Plamen"); await p.reload(); await p.waitForSelector(".who:has-text('Plamen')");
+  await p.click("button:has-text('Save now')"); await p.waitForSelector("text=Last saved");
+  await p.fill("input[placeholder='e.g. Hotel main kitchen']", "Main kitchen"); await p.click("button:has-text('Create')");
+  await p.waitForSelector("h1:has-text('Main kitchen')"); const code = (await p.locator(".code b").innerText()).trim(); assert(/^[A-Z0-9]{6}$/.test(code), "code " + code);
+  const kid = p.url().split("#team-")[1];
+  if (SHOTS) await p.screenshot({ path: SHOTS + "/team.png", fullPage: true });
+  const c = await page(); await c.goto(BASE + "#account"); await ready(c); await signIn(c, "cook", "Ivan"); await c.reload();
+  await c.fill("input[placeholder='6 letters']", code.toLowerCase()); await c.click("button:has-text('Join')"); await c.waitForSelector("h1:has-text('Main kitchen')");
+  assert(await c.locator(".code").count() === 0, "cook sees the code");
+  await p.goto(BASE + "#board-" + kid); await p.waitForSelector("text=No tasks yet");
+  await p.fill("input[placeholder='e.g. Beef stock 20 L']", "Peel onions"); await p.fill("input[placeholder='e.g. 5 kg']", "5 kg"); await p.click("button:has-text('Add task')");
+  await p.waitForSelector(".tl li:has-text('Peel onions')");
+  await c.goto(BASE + "#board-" + kid); await c.waitForSelector(".tl li:has-text('Peel onions')");
+  assert(await c.locator("button:has-text('Add task')").count() === 0, "cook can add");
+  await c.click(".tl .ck"); await c.waitForSelector(".tl li.done");
+  await p.waitForSelector(".tl li.done:has-text('done by Ivan')", { timeout: 12000 });
+  if (SHOTS) await p.screenshot({ path: SHOTS + "/board.png", fullPage: true });
+  await p.goto(BASE + "#kitchen"); await p.waitForSelector("a.hz:has-text('Prep board · Main kitchen')");
+  assert(p.errors.length === 0 && c.errors.length === 0, p.errors.concat(c.errors).join("; "));
+});
+await test("community: share my recipe, find it signed out, save a copy", async () => {
+  const mine = [{ id: "u" + RUN, name: "Banitsa " + RUN, N: 8, algs: [1, 3], ing: [["Filo pastry", 500], ["Sirene cheese", 400], ["Eggs", "4 pcs"]], steps: ["Layer", "Bake 40 min at 180 °C"], updatedAt: 1 }];
+  const p = await page(); await p.addInitScript((m) => localStorage.setItem("bb-mine", m), JSON.stringify(mine));
+  await p.goto(BASE + "#r-u" + RUN); await ready(p); await signIn(p, "baker", "Maria");
+  await p.goto(BASE + "#community?share=u" + RUN); await p.reload(); await p.waitForSelector("text=Share your recipe");
+  await p.check(".sw input"); await p.click("button:has-text('Share with the community')"); await p.waitForSelector("h1:has-text('Banitsa')");
+  const g = await page(); await g.goto(BASE + "#community"); await ready(g); await g.fill("input[aria-label='Search community recipes']", "sirene");
+  await g.click(`a.cr:has-text('Banitsa ${RUN}')`); await g.waitForSelector("text=Shared by Maria"); await g.waitForSelector(".ing li:has-text('Filo pastry')");
+  await g.click("button:has-text('Save to my recipes')"); await g.waitForSelector(`h1:has-text('Banitsa ${RUN}')`);
+  const n = await g.evaluate(() => JSON.parse(localStorage.getItem("bb-mine")).length); assert(n === 1, "saved " + n);
+  assert(p.errors.length === 0 && g.errors.length === 0, p.errors.concat(g.errors).join("; "));
 });
 
 await b.close();

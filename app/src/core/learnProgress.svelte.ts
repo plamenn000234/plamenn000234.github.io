@@ -98,6 +98,8 @@ export function lessonRecipes(l: { id: string; q?: string }) {
 }
 
 /* ---------- certificate ---------- */
+import qrcode from "qrcode-generator";
+import { registerCert, certUrl } from "./cloud.svelte";
 export async function certPdf(id: string) {
   const all = id === "all", m = all ? null : LD.mods.find((x) => x.id === id); if (!all && !m) return null;
   const v = LP.v, doc = await pdfDoc(true), W = 297, H = 210;
@@ -118,7 +120,15 @@ export async function certPdf(id: string) {
   const dt = new Date(all ? Date.now() : v.quiz[m!.id]?.at || Date.now()).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
   doc.setFontSize(10); doc.text("Date", 70, 172, { align: "center" }); doc.text("Certificate no.", W - 70, 172, { align: "center" });
   doc.setTextColor(20, 23, 27); doc.setFont("helvetica", "bold"); doc.setFontSize(12); doc.text(dt, 70, 165, { align: "center" });
-  const no = "CS-" + (all ? "ALL" : m!.id.toUpperCase()) + "-" + (Math.abs([...(v.name || "x") + dt].reduce((h, c) => (h * 31 + c.charCodeAt(0)) | 0, 7)) % 1e6).toString().padStart(6, "0");
+  // Signed in: the certificate is registered on the server and carries a QR anyone can check.
+  const vid = await registerCert({ name: v.name || "", title: ttl, score: sc, date: dt });
+  const no = vid ? vid.toUpperCase() : "CS-" + (all ? "ALL" : m!.id.toUpperCase()) + "-" + (Math.abs([...(v.name || "x") + dt].reduce((h, c) => (h * 31 + c.charCodeAt(0)) | 0, 7)) % 1e6).toString().padStart(6, "0");
+  if (vid) {
+    const q = qrcode(0, "M"); q.addData(certUrl(vid)); q.make(); const n = q.getModuleCount(), size = 26, cell = size / n, qx = W - 14 - 6 - size, qy = 22;
+    doc.setFillColor(255, 255, 255); doc.rect(qx - 2, qy - 2, size + 4, size + 4, "F"); doc.setFillColor(20, 23, 27);
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) doc.rect(qx + c * cell, qy + r * cell, cell + 0.02, cell + 0.02, "F");
+    doc.setFont("helvetica", "normal"); doc.setFontSize(7); doc.setTextColor(106, 114, 124); doc.text("Scan to check", qx + size / 2, qy + size + 5, { align: "center" });
+  }
   doc.text(no, W - 70, 165, { align: "center" }); doc.setDrawColor(200, 200, 200); doc.line(40, 168, 100, 168); doc.line(W - 100, 168, W - 40, 168);
   doc.setFillColor(217, 72, 15); doc.circle(W / 2, 166, 11, "F"); doc.setTextColor(255, 255, 255); doc.setFontSize(9); doc.text(all ? "COURSE" : "PASSED", W / 2, 167.2, { align: "center" });
   return doc.output("arraybuffer") as ArrayBuffer;

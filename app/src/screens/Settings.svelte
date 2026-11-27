@@ -14,6 +14,7 @@
   import { NEWS } from "../core/news.svelte";
   import { H } from "../core/haccp.svelte";
   import { S } from "../core/stock.svelte";
+  import { cloud } from "../core/cloud.svelte";
   let showNews = $state(false);
   const VERSION = __APP_VERSION__;
   let ti = $state(Math.max(0, THEMES.findIndex((t) => t[0] === theme.v)));
@@ -61,9 +62,18 @@
       <span><b>Stock and write-offs</b><small>What you have on hand, write-offs with a reason and their value, what to buy for an order. Shows in Kitchen.</small></span></label>
   </section>
 
+  <section class="card pad st">
+    <h2>Account</h2>
+    {#if cloud.signed}<a class="row" href="#account"><Icon name="check" size={18} /><span>{cloud.a.user?.name} · cloud copy, kitchens</span><Icon name="fwd" size={16} /></a>
+    {:else}<p class="note">Optional. Sign in for a cloud copy, a shared kitchen with your team, a live prep board and certificates with a QR. Without it everything works as now.</p>
+      <div><Button href="#account">Sign in</Button></div>{/if}
+    <label class="sw"><input type="checkbox" bind:checked={cloud.a.stats} onchange={() => cloud.save()} />
+      <span><b>Send anonymous usage counts</b><small>Only which screens and tools are opened, with no account, device or person id. Helps decide what to improve.</small></span></label>
+  </section>
+
   <section class="card pad st" id="data">
     <h2>Your data</h2>
-    <p class="note">Everything is saved on this device only. There is no account. Back it up to a file to move to a new phone or to keep it safe.</p>
+    <p class="note">{cloud.signed ? "Saved on this device, and in the cloud when you save a cloud copy." : "Everything is saved on this device only."} Back it up to a file to move to a new phone or to keep it safe.</p>
     <ul class="cnt">{#each counts as [n, t]}<li><b class="num">{n}</b><small>{t}</small></li>{/each}</ul>
     <div class="acts">
       <Button kind="pri" icon="share" onclick={backupAll}>Back up everything</Button>
@@ -84,7 +94,7 @@
     </div>
   </section>
   </div>
-  <p class="note ver">Chefsheet {VERSION} · free, no ads, no account</p>
+  <p class="note ver">Chefsheet {VERSION} · free, no ads, account optional</p>
 </div>
 <style>
   .head { margin: 22px 0 16px; display: grid; gap: 6px; }

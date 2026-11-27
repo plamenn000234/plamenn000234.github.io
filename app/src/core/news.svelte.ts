@@ -12,6 +12,8 @@ export const NEWS: News[] = [
     ["Onboard a new cook", "Learn → For chefs: one link with tests, recipes and a first-week checklist.", "#onboard-new"],
     ["Stock and write-offs", "What you have, write-offs with a reason and value, what to buy for an order. Turn on in Settings.", "#settings"],
     ["Menu engineering", "Tools → Menu engineering: which dishes are stars and which to rework, from your sales.", "#tool-menu"],
+    ["Account, if you want one", "Sign in with Google for a cloud copy, a shared kitchen with roles and a live prep board.", "#account"],
+    ["Community recipes", "Recipes → Community: find recipes other cooks shared, share your own.", "#community"],
     ["Recipes without…", "Filters → Without: hide recipes with mushrooms, pork or anything else.", "#recipes"],
   ] },
 ];
