@@ -4,7 +4,8 @@
   import Button from "../ui/Button.svelte";
   import Seg from "../ui/Seg.svelte";
   import Empty from "../ui/Empty.svelte";
-  import { D, MINE_SLUG, OTHER_SEC, mineList, mineSave, mineRemove, type Mine } from "../core/catalog";
+  import { D, MINE_SLUG, OTHER_SEC, mineList, mineSave, mineRemove, mineDraft, byId, detail, type Mine } from "../core/catalog";
+  import { setNote, noteOf } from "../core/notes.svelte";
   import { ALG } from "../core/constants";
   import { fold } from "../core/util";
   import { favs, recent, ord } from "../core/kitchen.svelte";
@@ -22,11 +23,21 @@
     semi: u ? !!u.semi : semi, y: u?.y || "", st: u?.st || "", steps: (u?.steps || []).join("\n"),
     ing: (u?.ing.length ? u.ing.map((i) => ({ n: String(i[0]), q: i[1] })) : [{ n: "", q: "" }, { n: "", q: "" }, { n: "", q: "" }]) as Row[],
   });
+  // "Make it mine": #new?from=<library recipe id> starts from a copy of that recipe.
+  // svelte-ignore state_referenced_locally
+  const src = !id ? byId.get(router.route.q.get("from") || "") : undefined;
+  let fromName = $state(""), fromId = $state("");
+  if (src && !src.mine) detail(src).then((dd) => {
+    if (!dd?.c?.length) return; const m = mineDraft(src, dd);
+    Object.assign(x, { name: m.name, N: m.N, pg: m.pg || "", kcal: m.kcal || "", diet: m.diet || 0, algs: m.algs, st: m.st || "", steps: m.steps.join("\n"),
+      ing: m.ing.length ? m.ing.map((i) => ({ n: String(i[0]), q: i[1] })) : x.ing });
+    fromName = src.t; fromId = src.id;
+  }).catch(() => toast.show("Could not load the recipe to copy"));
   const k = (s: string) => fold(s).replace(/\s+/g, " ").trim();
   const usedIn = u ? mineList().filter((v) => v.id !== u.id && v.ing.some((i) => k(String(i[0])) === k(u.name))).length : 0;
   const semis = mineList().filter((v) => v.semi && v.id !== id);
   const prods = D.products.filter((p) => p[5] !== "My product");
-  const back = u ? "#r-" + u.id : "#c-" + MINE_SLUG;
+  const back = u ? "#r-" + u.id : src ? "#r-" + src.id : "#c-" + MINE_SLUG;
   let armDel = $state(false);
 
   function save() {
@@ -36,9 +47,10 @@
     const r: Mine = { id: nid, name, N: Math.max(1, Math.round(Number(x.N) || 1)), pg: Number(x.pg) || 0, kcal: Number(x.kcal) || 0, diet: x.diet, algs: [...x.algs].sort((a, b) => a - b),
       ing: x.ing.map((i) => [i.n.trim(), num(i.q)] as [string, number | string]).filter((i) => i[0]),
       steps: x.steps.split("\n").map((s) => s.trim()).filter(Boolean), st: x.st.trim() };
+    const from = u?.from || fromId; if (from) r.from = from;
     if (x.semi) { r.semi = true; const y = num(x.y); if (y) r.y = y as number; }
     if (r.semi && mineList().some((v) => v.id !== nid && v.semi && k(v.name) === k(name))) { toast.show("Another semi-finished recipe has this name"); return; }
-    mineSave(r); toast.show("Recipe saved"); router.go("#r-" + nid);
+    mineSave(r); if (fromId && !id && noteOf(fromId) && !noteOf(nid)) setNote(nid, noteOf(fromId)); toast.show("Recipe saved"); router.go("#r-" + nid);
   }
   function del() {
     if (!u) return;
@@ -51,11 +63,12 @@
   function toggleAlg(n: number) { x.algs = x.algs.includes(n) ? x.algs.filter((a) => a !== n) : [...x.algs, n]; }
 </script>
 <div class="page">
-  <a class="back" href={back}><Icon name="back" size={16} />{u ? u.name : "My recipes"}</a>
+  <a class="back" href={back}><Icon name="back" size={16} />{u ? u.name : src ? src.t : "My recipes"}</a>
   {#if missing}
     <Empty title="Recipe not found">It may have been deleted on this device.<div class="ea"><Button href="#c-{MINE_SLUG}">My recipes</Button></div></Empty>
   {:else}
-    <div class="sub-h"><div><p class="eyebrow">My recipes</p><h1>{u ? "Edit recipe" : x.semi ? "New semi-finished" : "New recipe"}</h1></div></div>
+    <div class="sub-h"><div><p class="eyebrow">My recipes</p><h1>{u ? "Edit recipe" : fromName ? "Make it mine" : x.semi ? "New semi-finished" : "New recipe"}</h1></div></div>
+    {#if fromName}<p class="note from">A copy of <a href="#r-{fromId}">{fromName}</a>. Change grams, steps and serving as you work. The library recipe stays as it is.</p>{/if}
     <p class="note">Saved on this device only. Your recipe works with scaling, orders, prep lists, labels, allergens and food cost.</p>
 
     <section class="card pad ed">

@@ -7,10 +7,12 @@
   import { fmtG } from "../core/util";
   import { router } from "../core/router.svelte";
   import { toast } from "../core/ui.svelte";
+  import { noteOf } from "../core/notes.svelte";
   let { id }: { id: string } = $props();
   const r = $derived(byId.get(id));
   const p = $derived(Math.max(1, Number(router.route.q.get("p")) || r?.N || 1));
   const f = $derived(r ? p / r.N : 1);
+  const note = $derived(noteOf(id));
   let d = $state<Detail | null>(null), i = $state(0), showIng = $state(false), awake = $state(false);
   $effect(() => { const rr = r; if (rr) detail(rr).then((x) => (d = x || { c: [] })).catch(() => (d = { c: [] })); });
   const steps = $derived(d ? d.c.flatMap((c) => c[3].map((s) => ({ comp: d!.c.length > 1 ? c[0] : "", s }))) : []);
@@ -50,7 +52,7 @@
   </header>
   {#if !d}<p class="wait">Loading…</p>
   {:else if showIng}
-    <section class="ing"><h2>Ingredients for {p} portions</h2>
+    <section class="ing">{#if note}<p class="cnote"><span>My notes</span>{note}</p>{/if}<h2>Ingredients for {p} portions</h2>
       <ul>{#each ings as x}<li><span>{x.n}{#if x.comp}<small>{x.comp}</small>{/if}</span><b class="num">{typeof x.q === "number" ? fmtG(x.q * f) : x.q}</b></li>{/each}</ul>
       <button class="back2" onclick={() => (showIng = false)}>Back to the steps</button></section>
   {:else if !steps.length}<p class="wait">This recipe has no method yet.</p>
@@ -59,6 +61,7 @@
     <section class="step" onpointerdown={down} onpointerup={up} role="presentation">
       <p class="n">Step {i + 1} of {steps.length}{steps[i].comp ? " · " + steps[i].comp : ""}</p>
       {#key i}<p class="tx"><Timed text={steps[i].s} ctx={r?.t || ""} /></p>{/key}
+      {#if i === 0 && note}<p class="next cn"><span>My notes</span>{note}</p>{/if}
       {#if steps[i + 1]}<p class="next"><span>Next</span>{steps[i + 1].s}</p>{/if}
     </section>
     <nav class="nav">
@@ -92,5 +95,8 @@
   .ing li { display: flex; justify-content: space-between; gap: 12px; padding: 13px 0; box-shadow: inset 0 -1px 0 var(--hair); font-size: 18px; }
   .ing li span { display: grid; } .ing li small { font-size: 12px; color: var(--muted); } .ing li b { font-weight: 700; white-space: nowrap; }
   .back2 { margin-top: 16px; width: 100%; height: 56px; border: 0; border-radius: 16px; background: var(--pri); color: var(--pri-ink); font-size: 17px; font-weight: 700; }
+  .cnote { margin-bottom: 16px; padding: 14px 16px; border-radius: var(--r-m); background: var(--sunk); font-size: 16px; line-height: 1.45; white-space: pre-wrap; }
+  .cnote span, .cn span { display: block; font-size: 11.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+  .cn { white-space: pre-wrap; box-shadow: inset 3px 0 0 var(--accent); }
   .wait { padding: 40px 24px; color: var(--muted); }
 </style>

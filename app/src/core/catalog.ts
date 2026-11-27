@@ -12,7 +12,7 @@ export interface Recipe {
   mine?: boolean; semi?: boolean; y?: number; semis?: [string, number][];
 }
 export interface Detail { yl?: string; c: [string, string[], [string, number | string][], string[]][]; st?: string; al?: string; nu?: { p?: number[]; h?: number[] } | null }
-export interface Mine { id: string; name: string; N: number; pg?: number; kcal?: number; diet?: number; algs: number[]; ing: [string, number | string][]; steps: string[]; st?: string; semi?: boolean; y?: number; up?: number; updatedAt?: number }
+export interface Mine { id: string; name: string; N: number; pg?: number; kcal?: number; diet?: number; algs: number[]; ing: [string, number | string][]; steps: string[]; st?: string; semi?: boolean; y?: number; up?: number; updatedAt?: number; from?: string }
 
 export const MINE_SLUG = "__mine", OTHER_SEC = "Other (my products)";
 export const D = { v: "", sections: [] as string[], folders: [] as [string, string][], products: [] as Product[] };
@@ -230,4 +230,15 @@ export function mineRestore(text: string) {
     }
     write(KEYS.mine, a); mineSync(); return n;
   } catch { return -1; }
+}
+
+/** A library recipe as a draft of the cook's own recipe ("Make it mine"). Components are flattened, yield lines and component references are left out. */
+export function mineDraft(r: Recipe, d: Detail): Omit<Mine, "id"> {
+  const ing: [string, number | string][] = [], steps: string[] = [], many = d.c.length > 1;
+  const comps = new Set(d.c.map((c) => fold(c[0] || "")).filter(Boolean)); // a component used in another one is already counted by its own lines
+  for (const c of d.c) {
+    for (const x of c[2]) { if (/^(cooked |total )?yield/i.test(x[0]) || /\([A-Z]\)\s*$/.test(x[0]) || (many && comps.has(fold(x[0].replace(/\s*\([^)]*\)\s*$/, ""))))) continue; ing.push([x[0], x[1]]); }
+    for (const st of c[3]) steps.push(many && c[0] ? c[0] + ": " + st : st);
+  }
+  return { name: r.name, N: r.N, pg: r.pu === "g" || !r.pu ? r.pg || 0 : 0, kcal: r.kcal || 0, diet: r.diet || 0, algs: [...r.algs], ing, steps, st: d.st || "", from: r.id };
 }

@@ -19,13 +19,17 @@
   import { router } from "../core/router.svelte";
   import { recipePdf, svcPdf } from "../core/pdfs";
   import { makePdf, fileBase } from "../core/files";
+  import { notes, noteOf, setNote } from "../core/notes.svelte";
   let { id }: { id: string } = $props();
   const r = $derived(byId.get(id));
   let d = $state<Detail | null>(null), err = $state(false);
   let p = $state(1);
+  let editNote = $state(false), draft = $state("");
+  const note = $derived.by(() => { void notes.v; return r ? noteOf(r.id) : ""; });
+  function saveNote() { if (!r) return; setNote(r.id, draft); editNote = false; toast.show(draft.trim() ? "Note saved" : "Note removed"); }
   let got = $state(new Set<string>()), done = $state(new Set<string>());
   $effect(() => {
-    const rr = r; d = null; err = false; got = new Set(); done = new Set();
+    const rr = r; d = null; err = false; got = new Set(); done = new Set(); editNote = false;
     if (!rr) return;
     p = scaleMem.get(rr.id) || rr.N; untrack(() => seen(rr.id));
     detail(rr).then((x) => { if (r === rr) d = x || { c: [] }; }).catch(() => (err = true));
@@ -55,6 +59,7 @@
     if (!r || !d) return "";
     let t = `${r.name}\n${p} portions${r.pg ? " × " + r.pg + " " + (r.pu || "g") : ""}\n`;
     d.c.forEach((c) => { t += `\n${c[0] ? c[0].toUpperCase() + "\n" : ""}`; c[2].forEach((x) => (t += `${x[0]} — ${typeof x[1] === "number" ? fmtG(x[1] * f) : x[1]}\n`)); if (c[3].length) t += "\n" + c[3].map((s, i) => `${i + 1}. ${s}`).join("\n") + "\n"; });
+    if (note) t += `\nNotes: ${note}`;
     if (d.st) t += `\nStorage: ${d.st}`; if (r.algs.length) t += `\nAllergens: ${r.algs.map((a) => ALG[a]).join(", ")}`;
     return t + "\n\nChefsheet";
   }
@@ -84,9 +89,10 @@
     <button class="rb" aria-label="Share" onclick={() => shareText(r.t, text())}><Icon name="share" size={20} /></button>
     <button class="rb" aria-label="Copy" onclick={() => copyText(text(), "Recipe copied")}><Icon name="copy" size={20} /></button>
     <a class="rb cookb" aria-label="Cook mode" title="Cook mode: one step at a time, the screen stays on" href="#cook-{r.id}?p={p}"><Icon name="flame" size={20} /></a>
-    <button class="rb" aria-label="PDF" title="PDF for {p} portions" onclick={() => makePdf(fileBase(r.t) + "_" + p + "p.pdf", async () => (d ? recipePdf(r, d, p) : null))}><Icon name="pdf" size={20} /></button>
+    <button class="rb" aria-label="PDF" title="PDF for {p} portions" onclick={() => makePdf(fileBase(r.t) + "_" + p + "p.pdf", async () => (d ? recipePdf(r, d, p, note) : null))}><Icon name="pdf" size={20} /></button>
     <button class="rb" aria-label="Service card" title="Service card for the front of house" onclick={() => makePdf("Service_Card_" + fileBase(r.t) + ".pdf", () => svcPdf([r]))}><Icon name="cook" size={20} /></button>
-    {#if r.mine}<a class="rb" aria-label="Edit" href="#edit-{r.id}"><Icon name="edit" size={20} /></a>{/if}
+    {#if r.mine}<a class="rb" aria-label="Edit" href="#edit-{r.id}"><Icon name="edit" size={20} /></a>
+    {:else}<a class="rb" aria-label="Make it mine" title="Make it mine: a copy you can edit" href="#new?from={r.id}"><Icon name="edit" size={20} /></a>{/if}
   </div>
 
   <section class="bench" aria-label="Tools for this recipe">
@@ -105,6 +111,17 @@
     <span class="fx note">× {(Math.round(f * 100) / 100).toLocaleString("en")} of the base batch</span>
   </div>
 
+  <section class="card notes" aria-label="My notes">
+    {#if editNote}
+      <label class="tf"><span>My notes</span><!-- svelte-ignore a11y_autofocus --><textarea rows="4" bind:value={draft} maxlength="2000" autofocus placeholder="e.g. We plate it on a 28 cm plate. Less salt for the banquet."></textarea></label>
+      <div class="na"><Button small kind="pri" icon="check" onclick={saveNote}>Save note</Button><Button small onclick={() => (editNote = false)}>Cancel</Button></div>
+    {:else if note}
+      <div class="nh"><span class="eyebrow">My notes</span><button class="ne" onclick={() => { draft = note; editNote = true; }}>Edit</button></div>
+      <p class="nt">{note}</p>
+    {:else}
+      <button class="nadd" onclick={() => { draft = ""; editNote = true; }}><Icon name="edit" size={16} />Add a note for your kitchen</button>
+    {/if}
+  </section>
   {#if err}<p class="note pad">Could not load this recipe. Check your connection and open it again.</p>
   {:else if !d}<div class="skel"></div>
   {:else if !d.c.length}<Empty title="This recipe card is not finished yet">Ingredients and method will be added in an update.</Empty>
@@ -144,6 +161,12 @@
 </article>
 {/if}
 <style>
+  .notes { margin-top: 12px; padding: 12px 16px; display: grid; gap: 10px; }
+  .nh { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .nt { white-space: pre-wrap; font-size: 15px; line-height: 1.5; color: var(--ink); }
+  .ne, .nadd { border: 0; background: transparent; color: var(--accent); font: 600 14px var(--f-body, inherit); padding: 4px 0; display: inline-flex; align-items: center; gap: 6px; justify-self: start; }
+  .na { display: flex; gap: 8px; }
+  .notes textarea { width: 100%; }
   .back { display: inline-flex; align-items: center; gap: 4px; font-size: 14px; color: var(--ink-2); margin: 16px 0 4px; padding: 6px 12px 6px 8px; border-radius: 999px; background: var(--surface); box-shadow: var(--sh-1); }
   .hd { display: grid; justify-items: center; text-align: center; gap: 8px; padding: 8px 0 4px; max-width: 680px; margin: 0 auto; }
   .art { width: 220px; height: 220px; display: grid; place-items: center; border-radius: 50%; margin-bottom: 8px;
