@@ -368,6 +368,13 @@ table.mx td.y{color:var(--warn);font-weight:800}
 .ed-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
 .ed .filters{flex-wrap:wrap}
 .ed-acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.rtools{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.rtools .btn{height:36px;padding:0 12px;font-size:13px}
+.sh-acts .btn.keep .bl{display:inline!important}
+.tool[hidden]{display:none!important}
+.tool.fav{outline:2px solid var(--mark);outline-offset:-2px}
+.tool .ts{margin-left:auto;color:var(--mark)}
+.tfor{display:inline-flex;gap:6px;align-items:center;margin-top:8px;font-size:12.5px;font-weight:700;background:rgba(255,255,255,.22);padding:4px 10px;border-radius:999px}
 .sup-h{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .sup-acts{display:flex;gap:6px;flex-wrap:wrap}
 .sup-acts .btn{height:34px;padding:0 12px;font-size:13px}
@@ -861,7 +868,7 @@ function renderSheet(r,d){
       <p class="note-line">Tap an ingredient or a step to tick it off. Tap a time to start a timer.</p></div>
     <div class="col"><h2 class="mh">Method</h2>
       ${d.c.map((c,ci)=>c[3].length?`<div class="comp">${d.c.length>1?`<h3>${esc(c[0])}</h3>`:""}<ol class="steps">${c[3].map((s,i)=>`<li class="${ticks.st.has(ci+":"+i)?"done":""}" data-st="${ci}:${i}"><span>${tmHtml(esc(s))}</span></li>`).join("")}</ol></div>`:"").join("")}</div></div>
-    <div class="facts">${costBox(r,f)}<div><h4>Storage</h4><p>${esc(d.st||"Not stated.")}</p></div>
+    <div class="facts">${costBox(r,f)}${d.c.length?rtoolsHtml(r):""}<div><h4>Storage</h4><p>${esc(d.st||"Not stated.")}</p></div>
       <div><h4>Allergens</h4>${r.algs.length?`<div class="alist">${r.algs.map(a=>`<div><span class="al">${a}</span>${ALG[a]}</div>`).join("")}</div>${d.al?`<p style="margin-top:8px;font-size:12.5px;color:var(--muted)">${esc(d.al)}</p>`:""}`:`<p>No allergens from the list of 14.</p>`}</div>
       ${nut?`<div><h4>Nutrition</h4><table class="nut"><thead><tr><th></th><th>Protein</th><th>Fat</th><th>Carbs</th><th>kcal</th></tr></thead><tbody>
       <tr><td>Portion</td>${nut.p.map(v=>`<td>${v}</td>`).join("")}</tr>${nut.h?`<tr><td>100 g</td>${nut.h.map(v=>`<td>${v}</td>`).join("")}</tr>`:""}</tbody></table></div>`:""}</div>
@@ -884,6 +891,16 @@ function setCur(c){const x=CURS.find(y=>y[0]===c);if(!x)return;CURC=c;CUR=x[1];l
 function priceOf(pi){const v=prices[D.products[pi][0]];return typeof v==="number"&&v>0?v:null}
 function recipeCost(r){let sum=0,n=0;for(const [pi,g] of r.lines){const pr=D.products[pi],pv=priceOf(pi);if(pv!=null){sum+=g*pr[3]/pr[4]*pv;n++}}return {sum,n,of:r.lines.length}}
 const money=v=>CUR+" "+(Math.round(v*100)/100).toFixed(2);
+function batchG(r,d,f){let tot=0,yl=null;(d&&d.c||[]).forEach(c=>c[2].forEach(x=>{if(typeof x[1]!=="number")return;if(/^(cooked |total )?yield/i.test(x[0])){yl=(yl||0)+x[1];return}if(/\([A-Z]\)\s*$/.test(x[0]))return;tot+=x[1]}));return {raw:Math.round(tot*f),cooked:r.pg&&(!r.pu||r.pu==="g")?Math.round(r.pg*scale.p):(d&&d.c.length===1&&yl!=null?Math.round(yl*f):null)}}
+function rtoolsHtml(r){return `<div><h4>Kitchen tools</h4><p style="font-size:12.5px;color:var(--muted)">Open a calculator with this batch already filled in.</p><div class="rtools">
+  <button class="btn" data-rtool="salt">${msI("grain")}Salt</button><button class="btn" data-rtool="yield">${msI("scale")}Yield</button><button class="btn" data-rtool="sousvide">${msI("water_drop")}Sous-vide</button><button class="btn" data-rtool="cost">${msI("euro")}Menu price</button></div></div>`}
+function openToolFor(tool,r,d){const f=scale.p/r.N,b=batchG(r,d,f),c=recipeCost(r);
+  TS[tool]=TS[tool]||{};const s=TS[tool];
+  if(tool==="salt"){s.m=1;s.i=0;s.w=b.cooked||b.raw||1000}
+  if(tool==="yield"){s.raw=b.raw||1000;s.need=""}
+  if(tool==="sousvide"){s.w=b.raw||1000}
+  if(tool==="cost"){if(c.n)s.c=Math.round(c.sum*100)/100}
+  s.from=r.id;s.fromLabel=r.t+" · "+scale.p+" portions";location.hash="#tool-"+tool}
 function costBox(r,f){if(!r.lines.length)return"";const c=recipeCost(r);
   return `<div><h4>Food cost</h4>${c.n?`<p><span class="cost">${money(c.sum)}</span> per portion · ${money(c.sum*scale.p)} for ${scale.p}</p><p style="margin-top:6px;font-size:12.5px;color:var(--muted)">${c.n<c.of?`Prices set for ${c.n} of ${c.of} products, so the real cost is higher. `:""}Gross as-bought quantities.</p>`:`<p style="color:var(--muted)">Add your product prices to see the cost per portion.</p>`}<p style="margin-top:8px"><a href="#prices-${r.id}">${c.n?"Edit prices":"Set prices"}</a></p></div>`}
 
@@ -1219,6 +1236,8 @@ const TOOLS=[
   ["buffet","Buffet planner","room_service","Guests × grams × K"],
   ["cost","Food cost & price","euro","Price from cost and target %"],
   ["glossary","Kitchen glossary","translate","EN · BG · RU terms"]];
+let toolFavs=lsGet("bb-toolfav",[]);
+const TOOLKW={doneness:"steak temperature core rare medium well rest probe",sousvide:"water bath vacuum bag low temperature",salt:"brine cure seasoning percent",yield:"loss shrink raw cooked trim weight",bakers:"bread pizza pasta dough flour hydration",buffet:"guests grams per person banquet quantity",cost:"food cost menu price margin vat profit",glossary:"translate bulgarian russian terms dictionary"};
 const toolName=id=>(TOOLS.find(t=>t[0]===id)||[id,id])[1];
 function learnShell(inner){return inner}
 async function withLearn(fn){
@@ -1241,8 +1260,10 @@ function viewLearn(){withLearn(()=>{
     <div class="sec"><div class="sec-h"><h2>Modules</h2><small>${LD.mods.length} modules</small></div><div class="mods">
     ${LD.mods.map(m=>{const d=modDone(m),q=LP.quiz[m.id];return `<a class="mod" href="#m-${m.id}" style="--h:${m.h}"><span class="mi">${msI(m.ic,1)}</span><span class="mt"><small>Module ${m.n}</small><b>${esc(m.t)}</b>
       <span class="mm">${m.L.length} lessons${q&&q.pass?` · ${msI("workspace_premium",1)}test ${q.best}%`:""}</span>${pbar(d,m.L.length)}</span></a>`}).join("")}</div></div>
-    <div class="sec"><div class="sec-h"><h2>Kitchen tools</h2><small>Interactive tables</small></div><div class="tools">
-    ${TOOLS.map(t=>`<a class="tool" href="#tool-${t[0]}">${msI(t[2],1)}<span><b>${t[1]}</b><small>${t[3]}</small></span></a>`).join("")}</div></div>
+    <div class="sec" id="tools-sec"><div class="sec-h"><h2>Kitchen tools</h2><small>${toolFavs.length?toolFavs.length+" pinned":"Pin the ones you use"}</small></div>
+    <label class="fld" style="margin-bottom:10px"><span>Find a tool</span><input id="tool-q" type="search" placeholder="e.g. salt, brine, yield, price" autocomplete="off"></label><div class="tools">
+    ${[...TOOLS].sort((a,b)=>(toolFavs.includes(b[0])?1:0)-(toolFavs.includes(a[0])?1:0)).map(t=>`<a class="tool ${toolFavs.includes(t[0])?"fav":""}" href="#tool-${t[0]}" data-tk="${esc(fold(t[1]+" "+t[3]+" "+(TOOLKW[t[0]]||"")))}">${msI(t[2],1)}<span><b>${t[1]}</b><small>${t[3]}</small></span>${toolFavs.includes(t[0])?`<span class="ts">${ICON.starOn}</span>`:""}</a>`).join("")}</div>
+    <p class="note-line" id="tool-none" hidden>No tool matches. Try another word.</p></div>
     <p class="note-line">Progress and test results are saved on this device.</p>`;
 })}
 function viewModule(id){withLearn(()=>{
@@ -1366,7 +1387,9 @@ function toolBody(id){
 }
 function viewTool(id){withLearn(()=>{
   const t=TOOLS.find(x=>x[0]===id); if(!t){location.hash="learn";return}
-  $("main").innerHTML=`<a class="back" href="#learn">${ICON.back}Learn</a><article class="sheet"><div class="sh-head" style="--h:${MH[TOOLS.indexOf(t)%MH.length]}"><div><div class="crumb">Kitchen tool</div><h1>${t[1]}</h1><div class="sub">${t[3]}</div></div><span class="plate">${msI(t[2],1)}</span></div>
+  const st=TS[id]||{}, fr=st.from&&byId.get(st.from), tf=toolFavs.includes(id);
+  $("main").innerHTML=`<a class="back" href="${fr?"#r-"+fr.id:"#learn"}">${ICON.back}${fr?esc(fr.t):"Learn"}</a><article class="sheet"><div class="sh-head" style="--h:${MH[TOOLS.indexOf(t)%MH.length]}"><div><div class="crumb">Kitchen tool</div><h1>${t[1]}</h1><div class="sub">${t[3]}</div>${fr?`<span class="tfor">${msI("restaurant")}For ${esc(st.fromLabel||fr.t)}</span>`:""}
+  <div class="sh-acts" style="margin-top:10px"><button class="btn fav keep ${tf?"on":""}" id="tool-fav" aria-pressed="${tf}">${tf?ICON.starOn:ICON.star}<span class="bl">${tf?"Pinned":"Pin to top"}</span></button></div></div><span class="plate">${msI(t[2],1)}</span></div>
   <div class="lbody" id="tool-body">${toolBody(id)}</div></article>`;
 })}
 function refreshTool(soft){const id=(location.hash||"").slice(6);const b=$("tool-body");if(!b)return;
@@ -1474,6 +1497,8 @@ function bind(){
     if(t.id==="o-mx"){const b=mxPdf();if(!b){toast("PDF tool did not load");return}saveFile("Allergen_Matrix_"+fileBase(ord.name||"menu")+(ord.date?"_"+ord.date:"")+".pdf",b);return}
     if(t.id==="p-lbl"){labelsPdf().then(b=>{if(!b){toast("PDF tool did not load");return}saveFile("Labels_"+fileBase(ord.name||"prep")+"_"+new Date().toISOString().slice(0,10)+".pdf",b)});return}
     if(t.id==="o-menu"){saveMenu();return}
+    if(t.dataset.rtool){const r=byId.get(scale.id);if(!r)return;detail(r).then(d=>openToolFor(t.dataset.rtool,r,d));return}
+    if(t.id==="tool-fav"){const id=(location.hash||"").slice(6);toolFavs=toolFavs.includes(id)?toolFavs.filter(x=>x!==id):[id,...toolFavs];lsSet("bb-toolfav",toolFavs);toast(toolFavs.includes(id)?"Pinned to the top of Kitchen tools":"Unpinned");viewTool(id);return}
     if(t.dataset.ordby){ordBy=t.dataset.ordby;refreshTicket();return}
     if(t.dataset.supshare!=null){const g=supGroups(compute())[+t.dataset.supshare];if(g)shareText("Order"+(g.s?" for "+g.s.name:""),supText(g));return}
     if(t.id==="sp-add"){const n=$("sp-name").value.trim();if(!n){toast("Add a supplier name");$("sp-name").focus();return}sup.list.push({id:"s"+Date.now().toString(36),name:n,phone:$("sp-phone").value.trim()});supSave();viewSuppliers();toast("Supplier added");return}
@@ -1564,6 +1589,7 @@ function bind(){
     if(t.dataset&&t.dataset.tool!=null&&t.tagName==="INPUT"){toolInput(t);clearTimeout(bind._tt);const soft=t.type!=="search";bind._tt=setTimeout(()=>refreshTool(soft),soft?150:120)}
     if(t.id==="cert-name"){LP.name=t.value.trim();saveLP()}
     if(t.dataset&&t.dataset.price!=null){const v=parseFloat(String(t.value).replace(",","."));if(isFinite(v)&&v>0)prices[t.dataset.price]=v;else delete prices[t.dataset.price];lsSet("bb-prices",prices)}
+    if(t.id==="tool-q"){const q=fold(t.value.trim());let n=0;document.querySelectorAll("#tools-sec .tool").forEach(a=>{const ok=!q||q.split(/\s+/).every(w=>a.dataset.tk.includes(w));a.hidden=!ok;if(ok)n++});$("tool-none").hidden=n>0}
     if(t.id==="pr-q"){prQ=t.value;clearTimeout(bind._pq);bind._pq=setTimeout(()=>{const pos=t.selectionStart;viewPrices((location.hash||"").slice(8));const n=$("pr-q");if(n){n.focus();try{n.setSelectionRange(pos,pos)}catch(e){}}},150)}});
 }
 
