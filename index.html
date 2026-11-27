@@ -647,7 +647,6 @@ body.cook .sh-head h1{font-size:clamp(24px,3.4vw,34px)}
 }
 </style>
 </head><body>
-<div id="ill-defs"></div>
 <header class="top">
   <a class="logo" href="#" aria-label="Chefsheet home"><span class="lg"><span class="ms f">skillet</span></span><b>Chefsheet</b></a>
   <div class="search" role="search">
@@ -1426,7 +1425,6 @@ let theme=lsGet("bb-theme","auto");
 function applyTheme(){const t=THEMES.find(x=>x[0]===theme)||THEMES[0];if(t[0]==="auto")document.documentElement.removeAttribute("data-theme");else document.documentElement.setAttribute("data-theme",t[0]);
   const b=$("theme-btn");if(b){b.innerHTML=msI(t[1]);b.setAttribute("aria-label",t[2])}}
 applyTheme();
-{const e=document.getElementById("ill-defs");if(e)e.outerHTML=ILLDEFS}
 const toolName=id=>(TOOLS.find(t=>t[0]===id)||[id,id])[1];
 function learnShell(inner){return inner}
 async function withLearn(fn){
