@@ -1,5 +1,5 @@
 // Hash routes. 2.x links (#r-…, #quiz-…, #tool-…, #order, #fav …) keep working.
-export type Tab = "today" | "tools" | "kitchen" | "recipes" | "learn";
+export type Tab = "today" | "tools" | "kitchen" | "recipes" | "learn" | "app";
 export interface Route { tab: Tab; view: string; arg: string; q: URLSearchParams }
 
 const REDIRECT: Record<string, string> = { "#order": "#kitchen", "#orders": "#kitchen-saved", "#fav": "#recipes-fav", "#home": "#today", "#browse": "#recipes" };
@@ -23,8 +23,11 @@ export function parse(h: string): Route {
   if ((a = m("#edit-")) != null) return { tab: "recipes", view: "editor", arg: a, q };
   if (h === "#recipes") return { tab: "recipes", view: "recipes", arg: "", q };
   if (h === "#recipes-fav") return { tab: "recipes", view: "recipes", arg: "fav", q };
+  if (h === "#recipes-have") return { tab: "recipes", view: "recipes", arg: "have", q };
   if ((a = m("#c-")) != null) return { tab: "recipes", view: "recipes", arg: "c:" + a, q };
+  if ((a = m("#cook-")) != null) return { tab: "recipes", view: "cook", arg: a, q };
   if ((a = m("#r-")) != null) return { tab: "recipes", view: "recipe", arg: a, q };
+  if (h === "#settings") return { tab: "app", view: "settings", arg: "", q };
   if (h === "#learn") return { tab: "learn", view: "learn", arg: "", q };
   if (h === "#review") return { tab: "learn", view: "review", arg: "", q };
   if ((a = m("#m-")) != null) return { tab: "learn", view: "module", arg: a, q };
