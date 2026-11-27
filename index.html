@@ -368,6 +368,12 @@ table.mx td.y{color:var(--warn);font-weight:800}
 .ed-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
 .ed .filters{flex-wrap:wrap}
 .ed-acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.sup-h{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.sup-acts{display:flex;gap:6px;flex-wrap:wrap}
+.sup-acts .btn{height:34px;padding:0 12px;font-size:13px}
+.tk-it select{max-width:120px;height:30px;border:1px solid var(--line);border-radius:10px;background:var(--sunk);font-size:12px;margin-left:6px}
+.sp-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 40px;gap:6px;align-items:center;margin-top:6px}
+.sp-row input{height:44px;border:1px solid var(--line);border-radius:14px;background:var(--sunk);padding:0 12px;width:100%;min-width:0;font:inherit;font-weight:600;color:inherit}
 .mine-bar{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 4px}
 @media (max-width:600px){
   .logo b{display:none}
@@ -844,7 +850,7 @@ function renderSheet(r,d){
     <div class="strip"><div><small>Base batch</small><b>${r.N} portions</b></div><div><small>Portion</small><b>${esc(portion)}</b></div>${r.kcal?`<div><small>Energy</small><b>${r.kcal} kcal</b></div>`:""}<div><small>Allergens</small><b>${r.algs.length?r.algs.map(a=>ALG[a]).join(", "):"none"}</b></div>${r.diet?`<div><small>Diet</small><b>${r.diet===2?"Vegan":"Vegetarian"}</b></div>`:""}</div>
     <div class="sh-acts"><button class="btn pri" data-add="${r.id}">${io?ICON.check+'<span class="bl">In the order</span>':ICON.plus+'<span class="bl">Add to order</span>'}</button>
     <button class="btn fav ${fav?"on":""}" data-fav="${r.id}" aria-pressed="${fav}" aria-label="Favourite">${fav?ICON.starOn:ICON.star}<span class="bl">${fav?"Saved":"Favourite"}</span></button>
-    <button class="btn ${cook.on?"on":""}" id="r-cook" aria-pressed="${cook.on}" aria-label="Cook mode">${msI("cooking")}<span class="bl">Cook mode</span></button><button class="btn" id="r-share" aria-label="Share">${msI("share")}<span class="bl">Share</span></button><button class="btn" id="r-copy" aria-label="Copy">${ICON.copy}<span class="bl">Copy</span></button><button class="btn" id="r-pdf" aria-label="PDF">${ICON.pdf}<span class="bl">PDF</span></button>${r.mine?`<a class="btn" href="#edit-${r.id}" aria-label="Edit">${msI("edit")}<span class="bl">Edit</span></a><button class="btn" id="r-del" aria-label="Delete">${msI("delete")}<span class="bl">Delete</span></button>`:`<a class="btn" href="${reportHref(r)}" aria-label="Report a problem">${msI("flag")}<span class="bl">Report a problem</span></a>`}</div></div>${plate(r.ty)}</div>
+    <button class="btn ${cook.on?"on":""}" id="r-cook" aria-pressed="${cook.on}" aria-label="Cook mode">${msI("cooking")}<span class="bl">Cook mode</span></button><button class="btn" id="r-share" aria-label="Share">${msI("share")}<span class="bl">Share</span></button><button class="btn" id="r-copy" aria-label="Copy">${ICON.copy}<span class="bl">Copy</span></button><button class="btn" id="r-pdf" aria-label="PDF">${ICON.pdf}<span class="bl">PDF</span></button><button class="btn" id="r-svc" aria-label="Service card">${msI("room_service")}<span class="bl">Service card</span></button>${r.mine?`<a class="btn" href="#edit-${r.id}" aria-label="Edit">${msI("edit")}<span class="bl">Edit</span></a><button class="btn" id="r-del" aria-label="Delete">${msI("delete")}<span class="bl">Delete</span></button>`:`<a class="btn" href="${reportHref(r)}" aria-label="Report a problem">${msI("flag")}<span class="bl">Report a problem</span></a>`}</div></div>${plate(r.ty)}</div>
     <div class="scaler"><label for="sc-p">Portions</label><div class="stepper"><button data-step="-1" aria-label="Fewer portions">−</button><input id="sc-p" type="number" inputmode="numeric" min="1" max="5000" value="${scale.p}"><button data-step="1" aria-label="More portions">+</button></div>
     <div class="quick">${quick.map(q=>`<button data-qp="${q}" aria-pressed="${scale.p===q}">${q}</button>`).join("")}</div>
     <span class="fx">× ${(Math.round(f*100)/100).toLocaleString("en")} of the base batch</span></div>
@@ -938,13 +944,14 @@ function viewOrder(){
     <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="o-menu">${msI("restaurant_menu")}Save as menu</button><button class="btn" id="o-new">New order</button></div>`:menus().length?`<div style="margin-top:12px"><a class="btn" href="#orders">${msI("restaurant_menu")}Start from a saved menu</a></div>`:""}</section>
     <aside class="panel ticket"><div class="tk-h"><h2>Order list</h2>${ord.sid?`<span class="mono" style="font-size:11px;color:var(--muted)">saved</span>`:""}</div>
     <div class="tk-sum">${ord.lines.length} dishes · ${c.count} products · gross, rounded up${c.miss.length?` · <span style="color:var(--warn)">${c.miss.length} not counted</span>`:""}</div>
-    <div class="tk-scroll">${c.count?c.secs.map((s,i)=>s.length?`<div class="tk-sec"><h4>${esc(D.sections[i])}</h4>${s.map(it=>`<div class="tk-it"><span>${esc(it.name)}${it.note?`<small>${esc(it.note)}</small>`:""}</span><b>${fmtQ(it.q)} ${esc(it.unit)}</b></div>`).join("")}</div>`:"").join(""):`<p style="color:var(--muted);margin:0">Products appear here as you add dishes.</p>`}</div>
+    ${c.count?`<div class="seg" style="margin:0 0 10px"><button data-ordby="sec" aria-pressed="${ordBy==="sec"}">By section</button><button data-ordby="sup" aria-pressed="${ordBy==="sup"}">By supplier</button></div>`:""}
+    <div class="tk-scroll">${c.count&&ordBy==="sup"?supTicket(c):c.count?c.secs.map((s,i)=>s.length?`<div class="tk-sec"><h4>${esc(D.sections[i])}</h4>${s.map(it=>`<div class="tk-it"><span>${esc(it.name)}${it.note?`<small>${esc(it.note)}</small>`:""}</span><b>${fmtQ(it.q)} ${esc(it.unit)}</b></div>`).join("")}</div>`:"").join(""):`<p style="color:var(--muted);margin:0">Products appear here as you add dishes.</p>`}</div>
     ${c.algs.length?`<div class="tk-al">Allergens in this menu: ${c.algs.map(a=>ALG[a]).join(", ")}</div>`:""}
     ${c.count?`<div class="tk-al">${c.cost.n?`Food cost: <span class="cost">${money(c.cost.sum)}</span>${Number(ord.pax)>0?` · ${money(c.cost.sum/Number(ord.pax))} per guest`:""}${c.cost.n<c.count?` · prices for ${c.cost.n} of ${c.count} products`:""}`:`No prices yet.`} <a href="#prices">${c.cost.n?"Edit prices":"Add prices"}</a></div>`:""}
     <div class="tk-acts"><button class="btn pri" id="o-save" ${ord.lines.length?"":"disabled"}>${ord.sid?"Update saved order":"Save order"}</button>
     <button class="btn" id="o-copy" ${c.count?"":"disabled"}>${ICON.copy}Copy</button><button class="btn" id="o-pdf" ${c.count?"":"disabled"}>${ICON.pdf}PDF</button>
     <button class="btn" id="o-share" ${c.count?"":"disabled"}>${msI("share")}Share</button><button class="btn" id="o-csv" ${c.count?"":"disabled"}>CSV</button>
-    <a class="btn" href="#prep" ${ord.lines.length?"":'aria-disabled="true" style="pointer-events:none;opacity:.5"'}>${msI("checklist")}Prep list</a><button class="btn" id="o-mx" ${ord.lines.length?"":"disabled"}>${msI("health_and_safety")}Allergen matrix</button></div>
+    <a class="btn" href="#prep" ${ord.lines.length?"":'aria-disabled="true" style="pointer-events:none;opacity:.5"'}>${msI("checklist")}Prep list</a><button class="btn" id="o-mx" ${ord.lines.length?"":"disabled"}>${msI("health_and_safety")}Allergen matrix</button><button class="btn" id="o-svc" ${ord.lines.length?"":"disabled"}>${msI("room_service")}Service cards</button></div>
     <p class="note-line">Gross (as-bought) quantities from the recipe net weights with standard trim losses. Deduct your stock on hand. Deep-frying oil is not included.</p></aside></div>`;
 }
 function mxDishes(){return ord.lines.map(l=>byId.get(l.id)).filter(Boolean)}
@@ -1008,6 +1015,24 @@ async function labelsPdf(){const P=await prepData();const doc=pdfDoc();if(!doc)r
     doc.setFont("helvetica","normal");if(l.sh.temp){doc.text(pdfSafe("Store: "+l.sh.temp),x+4,ty+0.6);ty+=4.4}
     doc.setFontSize(7.8);doc.setTextColor(192,57,43);doc.text(doc.splitTextToSize(pdfSafe("Allergens: "+l.al),LW-8).slice(0,2),x+4,ty+0.6);doc.setTextColor(21,32,26)});
   return doc.output("arraybuffer")}
+function svcIngr(d){const seen=new Set(),out=[];(d&&d.c||[]).forEach(c=>c[2].forEach(x=>{const n=String(x[0]).trim();if(!n||/^(cooked |total )?yield/i.test(n)||/\([A-Z]\)\s*$/.test(n)||/^(water|ice|salt)\b/i.test(n))return;const k=fold(n.replace(/\s*\([^)]*\)/g,"").split(",")[0]);if(seen.has(k))return;seen.add(k);out.push(n.replace(/\s*\([^)]*\)/g,"").split(",")[0].trim())}));return out}
+function svcCard(doc,r,d,top){const W=210,M=16,H=148.5;let y=top+16;
+  doc.setTextColor(23,101,74);doc.setFont("helvetica","bold");doc.setFontSize(8.5);doc.text(pdfSafe((D.folders[r.f][0]+(r.sub?" / "+r.sub:"")).toUpperCase()),M,y);y+=8;
+  doc.setTextColor(21,32,26);doc.setFontSize(20);const tl=doc.splitTextToSize(pdfSafe(r.t),W-2*M).slice(0,2);doc.text(tl,M,y);y+=tl.length*7.5;
+  if(r.s){doc.setFont("helvetica","normal");doc.setFontSize(11);doc.setTextColor(90,106,96);const sl=doc.splitTextToSize(pdfSafe(r.s),W-2*M).slice(0,2);doc.text(sl,M,y);y+=sl.length*5+1}
+  doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(21,32,26);
+  const facts=[r.diet===2?"Vegan":r.diet===1?"Vegetarian":"",r.pg?"Portion "+r.pg+" "+(r.pu||"g"):"",r.kcal?r.kcal+" kcal per portion":""].filter(Boolean).join("   |   ");
+  if(facts){doc.text(pdfSafe(facts),M,y+1);y+=8}
+  const al=r.algs.length?r.algs.map(a=>ALG[a]).join(", "):"";
+  doc.setFillColor(r.algs.length?253:233,r.algs.length?236:244,r.algs.length?234:238);const al2=doc.splitTextToSize(pdfSafe(al||"No allergens from the list of 14"),W-2*M-8);const bh=8+al2.length*5.6;doc.roundedRect(M,y-2,W-2*M,bh,2.5,2.5,"F");
+  doc.setFont("helvetica","bold");doc.setFontSize(8.5);doc.setTextColor(r.algs.length?192:23,r.algs.length?57:101,r.algs.length?43:74);doc.text("ALLERGENS",M+4,y+3.4);doc.setFontSize(12.5);doc.text(al2,M+4,y+9.2);y+=bh+5;
+  const ing=svcIngr(d);if(ing.length){doc.setTextColor(21,32,26);doc.setFont("helvetica","bold");doc.setFontSize(8.5);doc.text("CONTAINS",M,y);y+=4.6;doc.setFont("helvetica","normal");doc.setFontSize(10);const il=doc.splitTextToSize(pdfSafe(ing.join(", ")),W-2*M);const room=Math.max(1,Math.floor((top+H-34-y)/4.6));doc.text(il.slice(0,room),M,y);y+=Math.min(il.length,room)*4.6+3}
+  doc.setFont("helvetica","bold");doc.setFontSize(8.5);doc.setTextColor(21,32,26);const ny=Math.max(y+2,top+H-28);doc.text("NOTES FOR SERVICE",M,ny);doc.setDrawColor(200,208,202);[0,1].forEach(i=>doc.line(M,ny+7+i*7,W-M,ny+7+i*7));
+  doc.setFont("helvetica","normal");doc.setFontSize(7);doc.setTextColor(120,120,120);doc.text("Allergens from the listed ingredients. Ask the kitchen about cross-contact. Made with Chefsheet.",M,top+H-6)}
+async function svcPdf(list){const doc=pdfDoc();if(!doc)return null;
+  for(let i=0;i<list.length;i++){const r=list[i];let d=null;try{d=await detail(r)}catch(e){}
+    if(i&&i%2===0)doc.addPage();const top=i%2?148.5:0;if(i%2){doc.setDrawColor(190,190,190);doc.setLineDashPattern([2,2],0);doc.line(8,148.5,202,148.5);doc.setLineDashPattern([],0)}svcCard(doc,r,d,top)}
+  return doc.output("arraybuffer")}
 async function prepPdf(){const P=await prepData();const doc=pdfDoc();if(!doc)return null;const W=210,M=14;let y=16;const page=h=>{if(y+(h||0)>284){doc.addPage();y=16}};
   doc.setFont("helvetica","bold");doc.setFontSize(16);doc.setTextColor(21,32,26);doc.text(pdfSafe("Prep list"+(ord.name?" - "+ord.name:"")),M,y);y+=6;
   doc.setFont("helvetica","normal");doc.setFontSize(9.5);doc.setTextColor(110,110,110);doc.text(pdfSafe(`${ord.date||"no date"}  |  ${ord.pax} guests  |  reserve ${ord.reserve}%`),M,y);y+=8;doc.setTextColor(21,32,26);
@@ -1043,6 +1068,27 @@ function orderText(c){let t=`ORDER LIST${ord.name?" · "+ord.name:""}\n${ord.dat
   if(c.algs.length)t+=`\nAllergens: ${c.algs.map(a=>a+" "+ALG[a]).join(", ")}`;
   if(c.miss.length)t+=`\nNot counted (no product data yet): ${c.miss.join(", ")}`;
   if(c.cost.n)t+=`\nFood cost: ${money(c.cost.sum)}${c.cost.n<c.count?` (prices for ${c.cost.n} of ${c.count} products)`:""}`;return t}
+/* ---------- suppliers ---------- */
+let sup=lsGet("bb-sup",{list:[],map:{}});if(!sup||!Array.isArray(sup.list))sup={list:[],map:{}};if(!sup.map)sup.map={};
+let ordBy="sec";
+function supSave(){lsSet("bb-sup",sup)}
+function supOf(name){const id=sup.map[name];return sup.list.find(x=>x.id===id)||null}
+function supGroups(c){const g=new Map();sup.list.forEach(x=>g.set(x.id,{s:x,items:[]}));const none={s:null,items:[]};
+  c.secs.forEach(sec=>sec.forEach(it=>{const x=supOf(it.name);(x?g.get(x.id):none).items.push(it)}));
+  const out=[...g.values()].filter(x=>x.items.length);if(none.items.length)out.push(none);out.forEach(x=>x.items.sort((a,b)=>a.name.localeCompare(b.name)));return out}
+function supText(grp){let t=`Order${grp.s?" for "+grp.s.name:""}${ord.name?" · "+ord.name:""}\n${ord.date?"Delivery: "+ord.date+"\n":""}\n`;grp.items.forEach(it=>t+=`${it.name} — ${fmtQ(it.q)} ${it.unit}\n`);return t+"\nThank you!"}
+function supPhone(p){return String(p||"").replace(/[^\d]/g,"")}
+function supTicket(c){const G=supGroups(c);
+  return G.map((grp,gi)=>`<div class="tk-sec"><div class="sup-h"><h4>${esc(grp.s?grp.s.name:"No supplier")} · ${grp.items.length}</h4>${grp.s?`<span class="sup-acts"><a class="btn" href="https://wa.me/${supPhone(grp.s.phone)}?text=${encodeURIComponent(supText(grp))}" target="_blank" rel="noopener">WhatsApp</a><a class="btn" href="viber://forward?text=${encodeURIComponent(supText(grp))}">Viber</a><button class="btn" data-supshare="${gi}" aria-label="Share">${msI("share")}</button></span>`:""}</div>
+  ${grp.items.map(it=>`<div class="tk-it"><span>${esc(it.name)}${sup.list.length?`<select data-supset="${esc(it.name)}" aria-label="Supplier for ${esc(it.name)}"><option value="">Supplier…</option>${sup.list.map(x=>`<option value="${esc(x.id)}" ${sup.map[it.name]===x.id?"selected":""}>${esc(x.name)}</option>`).join("")}</select>`:""}</span><b>${fmtQ(it.q)} ${esc(it.unit)}</b></div>`).join("")}</div>`).join("")
+  +(sup.list.length?`<p class="note-line"><a href="#suppliers">Manage suppliers</a></p>`:`<div class="empty" style="box-shadow:none;background:var(--sunk)"><b>No suppliers yet</b>Add your suppliers, then pick one for each product. The app remembers it for every next order.<br><br><a href="#suppliers">Add suppliers</a></div>`)}
+function viewSuppliers(){const m=$("main");
+  m.innerHTML=`<a class="back" href="#order">${ICON.back}Order</a><section class="panel ed"><h2>Suppliers</h2>
+  <p class="note-line" style="margin-top:4px">Saved on this device. Phone in international format, e.g. +359 88 123 4567, so WhatsApp opens the right chat. In the order list, switch to "By supplier" and pick a supplier for each product.</p>
+  <div id="sp-list">${sup.list.map(x=>`<div class="sp-row" data-spid="${esc(x.id)}"><input data-spf="name" value="${esc(x.name)}" placeholder="Supplier name"><input data-spf="phone" type="tel" value="${esc(x.phone||"")}" placeholder="Phone"><button class="ib" data-sprm="${esc(x.id)}" aria-label="Delete supplier">×</button></div>`).join("")}</div>
+  <div class="sp-row" style="margin-top:14px"><input id="sp-name" placeholder="New supplier, e.g. Metro" maxlength="60"><input id="sp-phone" type="tel" placeholder="Phone (optional)"><button class="ib add" id="sp-add" aria-label="Add supplier">${ICON.plus}</button></div>
+  ${sup.list.length?`<p class="note-line">${Object.keys(sup.map).length} products have a supplier.</p>`:""}</section>`}
+
 /* ---------- menu templates ---------- */
 function menus(){return lsGet("bb-menus",[]).filter(x=>x&&Array.isArray(x.lines))}
 function saveMenu(){if(!ord.lines.length)return;const a=menus();const name=(ord.name||"").trim()||"Menu "+(a.length+1);const i=a.findIndex(x=>x.name.toLowerCase()===name.toLowerCase());
@@ -1406,6 +1452,7 @@ function route(){
   if(h==="#order"){setNav("order");viewOrder();restore();return}
   if(h==="#orders"){setNav("orders");viewOrders();restore();return}
   if(h==="#prep"){setNav("order");viewPrep();return}
+  if(h==="#suppliers"){setNav("order");viewSuppliers();return}
   if(h==="#new"||h.startsWith("#edit-")){setNav("home");viewEditor(h==="#new"?"":h.slice(6));return}
   if(h==="#prices"||h.startsWith("#prices-")){if(route._pr!==h){prOnly=null;prQ=""}route._pr=h;setNav("order");viewPrices(h.slice(8));return}
   if(h.startsWith("#c-")){const i=D.folders.findIndex(f=>f[1]===h.slice(3));ui.coll=i;} else ui.coll=-1;
@@ -1427,6 +1474,13 @@ function bind(){
     if(t.id==="o-mx"){const b=mxPdf();if(!b){toast("PDF tool did not load");return}saveFile("Allergen_Matrix_"+fileBase(ord.name||"menu")+(ord.date?"_"+ord.date:"")+".pdf",b);return}
     if(t.id==="p-lbl"){labelsPdf().then(b=>{if(!b){toast("PDF tool did not load");return}saveFile("Labels_"+fileBase(ord.name||"prep")+"_"+new Date().toISOString().slice(0,10)+".pdf",b)});return}
     if(t.id==="o-menu"){saveMenu();return}
+    if(t.dataset.ordby){ordBy=t.dataset.ordby;refreshTicket();return}
+    if(t.dataset.supshare!=null){const g=supGroups(compute())[+t.dataset.supshare];if(g)shareText("Order"+(g.s?" for "+g.s.name:""),supText(g));return}
+    if(t.id==="sp-add"){const n=$("sp-name").value.trim();if(!n){toast("Add a supplier name");$("sp-name").focus();return}sup.list.push({id:"s"+Date.now().toString(36),name:n,phone:$("sp-phone").value.trim()});supSave();viewSuppliers();toast("Supplier added");return}
+    if(t.dataset.sprm){const id=t.dataset.sprm,k="sp:"+id;if(delArm!==k){delArm=k;t.classList.add("del-yes");t.textContent="?";setTimeout(()=>{if(delArm===k){delArm=null;if(location.hash==="#suppliers")viewSuppliers()}},3000);return}
+      delArm=null;sup.list=sup.list.filter(x=>x.id!==id);for(const p in sup.map)if(sup.map[p]===id)delete sup.map[p];supSave();viewSuppliers();toast("Supplier deleted");return}
+    if(t.id==="r-svc"){const r=byId.get(scale.id);if(!r)return;svcPdf([r]).then(b=>{if(!b){toast("PDF tool did not load");return}saveFile("Service_Card_"+fileBase(r.t)+".pdf",b)});return}
+    if(t.id==="o-svc"){svcPdf(mxDishes()).then(b=>{if(!b){toast("PDF tool did not load");return}saveFile("Service_Cards_"+fileBase(ord.name||"menu")+".pdf",b)});return}
     if(t.dataset.usemenu){useMenu(t.dataset.usemenu);return}
     if(t.dataset.delmenu){delMenu(t.dataset.delmenu);return}
     if(t.id==="ed-add"){const w=$("ed-ing");w.insertAdjacentHTML("beforeend",w.dataset.row);w.lastElementChild.querySelector("input").focus();return}
@@ -1492,6 +1546,8 @@ function bind(){
   document.addEventListener("change",e=>{
     const t=e.target;
     if(t.id==="sort"){ui.sort=t.value;route();return}
+    if(t.dataset&&t.dataset.supset!=null){if(t.value)sup.map[t.dataset.supset]=t.value;else delete sup.map[t.dataset.supset];supSave();refreshTicket();return}
+    if(t.dataset&&t.dataset.spf){const row=t.closest("[data-spid]");const x=sup.list.find(y=>y.id===row.dataset.spid);if(x){x[t.dataset.spf]=t.value.trim();if(x.name){supSave();toast("Saved")}}return}
     if(t.id==="pr-cur"){setCur(t.value);viewPrices((location.hash||"").slice(8));return}
     if(t.id==="mine-imp"&&t.files&&t.files[0]){mineImport(t.files[0]);t.value="";return}
     if(t.dataset&&t.dataset.tool!=null){toolInput(t);refreshTool(t.tagName==="INPUT"&&t.type!=="search");return}
