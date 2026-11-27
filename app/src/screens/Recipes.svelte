@@ -17,6 +17,13 @@
   const coll = $derived(arg.startsWith("c:") ? D.folders.findIndex((f) => f[1] === arg.slice(2)) : -1);
   const browsing = $derived(!!q.trim() || coll >= 0 || onlyFav || diet > 0 || free.size > 0 || low);
   let rev = $state(0);
+  function saveOffline() {
+    const sw = navigator.serviceWorker?.controller;
+    if (!sw) { toast.show("Offline mode starts after the next reload. Open the app again, then tap this once more."); return; }
+    const urls = D.folders.filter((f) => f[1] !== "__mine").map((f) => "../r/" + f[1] + ".json");
+    navigator.serviceWorker.addEventListener("message", (e) => { if (e.data?.type === "cached") toast.show(`Saved ${e.data.ok} of ${e.data.n} collections for offline use`); }, { once: true });
+    sw.postMessage({ type: "cacheAll", urls }); toast.show("Saving " + urls.length + " collections for offline use…");
+  }
   function restore(e: Event) {
     const inp = e.target as HTMLInputElement, f = inp.files?.[0]; if (!f) return;
     f.text().then((t) => { const n = mineRestore(t); toast.show(n < 0 ? "This file is not a Chefsheet backup" : n + " recipes restored"); rev++; inp.value = ""; });
@@ -72,6 +79,7 @@
         <div class="rack">{#each ids as i}<a class="coll" href="#c-{D.folders[i][1]}"><img src={dishImg(folderStyle(i)[1])} alt="" width="72" height="72" loading="lazy" /><span><b>{D.folders[i][0]}</b><small>{folderCount[i]} recipes</small></span></a>{/each}</div>
       </section>
     {/each}
+    <section class="sec card pad off"><div><b>Use it without internet</b><p class="note">Save every recipe collection on this phone, so recipes open in a basement kitchen or on a plane.</p></div><Button icon="check" onclick={saveOffline}>Save all recipes</Button></section>
   {/if}
 </div>
 <style>
@@ -99,6 +107,7 @@
   .rack { display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; margin: 0 calc(-1 * var(--gap)); padding: 2px var(--gap) 12px; scroll-snap-type: x mandatory; }
   .rack::-webkit-scrollbar { display: none; }
   .mine { margin: 4px 0 6px; }
+  .off { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; } .off > div { flex: 1 1 240px; display: grid; gap: 4px; }
   .btnf { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 999px; background: var(--surface); box-shadow: var(--sh-1), inset 0 0 0 1px var(--hair); font-size: 13.5px; font-weight: 500; cursor: pointer; }
   .coll { flex: none; width: 150px; display: grid; gap: 10px; padding: 16px 14px 14px; background: var(--surface); border-radius: var(--r); box-shadow: var(--sh-1); color: var(--ink); scroll-snap-align: start; transition: transform .2s var(--ease), box-shadow .2s; }
   .coll:active { transform: scale(.97); }

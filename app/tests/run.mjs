@@ -14,7 +14,7 @@ const assert = (c, m) => { if (!c) throw new Error(m); };
 
 const b = await chromium.launch();
 async function page(opts = {}) {
-  const ctx = await b.newContext({ viewport: opts.vp || { width: 390, height: 844 }, deviceScaleFactor: 1, colorScheme: opts.dark ? "dark" : "light" });
+  const ctx = await b.newContext({ viewport: opts.vp || { width: 390, height: 844 }, deviceScaleFactor: process.env.SHOTS ? 2 : 1, colorScheme: opts.dark ? "dark" : "light" });
   const p = await ctx.newPage();
   await p.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
   p.errors = [];
@@ -197,6 +197,17 @@ await test("learn: lesson with diagram, mark done, test, mistakes, card of the d
   const miss = await p.evaluate(() => Object.keys(JSON.parse(localStorage.getItem("bb-learn")).miss).length);
   if (miss) { await p.goto(BASE + "#review"); await p.waitForSelector(".qz li"); }
   assert(p.errors.length === 0, p.errors.join("; "));
+});
+
+await test("offline: service worker caches 3.0 and it opens without internet", async () => {
+  const p = await page(); await p.goto(BASE); await ready(p);
+  await p.evaluate(async () => { await navigator.serviceWorker.ready; });
+  await p.reload(); await ready(p);
+  assert(await p.evaluate(() => !!navigator.serviceWorker.controller), "no controller");
+  await p.context().setOffline(true);
+  await p.reload(); await ready(p); await p.goto(BASE + "#learn"); await p.waitForSelector(".mods li", { timeout: 10000 });
+  await p.goto(BASE + "#tool-salt"); await p.waitForSelector("text=Fine salt");
+  await p.context().setOffline(false);
 });
 
 await b.close();
