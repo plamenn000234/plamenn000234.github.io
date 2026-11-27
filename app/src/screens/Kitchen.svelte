@@ -107,7 +107,7 @@
   .ticket::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; border-radius: var(--r) var(--r) 0 0; background: var(--accent); }
   .th { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; align-items: flex-start; margin-bottom: 6px; }
   .ta { display: flex; gap: 6px; }
-  .ticket h3 { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin: 16px 0 4px; font-family: var(--f-body); }
+  .ticket h3 { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin: 16px 0 4px; font-family: var(--f-body); }
   .ticket ul { list-style: none; margin: 0; padding: 0; }
   .ticket li button { width: 100%; display: flex; justify-content: space-between; gap: 12px; padding: 11px 0; border: 0; box-shadow: inset 0 -1px 0 var(--hair); background: transparent; text-align: left; font-size: 15px; }
   .ticket li span { display: grid; } .ticket li small { font-size: 11.5px; color: var(--muted); }

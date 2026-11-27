@@ -61,8 +61,8 @@
   .head { margin: 22px 0 20px; display: grid; gap: 6px; }
   h1 { font-size: 36px; }
   .hero { position: relative; display: grid; gap: 18px; padding: 22px 22px 20px; border-radius: 24px; color: var(--hero-ink); overflow: hidden;
-    background: radial-gradient(120% 140% at 100% 0%, color-mix(in srgb, var(--accent) 38%, transparent) 0%, transparent 55%), var(--hero); box-shadow: var(--sh-3); }
-  .hero::after { content: ""; position: absolute; right: -40px; top: -40px; width: 180px; height: 180px; border-radius: 50%; border: 1px solid rgba(255, 240, 220, .12); }
+    background: radial-gradient(120% 140% at 100% 0%, color-mix(in srgb, var(--accent) 22%, transparent) 0%, transparent 60%), var(--hero); box-shadow: var(--sh-3); }
+  .hero::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--accent); }
   .hero .eyebrow { color: var(--hero-muted); }
   .hero h2 { font-size: 26px; color: var(--hero-ink); margin-top: 6px; }
   .hs { color: var(--hero-muted); font-size: 14px; margin-top: 6px; max-width: 34ch; }

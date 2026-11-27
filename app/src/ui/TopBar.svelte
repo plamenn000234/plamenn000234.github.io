@@ -17,8 +17,8 @@
   .in { max-width: var(--maxw); margin: 0 auto; padding: 10px var(--gap); display: flex; align-items: center; gap: 12px; }
   .logo { display: flex; align-items: center; gap: 8px; color: var(--ink); flex: none; }
   .logo i { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
-  .logo b { font: 600 20px var(--f-display); letter-spacing: .03em; }
-  .logo small { font-size: 9px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 2px 7px; }
+  .logo b { font: 800 20px var(--f-display); letter-spacing: -.03em; }
+  .logo small { font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 2px 7px; }
   .nav { display: none; }
   .sbtn { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; height: 40px; border: 0; border-radius: 999px; background: var(--sunk); color: var(--muted); padding: 0 14px; font-size: 14px; text-align: left; transition: box-shadow .2s; }
   .sbtn:active { box-shadow: inset 0 0 0 2px var(--ink); }
