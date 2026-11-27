@@ -836,6 +836,7 @@ ol.steps li.done::before{color:var(--muted)!important}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .plate:has(.ill){background:#EDE6D6!important}}
 :root[data-theme="dark"] .sh-ill .ill,:root[data-theme="night"] .sh-ill .ill,:root[data-theme="dark"] .si .ill,:root[data-theme="night"] .si .ill{background:#EDE6D6;border-radius:50%}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .sh-ill .ill,:root:not([data-theme="light"]) .si .ill{background:#EDE6D6;border-radius:50%}}
+.ea.ei{width:150px;height:150px;object-fit:contain;display:block;margin:0 auto 6px}
 </style>
 </head><body>
 <header class="top">
@@ -1081,10 +1082,11 @@ function algBadges(algs){return algs.length?`<span class="algs" title="Allergens
 function dietTag(r){return r.diet===2?`<span class="diet">${ICON.leaf}Vegan</span>`:r.diet===1?`<span class="diet">${ICON.leaf}Vegetarian</span>`:""}
 function inOrder(id){return ord.lines.some(l=>l.id===id)}
 const EART={
- ticket:`<svg class="ea" width="150" height="104" viewBox="0 0 150 104" aria-hidden="true"><ellipse class="sh" cx="75" cy="96" rx="52" ry="6"/><path class="p o" d="M44 14h62v72l-7-5-7 5-7-5-7 5-7-5-7 5-7-5-6 5z" stroke-width="2.5" stroke-linejoin="round"/><path class="ln" d="M54 30h42M54 42h30M54 54h36" stroke-width="3" stroke-linecap="round" stroke-dasharray="1 7"/><circle cx="112" cy="22" r="15" fill="var(--accent)"/><path d="M112 15v14M105 22h14" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>`,
- star:`<svg class="ea" width="150" height="96" viewBox="0 0 150 96" aria-hidden="true"><ellipse class="sh" cx="75" cy="88" rx="46" ry="6"/><path class="o" d="M75 12l12 25 27 3-20 18 6 27-25-14-25 14 6-27-20-18 27-3z" fill="#FFE7A8" stroke-width="2.5" stroke-linejoin="round"/><path d="M66 52q9 8 18 0" stroke="#17181B" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="67" cy="44" r="2.6" fill="#17181B"/><circle cx="83" cy="44" r="2.6" fill="#17181B"/><path d="M118 18l4 4M126 30h5M30 28h-5M33 16l-4-4" stroke="var(--mark)" stroke-width="3" stroke-linecap="round"/></svg>`,
- book:`<svg class="ea" width="150" height="100" viewBox="0 0 150 100" aria-hidden="true"><ellipse class="sh" cx="75" cy="92" rx="50" ry="6"/><path class="p o" d="M42 22h58a8 8 0 0 1 8 8v54H50a8 8 0 0 1-8-8z" stroke-width="2.5"/><path class="o" d="M42 76a8 8 0 0 1 8-8h58" fill="none" stroke-width="2.5"/><path class="ln" d="M60 36h32M60 46h22" stroke-width="3" stroke-linecap="round"/><path class="o" d="M104 10c8 4 10 14 3 20l-22 22-8 2 2-8 22-22c3-3 2-10 3-14z" fill="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/></svg>`,
- search:`<svg class="ea" width="150" height="100" viewBox="0 0 150 100" aria-hidden="true"><ellipse class="sh" cx="75" cy="92" rx="46" ry="6"/><circle class="p o" cx="66" cy="44" r="28" stroke-width="2.5"/><path class="o" d="M86 64l22 22" stroke-width="7" stroke-linecap="round"/><path d="M58 38q8-10 16 0" stroke="var(--accent)" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="66" cy="54" r="2.6" fill="var(--accent)"/></svg>`,
+ menu:`<img class="ea ei" src="img/empty/menu.webp" alt="" width="150" height="150" decoding="async">`,
+ ticket:`<img class="ea ei" src="img/empty/orders.webp" alt="" width="150" height="150" decoding="async">`,
+ star:`<img class="ea ei" src="img/empty/fav.webp" alt="" width="150" height="150" decoding="async">`,
+ book:`<img class="ea ei" src="img/empty/book.webp" alt="" width="150" height="150" decoding="async">`,
+ search:`<img class="ea ei" src="img/empty/search.webp" alt="" width="150" height="150" decoding="async">`,
  done:`<svg class="ea" width="150" height="96" viewBox="0 0 150 96" aria-hidden="true"><ellipse class="sh" cx="75" cy="88" rx="44" ry="6"/><circle cx="75" cy="44" r="32" fill="var(--ok-soft)" class="o" stroke-width="2.5"/><path d="M60 45l10 10 20-22" stroke="var(--ok)" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`};
 function rowHtml(r){
   const fav=favs.includes(r.id), io=inOrder(r.id);
@@ -1462,7 +1464,7 @@ function menusHtml(){const a=menus();return `<div class="rhead"><h2>Menus</h2><s
   ${a.length?`<div class="svd">${a.map(t=>{const arm=delArm==="m:"+t.id;const ds=t.lines.map(l=>byId.get(l.id)).filter(Boolean);
     return `<div class="sv"><span><b>${esc(t.name)}</b><small>${ds.length} dishes · ${esc(t.pax)} guests · ${esc(ds.slice(0,4).map(r=>r.t).join(", "))}${ds.length>4?"…":""}</small></span>
     <button class="btn pri" data-usemenu="${esc(t.id)}">Use</button><button class="btn ${arm?"del-yes":""}" data-delmenu="${esc(t.id)}" aria-label="Delete menu">${arm?"Delete?":"×"}</button></div>`}).join("")}</div>`
-  :`<div class="empty">${EART.book}<b>No menus yet</b>Build an order and tap Save as menu. Next time, start a new order from it in one tap and only change the guests and date.</div>`}`}
+  :`<div class="empty">${EART.menu}<b>No menus yet</b>Build an order and tap Save as menu. Next time, start a new order from it in one tap and only change the guests and date.</div>`}`}
 function viewOrders(){
   const where=userCol?"Saved to your account, visible only to you.":(STANDALONE?"Saved on this device.":"Saved on this device. Sign in to claude.ai to keep orders on all your devices.");
   const list=userCol?savedDocs.map(s=>({id:s.id,o:s.data()})):lsGet("bb-saved",[]).map(o=>({id:o.id,o}));
