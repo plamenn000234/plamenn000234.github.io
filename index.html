@@ -829,6 +829,13 @@ ol.steps li.done::before{color:var(--muted)!important}
 .empty .ea .o{stroke:var(--ink)}
 .toast{border-radius:2px!important;background:var(--ink)!important;color:var(--bg)!important;letter-spacing:.06em}
 .ed-semi{margin-top:4px}
+.ms.ci{height:1em;background:currentColor!important;-webkit-mask:var(--ci) center/contain no-repeat;mask:var(--ci) center/contain no-repeat;border-radius:0!important}
+.tool>.ms.ci,.plate>.ms.ci{-webkit-mask-size:62%;mask-size:62%}
+.ill{transform:none!important;filter:none!important}
+:root[data-theme="dark"] .plate:has(.ill),:root[data-theme="night"] .plate:has(.ill){background:#EDE6D6!important}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .plate:has(.ill){background:#EDE6D6!important}}
+:root[data-theme="dark"] .sh-ill .ill,:root[data-theme="night"] .sh-ill .ill,:root[data-theme="dark"] .si .ill,:root[data-theme="night"] .si .ill{background:#EDE6D6;border-radius:50%}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .sh-ill .ill,:root:not([data-theme="light"]) .si .ill{background:#EDE6D6;border-radius:50%}}
 </style>
 </head><body>
 <header class="top">
@@ -840,11 +847,11 @@ ol.steps li.done::before{color:var(--muted)!important}
   </div>
   <button class="thb" id="theme-btn" aria-label="Theme"><span class="ms">brightness_auto</span></button>
   <nav class="topnav" aria-label="Main">
-    <a href="#" data-nav="home"><span class="ms">menu_book</span>Recipes</a>
-    <a href="#learn" data-nav="learn"><span class="ms">school</span>Learn</a>
-    <a href="#fav" data-nav="fav"><span class="ms">star</span>Favourites <span class="badge" id="b-fav"></span></a>
-    <a href="#order" data-nav="order"><span class="ms">receipt_long</span>Order <span class="badge" id="b-ord"></span></a>
-    <a href="#orders" data-nav="orders"><span class="ms">inventory_2</span>My orders</a>
+    <a href="#" data-nav="home"><span class="ms ci" style="--ci:url(img/ui/tab-recipes.png)" aria-hidden="true"></span>Recipes</a>
+    <a href="#learn" data-nav="learn"><span class="ms ci" style="--ci:url(img/ui/tab-learn.png)" aria-hidden="true"></span>Learn</a>
+    <a href="#fav" data-nav="fav"><span class="ms ci" style="--ci:url(img/ui/tab-fav.png)" aria-hidden="true"></span>Favourites <span class="badge" id="b-fav"></span></a>
+    <a href="#order" data-nav="order"><span class="ms ci" style="--ci:url(img/ui/tab-order.png)" aria-hidden="true"></span>Order <span class="badge" id="b-ord"></span></a>
+    <a href="#orders" data-nav="orders"><span class="ms ci" style="--ci:url(img/ui/tab-orders.png)" aria-hidden="true"></span>My orders</a>
   </nav>
 </header>
 
@@ -855,11 +862,11 @@ ol.steps li.done::before{color:var(--muted)!important}
 </div>
 
 <nav class="tabs" aria-label="Main">
-  <a href="#" data-nav="home"><span class="ms">menu_book</span>Recipes</a>
-  <a href="#learn" data-nav="learn"><span class="ms">school</span>Learn</a>
-  <a href="#fav" data-nav="fav"><span class="ms">star</span>Favourites<span class="badge" id="b-fav2"></span></a>
-  <a href="#order" data-nav="order"><span class="ms">receipt_long</span>Order<span class="badge" id="b-ord2"></span></a>
-  <a href="#orders" data-nav="orders"><span class="ms">inventory_2</span>My orders</a>
+  <a href="#" data-nav="home"><span class="ms ci" style="--ci:url(img/ui/tab-recipes.png)" aria-hidden="true"></span>Recipes</a>
+  <a href="#learn" data-nav="learn"><span class="ms ci" style="--ci:url(img/ui/tab-learn.png)" aria-hidden="true"></span>Learn</a>
+  <a href="#fav" data-nav="fav"><span class="ms ci" style="--ci:url(img/ui/tab-fav.png)" aria-hidden="true"></span>Favourites<span class="badge" id="b-fav2"></span></a>
+  <a href="#order" data-nav="order"><span class="ms ci" style="--ci:url(img/ui/tab-order.png)" aria-hidden="true"></span>Order<span class="badge" id="b-ord2"></span></a>
+  <a href="#orders" data-nav="orders"><span class="ms ci" style="--ci:url(img/ui/tab-orders.png)" aria-hidden="true"></span>My orders</a>
 </nav>
 <div class="toast" id="toast" role="status" hidden></div>
 <div class="tdock" id="tdock" aria-live="polite" hidden></div>
@@ -878,7 +885,8 @@ const PAGE=60;
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fold=s=>String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/ı/g,"i").replace(/ø/g,"o").replace(/æ/g,"ae").replace(/œ/g,"oe").replace(/ß/g,"ss");
-const msI=(n,f)=>`<span class="ms${f?" f":""}" aria-hidden="true">${n}</span>`;
+const CI={grain:"tool-salt",scale:"tool-yield",water_drop:"tool-sousvide",euro:"tool-price",timer:"tool-timer",label:"tool-label",checklist:"tool-prep",school:"tab-learn",menu_book:"tab-recipes",receipt_long:"tab-order",inventory_2:"tab-orders",quiz:"learn-quiz",workspace_premium:"learn-cert",translate:"learn-glossary"};
+const msI=(n,f)=>CI[n]?`<span class="ms ci" style="--ci:url(img/ui/${CI[n]}.png)" aria-hidden="true"></span>`:`<span class="ms${f?" f":""}" aria-hidden="true">${n}</span>`;
 const ICON={star:msI("star"),starOn:msI("star",1),plus:msI("add"),check:msI("check"),leaf:msI("eco",1),copy:msI("content_copy"),pdf:msI("picture_as_pdf"),back:msI("arrow_back")};
 
 
@@ -886,13 +894,14 @@ const PIC={meat:"kebab_dining",skewer:"kebab_dining",fish:"set_meal",soup:"soup_
 const FST={"Italian":[8,"pizza"],"French":[228,"bread"],"Greek":[200,"leaf"],"Spanish & Tapas":[18,"tapas"],"Portuguese":[192,"fish"],"Alpine":[210,"snow"],"Nordic":[215,"fish"],"British & Irish Pub":[32,"beer"],"Turkish":[352,"skewer"],"Georgian & Caucasus":[335,"bread"],"Bulgarian Classics":[140,"pot"],"Middle Eastern":[40,"tapas"],"North African":[24,"pot"],"Indian":[28,"rice"],"Pan-Asian":[0,"noodle"],"Robata & Nikkei":[190,"bento"],"Latin American":[48,"taco"],"American Diner & Southern":[218,"burger"],"Creole":[168,"fish"],"Island Resort":[178,"sun"],"Eastern European":[320,"pot"],"German & Austrian":[38,"meat"],"Caribbean":[165,"chili"],"African":[25,"pot"],"Persian":[350,"rice"],"Street Food":[30,"taco"],"Brunch & Eggs":[45,"egg"],"Vegetarian Mains":[120,"leaf"],"Meal Prep & Grab & Go":[200,"bento"],"Afternoon Tea":[300,"coffee"],"Pâtisserie Boutique":[345,"cake"],"Fine Dining Components":[262,"pot"],"Butchery & Yield Tests":[10,"knife"],"Plated Banquet & Wedding":[330,"celebrate"],"Iftar & Halal Buffet":[28,"rice"],"Special Diets on Request":[150,"nutrition"],"Zero-Proof & Hot Beverages":[185,"coffee"],"Breakfast Preserves":[20,"jar"],"Adriatic & Balkan":[205,"fish"],"Coffee Breaks & Conference":[30,"coffee"],"Bowl Food & Flying Dishes":[275,"flatware"],"Gluten-Free Bakery & Pastry":[45,"bread"],"House Dairy & Cheese-Making":[50,"cheese"],"Wild Mushrooms & Mountain Foraging":[95,"leaf"],"Gelato & Frozen Desserts":[320,"ice"],"Classic Cocktails & Bar Spec":[270,"glass"],"Celebration & Wedding Cakes":[335,"cake"],"Cheese Course & Trolley":[45,"cheese"],"Batch Cocktails & Event Punches":[285,"glass"],"Zero-Waste & By-Product Kitchen":[100,"leaf"],"Religious & Cultural Diets":[40,"nutrition"],"Texture-Modified Meals (IDDSI)":[190,"nutrition"],"Salumi & Dry-Curing":[12,"meat"],"Ski Lunches & Mountain Picnic":[200,"snow"],"À la Carte Plated Desserts":[340,"cake"],"Sushi & Japanese Counter":[5,"fish"],"Ramen & Noodle Bar":[22,"noodle"],"Hot Pot, Shabu-Shabu & Table Cooking":[12,"pot"],"Sugar & Chocolate Décor":[325,"cake"],"Dim Sum & Cantonese Roast":[8,"bento"],"Kaiseki & Izakaya":[355,"fish"],"Sourdough & Long-Fermentation Bread":[35,"bread"],"Viennoiserie Lab":[40,"toast"],"Bonbons & Confectionery":[15,"candy"],"Asian Pâtisserie":[150,"cake"],
  "Breakfast":[42,"egg"],"Starters":[155,"tapas"],"Soups":[30,"soup"],"Salads":[110,"leaf"],"Main Courses":[10,"chef"],"Sides":[80,"rice"],"Sauces":[16,"sauce"],"Marinades":[26,"blender"],"Sandwiches":[36,"toast"],"Burgers":[24,"burger"],"Canapés":[285,"tapas"],"Desserts":[330,"cake"],"Bakery & Bread":[32,"bread"],"Drinks":[262,"glass"],"Prep & Mise en Place":[165,"cooking"],
  "Buffet":[150,"flatware"],"Live Stations":[8,"sauce"],"Festive & Holidays":[355,"celebrate"],"Modern Fine Dining":[250,"chef"],"Modern Bistro":[205,"wine"],"Grill & Steak":[4,"grill"],"BBQ & Smokehouse":[20,"grill"],"Game":[28,"meat"],"Seafood & Raw Bar":[196,"fish"],"Garde Manger & Charcuterie":[345,"tapas"],"Sous-Vide & Cook-Chill":[192,"fridge"],"Fermentation & Pickling":[95,"nutrition"],"Healthy":[130,"spa"],"Plant-Based & Free-From":[140,"leaf"],"Kids Menu":[48,"kids"],"Room Service & Snacks":[225,"room"],"Bar & Lounge":[272,"wine"],"Après-Ski":[205,"snow"],"My recipes":[150,"chef"],"Staff Canteen":[100,"flatware"],"Winter Tasting Menus":[210,"chef"],"Whole Fish & Shellfish":[195,"fish"],"Stocks, Fonds & Consommés":[30,"soup"],"Plant-Based Tasting Menu":[120,"leaf"]};
-const DISH=["soup","leaf","pasta","meat","fish","cake","ice","bread","glass","coffee","egg","burger","noodle","pizza","rice","pot","tapas","skewer","taco","cheese"];
-const DISHA={grill:"meat",flame:"meat",chef:"meat",chili:"pot",sauce:"pot",jar:"pot",beer:"glass",wine:"glass",toast:"bread",chop:"noodle",bento:"rice",candy:"cake",kids:"burger",flatware:"tapas",celebrate:"cake",skillet:"pot"};
+const DISH=["soup","leaf","pasta","meat","fish","cake","ice","bread","glass","coffee","egg","burger","noodle","pizza","rice","pot","tapas","skewer","taco","cheese","grill","chef","wine","beer","toast","bento","sauce","jar","pickle","chili","candy","celebrate","flatware","fondue","sun","spa","kids","room","fridge","semi"];
+const DISHA={flame:"grill",chop:"noodle",skillet:"sauce",nutrition:"pickle",snow:"fondue",star:"chef",knife:"chef",cooking:"pot",blender:"sauce"};
 const dishOf=k=>DISH.includes(k)?k:DISHA[k]||null;
 const svgI=k=>{const d=dishOf(k);return d?`<img class="ill" src="img/dish/${d}.webp" alt="" width="96" height="96" decoding="async">`:`<span class="ms f" aria-hidden="true">${PIC[k]||"restaurant"}</span>`};
 const fst=i=>FST[D.folders[i][0]]||[150,"pot"];
 function plate(ty,cls){return `<span class="plate ${cls||""}" style="--h:${ty[0]}" aria-hidden="true">${svgI(ty[1])}</span>`}
 function dishType(r){
+  if(r.semi)return [30,"semi"];
   const f=D.folders[r.f][0], t=" "+fold(r.t)+" ";
   const sec=[0,0,0,0,0,0,0,0];for(const [pi,g] of r.lines){const p=D.products[pi];if(p[2]!=="pcs")sec[p[1]]+=g}
   const W=re=>new RegExp("\\b("+re+")","i").test(t);
