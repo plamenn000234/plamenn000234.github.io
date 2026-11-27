@@ -436,6 +436,49 @@ await test("tool upgrades: doneness kinds, price rounding, brine to cover, dough
   assert(p.errors.length === 0, p.errors.join("; "));
 });
 
+await test("stock: off by default, turn on, add, delivered and cooked order, write-off, undo, PDF", async () => {
+  const { p } = await withOrder(); await p.goto(BASE + "#kitchen"); await p.reload(); await ready(p);
+  assert(await p.locator("a[href='#stock']").count() === 0, "stock shown while off");
+  await p.goto(BASE + "#settings"); await p.waitForSelector("text=Stock and write-offs"); await p.check(".sw:has-text('Stock and write-offs') input");
+  await p.goto(BASE + "#stock"); await p.waitForSelector("text=Current order: Test banquet");
+  await p.fill(".tf.wide input >> nth=0", "butter"); await p.fill(".form input[type=number] >> nth=0", "2"); await p.click(".form button:has-text('Add to stock')");
+  await p.waitForSelector(".st li:has-text('Butter')");
+  await p.click("button:has-text('Delivered: add to stock')"); await p.click("button:has-text('Tap again to add')");
+  let st = await p.evaluate(() => JSON.parse(localStorage.getItem("bb-stock")));
+  const n = Object.keys(st.have).length; assert(n > 3 && st.have.Butter.q > 2, "after delivery " + JSON.stringify(st.have).slice(0, 200));
+  await p.goto(BASE + "#kitchen"); await p.waitForSelector("a.hz:has-text('Stock and write-offs')"); await p.waitForSelector(".ticket small.sb:has-text('enough')");
+  await p.goto(BASE + "#stock"); await p.click("button:has-text('Cooked: take from stock')"); await p.click("button:has-text('Tap again to take')");
+  st = await p.evaluate(() => JSON.parse(localStorage.getItem("bb-stock")));
+  assert(Object.entries(st.have).every(([k, it]) => it.q === (k === "Butter" ? 2 : 0)), "not taken " + JSON.stringify(st.have).slice(0, 200));
+  await p.click(".st li:has-text('Butter') button.row"); await p.fill("input[aria-label='Minimum of Butter']", "5"); await p.click("button:has-text('Set minimum')");
+  await p.waitForSelector("b.bad:has-text('1 running low')");
+  await p.evaluate(() => localStorage.setItem("bb-prices", JSON.stringify({ Butter: 10 })));
+  await p.reload(); await ready(p);
+  await p.click(".seg button:has-text('Write-off')"); await p.fill(".tf.wide input", "Butter"); await p.fill(".form input[type=number]", "0.5");
+  await p.selectOption(".form select", "1"); await p.waitForSelector("text=Value € 5.00"); await p.click(".form button:has-text('Write off')");
+  await p.waitForSelector("h2:has-text('1 write-off · € 5.00')");
+  st = await p.evaluate(() => JSON.parse(localStorage.getItem("bb-stock")));
+  assert(st.have.Butter.q === 1.5 && st.log[0].k === "waste" && st.log[0].why === "Past use-by", JSON.stringify(st.log[0]));
+  if (SHOTS) await p.screenshot({ path: SHOTS + "/stock.png", fullPage: true });
+  await p.click(".seg button:has-text('History')"); await p.click(".log li >> nth=0 >> button.x"); await p.click(".log li >> nth=0 >> button:has-text('Undo?')");
+  st = await p.evaluate(() => JSON.parse(localStorage.getItem("bb-stock"))); assert(st.have.Butter.q === 2, "undo " + st.have.Butter.q);
+  await p.goto(BASE + "#today"); await p.waitForSelector("text=Running low");
+  await p.goto(BASE + "#stock"); const f = await download(p, () => p.click(".pdf button")); assert(/^Stock_\d{4}-\d{2}\.pdf$/.test(f), f);
+  assert(p.errors.length === 0, p.errors.join("; "));
+});
+
+await test("menu engineering: classes from price, sold and cost", async () => {
+  const { p, ids } = await withOrder();
+  await p.evaluate((ids) => localStorage.setItem("bb-mix", JSON.stringify({ vat: 0, src: "o", rows: { [ids[0]]: { p: 20, n: 100, c: 5 }, [ids[1]]: { p: 10, n: 20, c: 6 } } })), ids);
+  await p.goto(BASE + "#tool-menu"); await p.reload(); await ready(p); await p.waitForSelector(".quad");
+  assert(await p.locator(".dish >> nth=0 >> em.cls").innerText() === "Star", "first not star");
+  assert(await p.locator(".dish >> nth=1 >> em.cls").innerText() === "Dog", "second not dog");
+  const o = (await p.locator(".tool-body .outs").innerText()).replace(/\s+/g, " ");
+  assert(/PORTIONS SOLD 120/i.test(o) && /AVERAGE PROFIT 13.17/i.test(o), o);
+  if (SHOTS) await p.screenshot({ path: SHOTS + "/menu-eng.png", fullPage: true });
+  assert(p.errors.length === 0, p.errors.join("; "));
+});
+
 await b.close();
 console.log(results.join("\n"));
 console.log(failed ? `\n${failed} failed` : `\nall ${results.length} passed`);

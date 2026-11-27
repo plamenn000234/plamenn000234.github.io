@@ -15,10 +15,12 @@
   import { toast, copyText, shareText } from "../core/ui.svelte";
   import { router } from "../core/router.svelte";
   import { H, dueToday } from "../core/haccp.svelte";
+  import { S, toBuy, low } from "../core/stock.svelte";
   import { guestLink, qrSvg, guestPdf } from "../core/guest";
   let showQr = $state(false);
   const gLink = $derived.by(() => { void JSON.stringify(o.lines); return showQr ? guestLink(o.name || "", orderDishes()) : ""; });
   const nDue = $derived(H.v.on ? dueToday().length : 0);
+  const nLow = $derived.by(() => { void JSON.stringify(S.v.have); return S.v.on ? low().length : 0; });
   const tab = $derived(router.route.arg === "saved" ? 1 : 0);
   let rev = $state(0);
   const o = $derived(ord.v);
@@ -46,6 +48,7 @@
 <div class="page">
   <div class="head"><p class="eyebrow">Production</p><h1>Kitchen</h1></div>
   {#if H.v.on}<a class="card hz press" href="#haccp"><Icon name="thermo" size={22} /><span><b>Food safety logs</b><small>{nDue ? nDue + " unit" + (nDue > 1 ? "s" : "") + " not checked today" : "Temperatures checked today"}</small></span><Icon name="fwd" size={16} /></a>{/if}
+  {#if S.v.on}<a class="card hz press" href="#stock"><Icon name="stock" size={22} /><span><b>Stock and write-offs</b><small>{nLow ? nLow + " product" + (nLow > 1 ? "s" : "") + " running low" : Object.keys(S.v.have).length + " products on hand"}</small></span><Icon name="fwd" size={16} /></a>{/if}
   <div class="tabs2"><a href="#kitchen" aria-current={tab === 0 ? "page" : undefined}>Current order</a><a href="#kitchen-saved" aria-current={tab === 1 ? "page" : undefined}>Saved orders and menus</a></div>
 
   {#if tab === 0}
@@ -83,7 +86,7 @@
         {#if by === 0}
           {#each c.secs as s, i}{#if s.length}
             <h3>{D.sections[i]}</h3>
-            <ul>{#each s as it}{@const k = it.name + "|" + it.unit}<li class:got={ticked.has(k)}><button onclick={() => tick(k)}><span>{it.name}{#if it.note}<small>{it.note}</small>{/if}</span><b class="num">{fmtQ(it.q)} <i>{it.unit}</i></b></button></li>{/each}</ul>
+            <ul>{#each s as it}{@const k = it.name + "|" + it.unit}{@const sb = S.v.on ? toBuy(it.name, it.q) : null}<li class:got={ticked.has(k)}><button onclick={() => tick(k)}><span>{it.name}{#if it.note}<small>{it.note}</small>{/if}{#if sb?.tracked}<small class="sb">On hand {fmtQ(sb.have) === "–" ? "0" : fmtQ(sb.have)} · {sb.buy > 0 ? "buy " + fmtQ(sb.buy) : "enough"}</small>{/if}</span><b class="num">{fmtQ(it.q)} <i>{it.unit}</i></b></button></li>{/each}</ul>
           {/if}{/each}
         {:else}
           {#each groups as g}
@@ -164,6 +167,7 @@
   .ticket li button { width: 100%; display: flex; justify-content: space-between; gap: 12px; padding: 11px 0; border: 0; box-shadow: inset 0 -1px 0 var(--hair); background: transparent; text-align: left; font-size: 15px; }
   .ticket li span { display: grid; } .ticket li small { font-size: 11.5px; color: var(--muted); }
   .ticket li b { font: 600 15.5px var(--f-display); white-space: nowrap; } .ticket li i { font-style: normal; font-size: 12px; color: var(--muted); }
+  .ticket li small.sb { color: var(--accent); font-weight: 600; }
   .ticket li.got button { color: var(--muted); text-decoration: line-through; }
   .al { margin-top: 12px; } .cost { margin-top: 10px; font-size: 14px; } .cost b { font: 600 18px var(--f-display); }
   .acts { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 8px; }

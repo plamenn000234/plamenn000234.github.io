@@ -28,6 +28,8 @@ export const TOOLS: ToolDef[] = [
     load: () => import("./Gel.svelte"), fromRecipe: (x) => ({ w: x.cooked || x.raw || 1000 }) },
   { id: "cost", name: "Food cost & price", group: "Money", icon: "tool-price", desc: "Menu price from cost and target %", kw: "food cost menu price margin vat profit",
     load: () => import("./Cost.svelte"), fromRecipe: (x) => (x.costPortion ? { c: Math.round(x.costPortion * 100) / 100 } : null) },
+  { id: "menu", name: "Menu engineering", group: "Money", icon: "tool-menu", desc: "Stars, plowhorses, puzzles and dogs from sales", kw: "menu engineering mix sales popularity profit margin contribution star dog puzzle plowhorse analysis",
+    load: () => import("./MenuMix.svelte") },
   { id: "glossary", name: "Kitchen glossary", group: "Reference", icon: "learn-glossary", desc: "EN · BG · RU terms", kw: "translate bulgarian russian terms dictionary", learn: true,
     load: () => import("./Glossary.svelte") },
 ];
