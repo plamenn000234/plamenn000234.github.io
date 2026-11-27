@@ -21,7 +21,7 @@
   --bg:#F3F3F1; --surface:#FFFFFF; --sunk:#F7F7F5; --ink:#17181B; --muted:#6A6D74; --line:#E1E1DD; --line-2:#ECECE8;
   --accent:#E2552B; --accent-ink:#FFFFFF; --accent-soft:#FCE6DD; --ok:#21875A; --ok-soft:#DFF2E8; --mark:#E8A317; --warn:#C0392B; --warn-soft:#FBE3DF;
   --g-s:80%; --g1-l:60%; --g2-l:47%; --tint-s:70%; --tint-l:94%; --deep-s:60%; --deep-l:36%;
-  --hero-1:#1A1B1F; --hero-2:#2A2B31; --hero-ink:#FFFFFF; --hero-muted:#B9BAC2; --hero-acc:#FF8A5B;
+  --paper:#FFFDF7; --paper-line:#D9D4C6; --hero-1:#1A1B1F; --hero-2:#2A2B31; --hero-ink:#FFFFFF; --hero-muted:#B9BAC2; --hero-acc:#FF8A5B;
   --f-display:"Bricolage Grotesque","Arial Narrow",Arial,sans-serif; --f-body:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
   --r:18px; --shadow:0 1px 2px rgba(23,24,27,.05),0 8px 24px rgba(23,24,27,.07); --shadow-h:0 2px 4px rgba(23,24,27,.06),0 14px 34px rgba(23,24,27,.12);
 }
@@ -29,19 +29,19 @@
   --bg:#101113; --surface:#1A1B1F; --sunk:#151619; --ink:#F1F1F3; --muted:#9A9CA5; --line:#2C2D33; --line-2:#24252A;
   --accent:#FF7A4D; --accent-ink:#1A0C06; --accent-soft:#3A2219; --ok:#4CC38A; --ok-soft:#173226; --mark:#F5B83A; --warn:#FF7B6B; --warn-soft:#3A1D1A;
   --g-s:62%; --g1-l:50%; --g2-l:38%; --tint-s:30%; --tint-l:16%; --deep-s:70%; --deep-l:74%;
-  --hero-1:#202127; --hero-2:#2C2D35; --hero-ink:#FFFFFF; --hero-muted:#A9AAB4; --hero-acc:#FF8A5B;
+  --hero-1:#202127; --hero-2:#2C2D35; --hero-ink:#FFFFFF; --hero-muted:#A9AAB4; --hero-acc:#FF8A5B; --paper:#1F1F23; --paper-line:#3A3A40;
   --shadow:0 1px 2px rgba(0,0,0,.4); --shadow-h:0 10px 30px rgba(0,0,0,.45); color-scheme:dark}}
 :root[data-theme="night"]{
   --bg:#15110D; --surface:#201A14; --sunk:#1A1510; --ink:#F2E4D0; --muted:#B39E86; --line:#3A3026; --line-2:#2C241C;
   --accent:#F0915A; --accent-ink:#1E1006; --accent-soft:#3D2616; --ok:#9CC27A; --ok-soft:#28301B; --mark:#F2B451; --warn:#F08A6E; --warn-soft:#3B211A;
   --g-s:55%; --g1-l:44%; --g2-l:33%; --tint-s:30%; --tint-l:15%; --deep-s:60%; --deep-l:72%;
-  --hero-1:#2A2018; --hero-2:#3A2C20; --hero-ink:#F7EBDC; --hero-muted:#C8B39A; --hero-acc:#F5A46E;
+  --hero-1:#2A2018; --hero-2:#3A2C20; --hero-ink:#F7EBDC; --hero-muted:#C8B39A; --hero-acc:#F5A46E; --paper:#271F17; --paper-line:#4A3C2E;
   --shadow:0 1px 2px rgba(0,0,0,.45); --shadow-h:0 10px 30px rgba(0,0,0,.5); color-scheme:dark}
 :root[data-theme="dark"]{
   --bg:#101113; --surface:#1A1B1F; --sunk:#151619; --ink:#F1F1F3; --muted:#9A9CA5; --line:#2C2D33; --line-2:#24252A;
   --accent:#FF7A4D; --accent-ink:#1A0C06; --accent-soft:#3A2219; --ok:#4CC38A; --ok-soft:#173226; --mark:#F5B83A; --warn:#FF7B6B; --warn-soft:#3A1D1A;
   --g-s:62%; --g1-l:50%; --g2-l:38%; --tint-s:30%; --tint-l:16%; --deep-s:70%; --deep-l:74%;
-  --hero-1:#202127; --hero-2:#2C2D35; --hero-ink:#FFFFFF; --hero-muted:#A9AAB4; --hero-acc:#FF8A5B;
+  --hero-1:#202127; --hero-2:#2C2D35; --hero-ink:#FFFFFF; --hero-muted:#A9AAB4; --hero-acc:#FF8A5B; --paper:#1F1F23; --paper-line:#3A3A40;
   --shadow:0 1px 2px rgba(0,0,0,.4); --shadow-h:0 10px 30px rgba(0,0,0,.45); color-scheme:dark}
 *{box-sizing:border-box}
 a{color:var(--accent)}
@@ -327,7 +327,21 @@ table.mx td.y{color:var(--warn);font-weight:800}
 .tk-sum{font-size:12.5px;font-weight:600;color:var(--muted);margin:-8px 0 10px}
 .tk-sec{margin-top:14px}
 .tk-sec h4{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin:0 0 4px;padding-bottom:5px;border-bottom:2px solid var(--accent-soft)}
-.tk-it{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:6px 0;border-bottom:1px solid var(--line-2);font-size:14px}
+.tk-it{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:6px 0;border-bottom:1.5px dotted var(--paper-line);font-size:13.5px}
+.panel.ticket{background:none;box-shadow:none;padding:0}
+.tkw{filter:drop-shadow(0 8px 16px rgba(0,0,0,.10))}
+.tkp{background:var(--paper);padding:24px 18px 26px;-webkit-mask:radial-gradient(circle 7px at 50% 0,transparent 98%,#000) top/18px 51% repeat-x,radial-gradient(circle 7px at 50% 100%,transparent 98%,#000) bottom/18px 51% repeat-x;mask:radial-gradient(circle 7px at 50% 0,transparent 98%,#000) top/18px 51% repeat-x,radial-gradient(circle 7px at 50% 100%,transparent 98%,#000) bottom/18px 51% repeat-x;position:relative}
+.tkp .tk-h{display:block;text-align:center;border-bottom:2px dashed var(--paper-line);padding-bottom:12px;margin-bottom:12px}
+.tkp .tk-h h2{font-family:var(--f-display);letter-spacing:.08em;text-transform:uppercase;font-size:22px;margin:0}
+.tkp .tk-h small{display:block;font-family:var(--f-mono);font-size:11.5px;color:var(--muted);margin-top:4px}
+.tk-no{position:absolute;top:16px;right:14px;font-family:var(--f-mono);font-size:10px;font-weight:700;color:var(--accent);border:1.5px solid var(--accent);border-radius:6px;padding:2px 6px;transform:rotate(6deg)}
+.tkp .tk-sum{margin:0 0 10px;text-align:center;font-family:var(--f-mono);font-size:11.5px}
+.tkp .tk-it span{font-family:var(--f-body)}
+.tkp .tk-al{border-top:2px dashed var(--paper-line);padding-top:10px;font-family:var(--f-mono);font-size:12px}
+.tk-alg{margin-top:10px;background:var(--warn-soft);color:var(--warn);font-size:12px;padding:8px 10px;border-radius:8px;font-weight:700}
+.tk-bar{margin:14px auto 0;height:30px;width:64%;opacity:.85;background:repeating-linear-gradient(90deg,var(--ink) 0 2px,transparent 2px 4px,var(--ink) 4px 5px,transparent 5px 8px,var(--ink) 8px 11px,transparent 11px 13px)}
+.tk-thx{text-align:center;font-family:var(--f-mono);font-size:10.5px;color:var(--muted);margin-top:6px;letter-spacing:.12em}
+.panel.ticket .tk-acts,.panel.ticket>.note-line{padding:0 4px}
 .tk-it small{display:block;color:var(--muted);font-size:11.5px}
 .tk-it b{font-family:var(--f-mono);font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}
 .tk-scroll{max-height:52vh;overflow:auto;padding-right:4px;scrollbar-width:thin}
@@ -573,6 +587,22 @@ body.has-tm .toast{bottom:calc(100px + 64px * var(--nt,1) + var(--sab))}
 .tmr.fired{background:var(--warn);color:#fff;animation:pulse 1s infinite}
 .tmr.fired .ib{color:#fff}.tmr.fired>.ms{color:#fff}
 @keyframes pulse{50%{transform:scale(1.03)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.06)}100%{transform:scale(1)}}
+@keyframes shake{20%,60%{transform:translateX(-4px)}40%,80%{transform:translateX(4px)}}
+@media (prefers-reduced-motion:no-preference){
+  main.enter>*{animation:fadeUp .32s cubic-bezier(.2,.7,.3,1) both}
+  main.enter>*:nth-child(2){animation-delay:.04s}main.enter>*:nth-child(3){animation-delay:.08s}main.enter>*:nth-child(n+4){animation-delay:.12s}
+  main.enter .tiles>*,main.enter .list>.row,main.enter .mods>.mod{animation:fadeUp .3s cubic-bezier(.2,.7,.3,1) both}
+  main.enter .tiles>*:nth-child(2),main.enter .list>.row:nth-child(2),main.enter .mods>.mod:nth-child(2){animation-delay:.03s}
+  main.enter .tiles>*:nth-child(3),main.enter .list>.row:nth-child(3),main.enter .mods>.mod:nth-child(3){animation-delay:.06s}
+  main.enter .tiles>*:nth-child(4),main.enter .list>.row:nth-child(4),main.enter .mods>.mod:nth-child(4){animation-delay:.09s}
+  main.enter .tiles>*:nth-child(n+5),main.enter .list>.row:nth-child(n+5),main.enter .mods>.mod:nth-child(n+5){animation-delay:.12s}
+  .btn:active,.chip:active,.ib:active,.thb:active{transform:scale(.96)}
+  .opts button.right{animation:pop .35s ease}.opts button.wrong{animation:shake .35s ease}
+  .ib.on,.ib.add.on{animation:pop .3s ease}
+  .empty .ea{animation:fadeUp .5s .1s both}
+}
 @media (prefers-reduced-motion:reduce){.tmr.fired{animation:none}}
 .cookbar{position:sticky;top:calc(64px + var(--sat));z-index:19;display:flex;align-items:center;gap:10px;padding:8px 8px 8px 14px;margin:8px 0;border-radius:16px;background:var(--ok);color:#fff;font-weight:700;font-size:14px}
 .cookbar .ms{font-size:20px}.cookbar span.t{flex:1;min-width:0}
@@ -1017,12 +1047,14 @@ function viewOrder(){
     ${ord.lines.length?`<p class="note-line">Buffet: portions = guests × K × (g per guest ÷ TTK portion) + reserve. K is the popularity factor (1 = average, 1.3 = very popular). Plated: one portion per guest + reserve.</p>
     ${mxHtml()}
     <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="o-menu">${msI("restaurant_menu")}Save as menu</button><button class="btn" id="o-new">New order</button></div>`:menus().length?`<div style="margin-top:12px"><a class="btn" href="#orders">${msI("restaurant_menu")}Start from a saved menu</a></div>`:""}</section>
-    <aside class="panel ticket"><div class="tk-h"><h2>Order list</h2>${ord.sid?`<span class="mono" style="font-size:11px;color:var(--muted)">saved</span>`:""}</div>
+    <aside class="panel ticket"><div class="tkw"><div class="tkp"><span class="tk-no">${ord.sid?"#"+String(ord.sid).slice(-4).toUpperCase():"DRAFT"}</span><div class="tk-h"><h2>Order list</h2>${ord.name?`<small>${esc(ord.name)}</small>`:""}<small>${[ord.date?new Date(ord.date+"T12:00:00").toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"}):"",Number(ord.pax)>0?ord.pax+" guests":"",Number(ord.res)>0?"reserve "+ord.res+"%":""].filter(Boolean).join(" · ")||"&nbsp;"}</small></div>
     <div class="tk-sum">${ord.lines.length} dishes · ${c.count} products · gross, rounded up${c.miss.length?` · <span style="color:var(--warn)">${c.miss.length} not counted</span>`:""}</div>
     ${c.count?`<div class="seg" style="margin:0 0 10px"><button data-ordby="sec" aria-pressed="${ordBy==="sec"}">By section</button><button data-ordby="sup" aria-pressed="${ordBy==="sup"}">By supplier</button></div>`:""}
     <div class="tk-scroll">${c.count&&ordBy==="sup"?supTicket(c):c.count?c.secs.map((s,i)=>s.length?`<div class="tk-sec"><h4>${esc(D.sections[i])}</h4>${s.map(it=>`<div class="tk-it"><span>${esc(it.name)}${it.note?`<small>${esc(it.note)}</small>`:""}</span><b>${fmtQ(it.q)} ${esc(it.unit)}</b></div>`).join("")}</div>`:"").join(""):`<p style="color:var(--muted);margin:0">Products appear here as you add dishes.</p>`}</div>
-    ${c.algs.length?`<div class="tk-al">Allergens in this menu: ${c.algs.map(a=>ALG[a]).join(", ")}</div>`:""}
+
     ${c.count?`<div class="tk-al">${c.cost.n?`Food cost: <span class="cost">${money(c.cost.sum)}</span>${Number(ord.pax)>0?` · ${money(c.cost.sum/Number(ord.pax))} per guest`:""}${c.cost.n<c.count?` · prices for ${c.cost.n} of ${c.count} products`:""}`:`No prices yet.`} <a href="#prices">${c.cost.n?"Edit prices":"Add prices"}</a></div>`:""}
+    ${c.algs.length?`<div class="tk-alg">${msI("warning")} ${c.algs.map(a=>ALG[a]).join(" · ")}</div>`:""}
+    ${c.count?`<div class="tk-bar" aria-hidden="true"></div><div class="tk-thx">CHEFSHEET · THANK YOU, CHEF</div>`:""}</div></div>
     <div class="tk-acts"><button class="btn pri" id="o-save" ${ord.lines.length?"":"disabled"}>${ord.sid?"Update saved order":"Save order"}</button>
     <button class="btn" id="o-copy" ${c.count?"":"disabled"}>${ICON.copy}Copy</button><button class="btn" id="o-pdf" ${c.count?"":"disabled"}>${ICON.pdf}PDF</button>
     <button class="btn" id="o-share" ${c.count?"":"disabled"}>${msI("share")}Share</button><button class="btn" id="o-csv" ${c.count?"":"disabled"}>CSV</button>
@@ -1647,6 +1679,7 @@ if(navigator.serviceWorker)navigator.serviceWorker.addEventListener("message",e=
 const listY={};
 try{history.scrollRestoration="manual"}catch(e){}
 function route(){
+  {const mm=$("main"),hh=location.hash||"";if(mm&&hh!==route._ah){route._ah=hh;mm.classList.remove("enter");void mm.offsetWidth;mm.classList.add("enter");clearTimeout(route._t);route._t=setTimeout(()=>mm.classList.remove("enter"),700)}}
   if(!D)return;
   {const h0=location.hash||"",qi=h0.indexOf("?");if(qi>0){const base=h0.slice(0,qi),ps=new URLSearchParams(h0.slice(qi+1)),by=(ps.get("by")||"").trim().slice(0,60),due=(ps.get("due")||"").slice(0,10);
     const k=base.startsWith("#quiz-")?"q:"+base.slice(6):base.startsWith("#l-")?"l:"+base.slice(3):null;
