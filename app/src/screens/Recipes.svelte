@@ -4,10 +4,10 @@
   import Icon from "../ui/Icon.svelte";
   import Empty from "../ui/Empty.svelte";
   import Button from "../ui/Button.svelte";
-  import { R, D, filtered, byProducts, findProducts, pickSet, pickName, completeWord, folderCount, folderStyle, dishImg, mineFolder, mineBackup, mineRestore } from "../core/catalog";
+  import { R, D, filtered, byProducts, findProducts, pickSet, pickName, completeWord, folderCount, folderStyle, dishImg, courseCount, mineFolder, mineBackup, mineRestore } from "../core/catalog";
   import { saveFile, today } from "../core/files";
   import { toast } from "../core/ui.svelte";
-  import { GROUPS, ALG } from "../core/constants";
+  import { GROUPS, ALG, COURSES, MAINS, CUISINES } from "../core/constants";
   import { favs } from "../core/kitchen.svelte";
   import { router } from "../core/router.svelte";
   import { saveOffline } from "../core/offline";
@@ -31,14 +31,21 @@
   function pick(i: number | string) { pantry.add(i); pq = ""; (document.getElementById("pq") as HTMLInputElement)?.focus(); }
   const haves = $derived.by(() => { void rev; return haveMode ? byProducts(pantry.v, filtered({ q: "", coll: -1, diet: [0, 1, 2][diet], free, low, sort: "az", only: null, not: notSet })) : []; });
   const coll = $derived(arg.startsWith("c:") ? D.folders.findIndex((f) => f[1] === arg.slice(2)) : -1);
-  const browsing = $derived(!!q.trim() || coll >= 0 || onlyFav || diet > 0 || free.size > 0 || low || avoid.v.length > 0);
+  // "What dish" pages (#d-soups …): chips for what it is made of and the cuisine
+  const course = $derived(arg.startsWith("d:") ? COURSES.findIndex((c) => c[1] === arg.slice(2)) : -1);
+  let main = $state(-1), cui = $state(-2);
+  const inCourse = $derived(course >= 0 ? R.filter((r) => r.tg[0] === course) : []);
+  const mainN = $derived(MAINS.map((_, i) => inCourse.filter((r) => r.tg[1] === i && (cui < -1 || r.tg[2] === cui)).length));
+  const cuiN = $derived([...CUISINES.map((_, i) => inCourse.filter((r) => r.tg[2] === i && (main < 0 || r.tg[1] === main)).length), inCourse.filter((r) => r.tg[2] === -1 && (main < 0 || r.tg[1] === main)).length]);
+  const tiles = COURSES.map((c, i) => [i, courseCount(i)] as [number, number]).filter((x) => x[1] > 0);
+  const browsing = $derived(!!q.trim() || coll >= 0 || course >= 0 || onlyFav || diet > 0 || free.size > 0 || low || avoid.v.length > 0);
   let rev = $state(0);
   function restore(e: Event) {
     const inp = e.target as HTMLInputElement, f = inp.files?.[0]; if (!f) return;
     f.text().then((t) => { const n = mineRestore(t); toast.show(n < 0 ? "This file is not a Chefsheet backup" : n + " recipes restored"); rev++; inp.value = ""; });
   }
-  const list = $derived.by(() => { void rev; return filtered({ q, coll, diet: [0, 1, 2][diet], free, low, sort: (["rel", "az", "kcal"] as const)[sort], only: onlyFav ? new Set(favs.v) : null, not: notSet }); });
-  $effect(() => { q; coll; onlyFav; diet; sort; free; low; pantry.v; avoid.v; shown = 40; });
+  const list = $derived.by(() => { void rev; return filtered({ q, coll, diet: [0, 1, 2][diet], free, low, sort: (["rel", "az", "kcal"] as const)[sort], only: onlyFav ? new Set(favs.v) : null, not: notSet, course, main, cui }); });
+  $effect(() => { q; coll; course; main; cui; onlyFav; diet; sort; free; low; pantry.v; avoid.v; shown = 40; });
   const nFilters = $derived((diet ? 1 : 0) + free.size + (low ? 1 : 0) + avoid.v.length);
   function toggleAlg(a: number) { const s = new Set(free); s.has(a) ? s.delete(a) : s.add(a); free = s; }
   const groups = GROUPS.map(([g, names]) => [g, names.map((n) => D.folders.findIndex((f) => f[0] === n)).filter((i) => i >= 0)] as [string, number[]]);
@@ -46,6 +53,7 @@
 <div class="page">
   <div class="head">
     {#if coll >= 0}<a class="back" href="#recipes"><Icon name="back" size={16} />All recipes</a><h1>{D.folders[coll][0]}</h1>
+    {:else if course >= 0}<a class="back" href="#recipes"><Icon name="back" size={16} />All recipes</a><h1>{COURSES[course][0]}</h1>
     {:else if onlyFav}<a class="back" href="#recipes"><Icon name="back" size={16} />All recipes</a><h1>Favourites</h1>
     {:else if haveMode}<a class="back" href="#recipes"><Icon name="back" size={16} />All recipes</a><h1>What can I cook?</h1>
     {:else}<p class="eyebrow">Library</p><h1>Recipes</h1>{/if}
@@ -69,6 +77,17 @@
     <a class="chip" href="#new">New recipe</a>
     <a class="chip" href="#new-semi">New semi-finished</a>
   </div>
+  {/if}
+  {#if course >= 0}
+    <div class="tags" aria-label="Made of">
+      <button class="chip" class:on={main < 0} onclick={() => (main = -1)}>Any</button>
+      {#each MAINS as m, i}{#if mainN[i]}<button class="chip" class:on={main === i} onclick={() => (main = main === i ? -1 : i)}>{m} <small>{mainN[i]}</small></button>{/if}{/each}
+    </div>
+    <div class="tags" aria-label="Cuisine">
+      <button class="chip" class:on={cui < -1} onclick={() => (cui = -2)}>All cuisines</button>
+      {#each CUISINES as k, i}{#if cuiN[i]}<button class="chip" class:on={cui === i} onclick={() => (cui = cui === i ? -2 : i)}>{k} <small>{cuiN[i]}</small></button>{/if}{/each}
+      {#if cuiN[CUISINES.length]}<button class="chip" class:on={cui === -1} onclick={() => (cui = cui === -1 ? -2 : -1)}>International <small>{cuiN[CUISINES.length]}</small></button>{/if}
+    </div>
   {/if}
   {#if coll === mineFolder()}
     <div class="acts mine"><Button small icon="share" onclick={() => saveFile("Chefsheet_My_Recipes_" + today() + ".json", mineBackup())}>Back up my recipes</Button>
@@ -107,6 +126,9 @@
     {/if}
   {:else}
     <p class="count note">{R.length.toLocaleString("en")} recipes in {D.folders.length} collections</p>
+    <section class="sec"><div class="sec-h"><h2>What dish</h2></div>
+      <div class="dish">{#each tiles as [i, n]}<a class="dt" href="#d-{COURSES[i][1]}"><img src={dishImg(COURSES[i][2])} alt="" width="44" height="44" loading="lazy" /><span><b>{COURSES[i][0]}</b><small>{n.toLocaleString("en")}</small></span></a>{/each}</div>
+    </section>
     {#each groups as [g, ids]}
       <section class="sec"><div class="sec-h"><h2>{g}</h2><small class="muted">{ids.length}</small></div>
         <div class="rack">{#each ids as i}<a class="coll" href="#c-{D.folders[i][1]}"><img src={dishImg(folderStyle(i)[1])} alt="" width="72" height="72" loading="lazy" /><span><b>{D.folders[i][0]}</b><small>{folderCount[i]} recipes</small></span></a>{/each}</div>
@@ -150,6 +172,14 @@
   .rack { display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; margin: 0 calc(-1 * var(--gap)); padding: 2px var(--gap) 12px; scroll-snap-type: x mandatory; }
   .rack::-webkit-scrollbar { display: none; }
   .mine { margin: 4px 0 6px; }
+  .tags { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin: 10px calc(-1 * var(--gap)) 0; padding: 2px var(--gap) 4px; }
+  .tags::-webkit-scrollbar { display: none; }
+  .tags .chip { border: 0; } .tags small { color: var(--muted); font-weight: 400; } .tags .on small { color: inherit; opacity: .75; }
+  .dish { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 160px), 1fr)); }
+  .dt { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--r); background: var(--surface); box-shadow: var(--sh-1); color: var(--ink); transition: transform .15s var(--ease); }
+  .dt:active { transform: scale(.97); }
+  .dt img { width: 44px; height: 44px; object-fit: contain; border-radius: 50%; background: var(--ill-bg); padding: 4px; flex: none; }
+  .dt span { display: grid; min-width: 0; } .dt b { font: 600 14.5px/1.25 var(--f-display); } .dt small { font-size: 12px; color: var(--muted); }
   .off { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; } .off > div { flex: 1 1 240px; display: grid; gap: 4px; }
   .btnf { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 999px; background: var(--surface); box-shadow: var(--sh-1), inset 0 0 0 1px var(--hair); font-size: 13.5px; font-weight: 500; cursor: pointer; }
   .coll { flex: none; width: 150px; display: grid; gap: 10px; padding: 16px 14px 14px; background: var(--surface); border-radius: var(--r); box-shadow: var(--sh-1); color: var(--ink); scroll-snap-align: start; transition: transform .2s var(--ease), box-shadow .2s; }

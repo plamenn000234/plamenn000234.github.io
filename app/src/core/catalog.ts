@@ -8,7 +8,7 @@ export type Product = [name: string, sec: number, unit: string, k: number, per: 
 export interface Recipe {
   id: string; name: string; t: string; s: string; f: number; sub: string; N: number; pg: number; pu: string;
   algs: number[]; kcal: number; also: number[]; lines: [number, number][]; diet: number;
-  hay: string; tl: string; ty: [number, string];
+  hay: string; tl: string; ty: [number, string]; tg: [course: number, main: number, cuisine: number];
   mine?: boolean; semi?: boolean; y?: number; semis?: [string, number][];
 }
 export interface Detail { yl?: string; c: [string, string[], [string, number | string][], string[]][]; st?: string; al?: string; nu?: { p?: number[]; h?: number[] } | null }
@@ -19,6 +19,7 @@ export const D = { v: "", sections: [] as string[], folders: [] as [string, stri
 export let R: Recipe[] = [];
 export const byId = new Map<string, Recipe>();
 export let folderCount: number[] = [];
+export const courseCount = (c: number) => R.reduce((n, r) => n + (r.tg[0] === c ? 1 : 0), 0);
 let prodHay: string[] = [];
 let MINE_F = -1;
 let mine: Mine[] = [];
@@ -39,7 +40,7 @@ export async function load() {
   prodHay = D.products.map((p) => fold(p[0]));
   R = j.r.map((a: any[]) => {
     const [t, s] = splitName(a[1]);
-    const o: Recipe = { id: a[0], name: a[1], t, s, f: a[2], sub: a[3], N: a[4] || 1, pg: a[5], pu: a[6], algs: a[7], kcal: a[8], also: a[9], lines: a[10], diet: a[11], hay: "", tl: "", ty: [0, ""] };
+    const o: Recipe = { id: a[0], name: a[1], t, s, f: a[2], sub: a[3], N: a[4] || 1, pg: a[5], pu: a[6], algs: a[7], kcal: a[8], also: a[9], lines: a[10], diet: a[11], hay: "", tl: "", ty: [0, ""], tg: a[12] || [-1, -1, -1] };
     o.hay = fold(a[1] + " " + a[3] + " " + D.folders[a[2]][0]); o.tl = fold(t);
     folderCount[a[2]]++; o.also.forEach((x) => folderCount[x]++); o.ty = dishType(o);
     byId.set(o.id, o); return o;
@@ -81,7 +82,7 @@ function mineToR(u: Mine): Recipe {
   const [t, s0] = splitName(u.name);
   const o: Recipe = { id: u.id, name: u.name, t, s: s0, f: MINE_F, sub: u.semi ? "Semi-finished" : "", N, pg: Number(u.pg) || 0, pu: "g",
     algs: [...info.algs].sort((a, b) => a - b), kcal: Number(u.kcal) || 0, also: [], lines: [...acc].map(([pi, g]) => [pi, g] as [number, number]), diet: info.diet, mine: true,
-    semi: !!u.semi, y: u.semi ? semiYield(u) : 0, semis: info.semis.map(([id, q]) => [id, q / N] as [string, number]), hay: "", tl: "", ty: [0, ""] };
+    semi: !!u.semi, y: u.semi ? semiYield(u) : 0, semis: info.semis.map(([id, q]) => [id, q / N] as [string, number]), hay: "", tl: "", ty: [0, ""], tg: [u.semi ? 7 : -1, -1, -1] };
   o.hay = fold(u.name + " My recipes " + (u.semi ? "semi-finished prep " : "") + u.ing.map((x) => x[0]).join(" ")); o.tl = fold(t); o.ty = dishType(o);
   return o;
 }
@@ -105,13 +106,16 @@ export async function detail(r: Recipe): Promise<Detail> {
 
 /* ---------- search ---------- */
 export const inColl = (r: Recipe, c: number) => r.f === c || r.also.includes(c);
-export interface Filter { q: string; coll: number; diet: number; free: Set<number>; low: boolean; sort: "rel" | "az" | "kcal"; only?: Set<string> | null; not?: Set<number> | null }
+export interface Filter { q: string; coll: number; diet: number; free: Set<number>; low: boolean; sort: "rel" | "az" | "kcal"; only?: Set<string> | null; not?: Set<number> | null; course?: number; main?: number; cui?: number }
 export function filtered(ui: Filter): Recipe[] {
   const toks = fold(ui.q).split(/[^\p{L}\p{N}%]+/u).filter((t) => t.length > 1 || /\d/.test(t));
   const out: [Recipe, number][] = [];
   for (const r of R) {
     if (ui.only && !ui.only.has(r.id)) continue;
     if (ui.coll >= 0 && !inColl(r, ui.coll)) continue;
+    if (ui.course != null && ui.course >= 0 && r.tg[0] !== ui.course) continue;
+    if (ui.main != null && ui.main >= 0 && r.tg[1] !== ui.main) continue;
+    if (ui.cui != null && ui.cui > -2 && r.tg[2] !== ui.cui) continue; // -2 any cuisine, -1 international
     if (ui.diet && r.diet < ui.diet) continue;
     if (ui.free.size && r.algs.some((a) => ui.free.has(a))) continue;
     if (ui.low && !(r.kcal > 0 && r.kcal <= 400)) continue;

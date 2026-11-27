@@ -523,6 +523,24 @@ await test("community: share my recipe, find it signed out, save a copy", async 
   assert(p.errors.length === 0 && g.errors.length === 0, p.errors.concat(g.errors).join("; "));
 });
 
+await test("recipes by dish: soups, then fish, then a cuisine; old Bulgarian link opens Balkans", async () => {
+  const p = await page(); await p.goto(BASE + "#recipes"); await ready(p);
+  await p.click("a.dt:has-text('Soups')"); await p.waitForSelector("h1:has-text('Soups')");
+  const all = parseInt((await p.locator(".count").innerText()).replace(/,/g, ""));
+  assert(all > 200, "soups " + all);
+  await p.click(".tags button:has-text('Fish')"); await p.waitForTimeout(150);
+  const fish = parseInt((await p.locator(".count").innerText()).replace(/,/g, ""));
+  assert(fish > 5 && fish < all, "fish soups " + fish);
+  await p.click(".tags button:has-text('Mediterranean')"); await p.waitForTimeout(150);
+  const med = parseInt((await p.locator(".count").innerText()).replace(/,/g, ""));
+  assert(med >= 1 && med <= fish, "med fish soups " + med);
+  await noHScroll(p);
+  if (SHOTS) await p.screenshot({ path: SHOTS + "/dish-soups.png" });
+  await p.goto(BASE + "#c-bulgarian-classics"); await p.waitForSelector("h1:has-text('Adriatic & Balkan')");
+  await p.fill("input[aria-label='Search recipes']", "banitsa"); await p.waitForSelector("a.row");
+  assert(p.errors.length === 0, p.errors.join("; "));
+});
+
 await b.close();
 console.log(results.join("\n"));
 console.log(failed ? `\n${failed} failed` : `\nall ${results.length} passed`);
