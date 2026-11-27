@@ -5,7 +5,7 @@ export interface Route { tab: Tab; view: string; arg: string; q: URLSearchParams
 const REDIRECT: Record<string, string> = { "#order": "#kitchen", "#orders": "#kitchen-saved", "#fav": "#recipes-fav", "#home": "#today", "#browse": "#recipes" };
 
 /** Screens that still live in 2.x during the alpha. They open the current version at the same address. */
-export const LEGACY = /^#(new|new-semi|edit-|m-|l-|quiz-|review)/;
+export const LEGACY = /^#(m-|l-|quiz-|review)/;
 
 export function parse(h: string): Route {
   h = REDIRECT[h] || h;
@@ -21,6 +21,8 @@ export function parse(h: string): Route {
   if (h === "#suppliers") return { tab: "kitchen", view: "suppliers", arg: "", q };
   if (h === "#prices") return { tab: "kitchen", view: "prices", arg: "", q };
   if ((a = m("#prices-")) != null) return { tab: "recipes", view: "prices", arg: a, q };
+  if (h === "#new" || h === "#new-semi") return { tab: "recipes", view: "editor", arg: h === "#new-semi" ? "+semi" : "+", q };
+  if ((a = m("#edit-")) != null) return { tab: "recipes", view: "editor", arg: a, q };
   if (h === "#recipes") return { tab: "recipes", view: "recipes", arg: "", q };
   if (h === "#recipes-fav") return { tab: "recipes", view: "recipes", arg: "fav", q };
   if ((a = m("#c-")) != null) return { tab: "recipes", view: "recipes", arg: "c:" + a, q };

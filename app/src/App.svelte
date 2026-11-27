@@ -14,6 +14,7 @@
   import Prep from "./screens/Prep.svelte";
   import Suppliers from "./screens/Suppliers.svelte";
   import Prices from "./screens/Prices.svelte";
+  import Editor from "./screens/Editor.svelte";
   import { router } from "./core/router.svelte";
   import { load } from "./core/catalog";
   let ready = $state(false), err = $state(""), searching = $state(false);
@@ -36,6 +37,7 @@
   {:else if rt.view === "learn"}<Learn />
   {:else if rt.view === "prep"}<Prep />
   {:else if rt.view === "suppliers"}<Suppliers />
+  {:else if rt.view === "editor"}{#key rt.arg}<Editor id={rt.arg.startsWith("+") ? "" : rt.arg} semi={rt.arg === "+semi"} />{/key}
   {:else if rt.view === "prices"}{#key rt.arg}<Prices rid={rt.arg} />{/key}
   {/if}
 </main>

@@ -159,6 +159,22 @@ await test("recipe PDF and service card", async () => {
   f = await download(p, () => p.click("button[aria-label='Service card']")); assert(/^Service_Card_/.test(f), f);
 });
 
+await test("editor: semi-finished, a dish that uses it, edit and delete", async () => {
+  const p = await page(); await p.goto(BASE + "#new-semi"); await ready(p);
+  await p.fill("#ed-name", "House demi-glace"); await p.fill("input[aria-label='Ingredient 1']", "Butter"); await p.fill("input[aria-label='Amount 1']", "500");
+  await p.click("button:has-text('Save recipe')"); await p.waitForSelector("h1:has-text('House demi-glace')");
+  await p.goto(BASE + "#new"); await p.waitForSelector("#ed-name");
+  await p.fill("#ed-name", "Steak with demi"); await p.fill("input[aria-label='Ingredient 1']", "House demi-glace"); await p.fill("input[aria-label='Amount 1']", "200");
+  await p.click(".chip:has-text('Milk')"); await p.click("button:has-text('Save recipe')"); await p.waitForSelector("h1:has-text('Steak with demi')");
+  const m = await p.evaluate(() => JSON.parse(localStorage.getItem("bb-mine"))); assert(m.length === 2 && m[1].semi === true && m[0].algs.includes(7), "bb-mine " + JSON.stringify(m));
+  const id = m[0].id; await p.goto(BASE + "#edit-" + id); await p.waitForSelector("#ed-name");
+  assert((await p.inputValue("#ed-name")) === "Steak with demi", "editor not filled");
+  if (SHOTS) await p.screenshot({ path: SHOTS + "/editor.png", fullPage: true });
+  await p.click("button:has-text('Delete')"); await p.click("button:has-text('Tap again')"); await p.waitForURL(/#c-/);
+  assert((await p.evaluate(() => JSON.parse(localStorage.getItem("bb-mine")).length)) === 1, "not deleted");
+  assert(p.errors.length === 0, p.errors.join("; "));
+});
+
 await b.close();
 console.log(results.join("\n"));
 console.log(failed ? `\n${failed} failed` : `\nall ${results.length} passed`);

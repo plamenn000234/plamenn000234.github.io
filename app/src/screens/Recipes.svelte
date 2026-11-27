@@ -4,7 +4,9 @@
   import Icon from "../ui/Icon.svelte";
   import Empty from "../ui/Empty.svelte";
   import Button from "../ui/Button.svelte";
-  import { R, D, filtered, folderCount, folderStyle, dishImg, mineFolder } from "../core/catalog";
+  import { R, D, filtered, folderCount, folderStyle, dishImg, mineFolder, mineBackup, mineRestore } from "../core/catalog";
+  import { saveFile, today } from "../core/files";
+  import { toast } from "../core/ui.svelte";
   import { GROUPS, ALG } from "../core/constants";
   import { favs } from "../core/kitchen.svelte";
   import { router } from "../core/router.svelte";
@@ -14,7 +16,12 @@
   const onlyFav = $derived(arg === "fav");
   const coll = $derived(arg.startsWith("c:") ? D.folders.findIndex((f) => f[1] === arg.slice(2)) : -1);
   const browsing = $derived(!!q.trim() || coll >= 0 || onlyFav || diet > 0 || free.size > 0 || low);
-  const list = $derived(filtered({ q, coll, diet: [0, 1, 2][diet], free, low, sort: (["rel", "az", "kcal"] as const)[sort], only: onlyFav ? new Set(favs.v) : null }));
+  let rev = $state(0);
+  function restore(e: Event) {
+    const inp = e.target as HTMLInputElement, f = inp.files?.[0]; if (!f) return;
+    f.text().then((t) => { const n = mineRestore(t); toast.show(n < 0 ? "This file is not a Chefsheet backup" : n + " recipes restored"); rev++; inp.value = ""; });
+  }
+  const list = $derived.by(() => { void rev; return filtered({ q, coll, diet: [0, 1, 2][diet], free, low, sort: (["rel", "az", "kcal"] as const)[sort], only: onlyFav ? new Set(favs.v) : null }); });
   $effect(() => { q; coll; onlyFav; diet; sort; free; low; shown = 40; });
   const nFilters = $derived((diet ? 1 : 0) + free.size + (low ? 1 : 0));
   function toggleAlg(a: number) { const s = new Set(free); s.has(a) ? s.delete(a) : s.add(a); free = s; }
@@ -36,6 +43,11 @@
     <a class="chip" href="#new">New recipe</a>
     <a class="chip" href="#new-semi">New semi-finished</a>
   </div>
+  {#if coll === mineFolder()}
+    <div class="acts mine"><Button small icon="share" onclick={() => saveFile("Chefsheet_My_Recipes_" + today() + ".json", mineBackup())}>Back up my recipes</Button>
+      <label class="btnf"><Icon name="plus" size={16} />Restore from a file<input type="file" accept=".json,application/json" onchange={restore} hidden /></label></div>
+    <p class="note">Your recipes live on this device. Back them up to a file to move them to a new phone.</p>
+  {/if}
   {#if showF}
     <div class="filters card pad">
       <div><p class="eyebrow">Diet</p><Seg options={["Any", "Vegetarian", "Vegan"]} bind:value={diet} /></div>
@@ -86,6 +98,8 @@
   .more { display: flex; justify-content: center; margin-top: 14px; }
   .rack { display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; margin: 0 calc(-1 * var(--gap)); padding: 2px var(--gap) 12px; scroll-snap-type: x mandatory; }
   .rack::-webkit-scrollbar { display: none; }
+  .mine { margin: 4px 0 6px; }
+  .btnf { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 999px; background: var(--surface); box-shadow: var(--sh-1), inset 0 0 0 1px var(--hair); font-size: 13.5px; font-weight: 500; cursor: pointer; }
   .coll { flex: none; width: 150px; display: grid; gap: 10px; padding: 16px 14px 14px; background: var(--surface); border-radius: var(--r); box-shadow: var(--sh-1); color: var(--ink); scroll-snap-align: start; transition: transform .2s var(--ease), box-shadow .2s; }
   .coll:active { transform: scale(.97); }
   @media (hover: hover) { .coll:hover { box-shadow: var(--sh-2); transform: translateY(-2px); } }
