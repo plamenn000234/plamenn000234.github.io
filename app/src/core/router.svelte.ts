@@ -2,7 +2,7 @@
 export type Tab = "today" | "tools" | "kitchen" | "recipes" | "learn" | "app";
 export interface Route { tab: Tab; view: string; arg: string; q: URLSearchParams }
 
-const REDIRECT: Record<string, string> = { "#order": "#kitchen", "#orders": "#kitchen-saved", "#fav": "#recipes-fav", "#home": "#today", "#browse": "#recipes" };
+const REDIRECT: Record<string, string> = { "#order": "#kitchen", "#orders": "#kitchen-saved", "#fav": "#recipes-fav", "#home": "#today", "#browse": "#recipes", "#c-bulgarian-classics": "#c-adriatic-balkan" };
 
 
 export function parse(h: string): Route {
@@ -27,6 +27,7 @@ export function parse(h: string): Route {
   if (h === "#recipes-fav") return { tab: "recipes", view: "recipes", arg: "fav", q };
   if (h === "#recipes-have") return { tab: "recipes", view: "recipes", arg: "have", q };
   if ((a = m("#c-")) != null) return { tab: "recipes", view: "recipes", arg: "c:" + a, q };
+  if ((a = m("#d-")) != null) return { tab: "recipes", view: "recipes", arg: "d:" + a, q };
   if ((a = m("#cook-")) != null) return { tab: "recipes", view: "cook", arg: a, q };
   if ((a = m("#r-")) != null) return { tab: "recipes", view: "recipe", arg: a, q };
   if (h === "#guest") return { tab: "app", view: "guest", arg: "", q };
