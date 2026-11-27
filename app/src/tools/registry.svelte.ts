@@ -18,7 +18,7 @@ export const TOOLS: ToolDef[] = [
     load: () => import("./Bakers.svelte") },
   { id: "buffet", name: "Buffet planner", group: "Calculate", icon: "buffet", desc: "Guests × grams × K", kw: "guests grams per person banquet quantity", learn: true,
     load: () => import("./Buffet.svelte") },
-  { id: "doneness", name: "Doneness & resting", group: "Heat & time", icon: "thermo", desc: "Pull temperatures and resting times", kw: "steak temperature core rare medium well rest probe", learn: true,
+  { id: "doneness", name: "Doneness & resting", group: "Heat & time", icon: "thermo", desc: "Pull temperatures and resting times", kw: "steak temperature core rare medium well rest probe pork chicken poultry duck fish salmon tuna", learn: true,
     load: () => import("./Doneness.svelte") },
   { id: "sousvide", name: "Sous-vide", group: "Heat & time", icon: "tool-sousvide", desc: "Bath, time and salt by product", kw: "water bath vacuum bag low temperature", learn: true,
     load: () => import("./SousVide.svelte"), fromRecipe: (x) => ({ w: x.raw || 1000 }) },

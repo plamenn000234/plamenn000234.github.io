@@ -299,6 +299,28 @@ await test("tools: numbers match the tables (yield, buffet, bakers, sous-vide, c
   assert(p.errors.length === 0, p.errors.join("; "));
 });
 
+await test("tool upgrades: doneness kinds, price rounding, brine to cover, dough water, buffet list", async () => {
+  const p = await page(); const out = async () => (await p.locator(".tool-body .outs").allInnerTexts()).join(" | ").replace(/\s+/g, " ");
+  const has = async (re) => { for (let k = 0; k < 30; k++) { if (re.test(await out())) return true; await p.waitForTimeout(100); } return false; };
+  const open = async (t) => { await p.goto(BASE + "#tool-" + t); await p.reload(); await ready(p); await p.waitForSelector(".tool-body .outs"); };
+  await open("doneness"); await p.click(".tool-body .seg button:has-text('Poultry')");
+  assert(await has(/PULL AT 70 °C.*AFTER REST 74 °C/i), "poultry " + await out());
+  await p.click(".tool-body .seg button:has-text('Fish')"); await p.waitForSelector("text=against parasites");
+  await open("cost"); await p.click(".tool-body .seg button:has-text('.90')");
+  assert(await has(/MENU PRICE, WITH VAT 12.90/i), "round " + await out());
+  await p.click(".tool-body .seg button:has-text('Exact')"); await p.click(".tool-body .seg button:has-text('By profit')");
+  assert(await has(/MENU PRICE, WITH VAT 13.44/i), "profit " + await out());
+  await open("salt"); await p.click(".tool-body .seg button:has-text('Brine')");
+  assert(await has(/WATER 2,000 g.*FINE SALT 60 g/i), "brine " + await out());
+  await p.click(".tool-body .seg button:has-text('container')"); assert(await has(/WATER 3,000 g.*FINE SALT 90 g/i), "brine2 " + await out());
+  await open("bakers"); await p.selectOption(".tool-body select", "3");
+  assert(await has(/WATER AT 19 °C/i), "ddt " + await out());
+  await p.click(".tool-body .seg button:has-text('Poolish')"); assert(await has(/PRE: FLOUR 453 g.*PRE: WATER 453 g/i), "poolish " + await out());
+  await open("buffet"); await p.click("text=Add to the list"); await p.selectOption(".tool-body select", "1"); await p.click("text=Add to the list");
+  assert(await p.locator(".tool-body .tlist > div").count() === 2, "list");
+  assert(p.errors.length === 0, p.errors.join("; "));
+});
+
 await b.close();
 console.log(results.join("\n"));
 console.log(failed ? `\n${failed} failed` : `\nall ${results.length} passed`);
