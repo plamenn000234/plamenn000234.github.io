@@ -13,8 +13,8 @@
 <title>Chefsheet</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap">
-<link rel="manifest" href="manifest.json"><meta name="theme-color" content="#E2552B">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&icon_names=ac_unit,add,arrow_back,arrow_forward,assignment_ind,auto_awesome,bakery_dining,bento,blender,breakfast_dining,cake,calculate,celebration,check,check_circle,checklist,chef_hat,child_care,close,content_copy,cookie,cooking,delete,dinner_dining,download,download_for_offline,eco,edit,egg_alt,euro,fastfood,flag,grain,group,groups,health_and_safety,icecream,insights,inventory_2,kebab_dining,kitchen,label,lightbulb,local_bar,local_cafe,local_fire_department,local_pizza,lunch_dining,menu_book,more_horiz,nutrition,outdoor_grill,pause,picture_as_pdf,play_arrow,quiz,ramen_dining,receipt_long,refresh,restaurant,restaurant_menu,rice_bowl,room_service,scale,school,science,search,send,set_meal,share,skillet,soup_kitchen,spa,sports_bar,star,stockpot,sunny,tapas,thermostat,timer,translate,tune,upload,warning,water_drop,wine_bar,workspace_premium&display=block">
+<link rel="manifest" href="manifest.json"><meta name="theme-color" content="#E2552B"><script>try{var bt=JSON.parse(localStorage.getItem("bb-theme")||"null");if(bt&&bt!=="auto")document.documentElement.setAttribute("data-theme",bt)}catch(e){}</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&icon_names=ac_unit,add,arrow_back,arrow_forward,assignment_ind,auto_awesome,bakery_dining,bedtime,bento,blender,breakfast_dining,brightness_auto,cake,calculate,celebration,check,check_circle,checklist,chef_hat,child_care,close,content_copy,cookie,cooking,dark_mode,delete,dinner_dining,download,download_for_offline,eco,edit,egg_alt,euro,fastfood,flag,grain,group,groups,health_and_safety,icecream,insights,inventory_2,kebab_dining,kitchen,label,light_mode,lightbulb,local_bar,local_cafe,local_fire_department,local_pizza,lunch_dining,menu_book,more_horiz,nutrition,outdoor_grill,pause,picture_as_pdf,play_arrow,quiz,ramen_dining,receipt_long,refresh,restaurant,restaurant_menu,rice_bowl,room_service,scale,school,science,search,send,set_meal,share,skillet,soup_kitchen,spa,sports_bar,star,stockpot,sunny,tapas,thermostat,timer,translate,tune,upload,warning,water_drop,wine_bar,workspace_premium&display=block">
 <style>
 /* Layout: a modern food app. Paprika-orange brand, every collection gets its own gradient "app icon" colour; recipes read as clean cards; the recipe page opens on a colour banner, then a tech-card body with a scaled quantity column. */
 :root{--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);
@@ -31,6 +31,12 @@
   --g-s:62%; --g1-l:50%; --g2-l:38%; --tint-s:30%; --tint-l:16%; --deep-s:70%; --deep-l:74%;
   --hero-1:#202127; --hero-2:#2C2D35; --hero-ink:#FFFFFF; --hero-muted:#A9AAB4; --hero-acc:#FF8A5B;
   --shadow:0 1px 2px rgba(0,0,0,.4); --shadow-h:0 10px 30px rgba(0,0,0,.45); color-scheme:dark}}
+:root[data-theme="night"]{
+  --bg:#15110D; --surface:#201A14; --sunk:#1A1510; --ink:#F2E4D0; --muted:#B39E86; --line:#3A3026; --line-2:#2C241C;
+  --accent:#F0915A; --accent-ink:#1E1006; --accent-soft:#3D2616; --ok:#9CC27A; --ok-soft:#28301B; --mark:#F2B451; --warn:#F08A6E; --warn-soft:#3B211A;
+  --g-s:55%; --g1-l:44%; --g2-l:33%; --tint-s:30%; --tint-l:15%; --deep-s:60%; --deep-l:72%;
+  --hero-1:#2A2018; --hero-2:#3A2C20; --hero-ink:#F7EBDC; --hero-muted:#C8B39A; --hero-acc:#F5A46E;
+  --shadow:0 1px 2px rgba(0,0,0,.45); --shadow-h:0 10px 30px rgba(0,0,0,.5); color-scheme:dark}
 :root[data-theme="dark"]{
   --bg:#101113; --surface:#1A1B1F; --sunk:#151619; --ink:#F1F1F3; --muted:#9A9CA5; --line:#2C2D33; --line-2:#24252A;
   --accent:#FF7A4D; --accent-ink:#1A0C06; --accent-soft:#3A2219; --ok:#4CC38A; --ok-soft:#173226; --mark:#F5B83A; --warn:#FF7B6B; --warn-soft:#3A1D1A;
@@ -38,6 +44,7 @@
   --hero-1:#202127; --hero-2:#2C2D35; --hero-ink:#FFFFFF; --hero-muted:#A9AAB4; --hero-acc:#FF8A5B;
   --shadow:0 1px 2px rgba(0,0,0,.4); --shadow-h:0 10px 30px rgba(0,0,0,.45); color-scheme:dark}
 *{box-sizing:border-box}
+a{color:var(--accent)}
 html,body{background:var(--bg)}
 body{color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 110px;-webkit-font-smoothing:antialiased}
 button,input,select{font:inherit;color:inherit}
@@ -55,6 +62,8 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:var(--sat);z-index:
 .logo .lg .ms{font-size:22px}
 .logo b{font-family:var(--f-display);font-weight:800;font-size:24px;letter-spacing:-.02em;line-height:1}
 .search{flex:1;min-width:0;position:relative}
+.thb{flex:none;width:46px;height:46px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);display:grid;place-items:center}
+.thb .ms{font-size:22px}
 .search input{width:100%;height:46px;border:1px solid var(--line);border-radius:999px;background:var(--surface);padding:0 42px 0 46px;font-size:15px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
 .search input::-webkit-search-cancel-button{-webkit-appearance:none;display:none}
 .search input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 4px var(--accent-soft)}
@@ -181,7 +190,9 @@ main{min-width:0}
 .ib.add.on{color:var(--ok)}
 .more{display:block;width:100%;margin-top:14px;height:48px;border-radius:999px;background:var(--surface);box-shadow:var(--shadow);font-weight:800}
 .empty{padding:34px 18px;text-align:center;color:var(--muted);background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow)}
-.empty b{display:block;color:var(--ink);font-size:17px;margin-bottom:4px}
+.empty .ea{display:block;margin:0 auto 10px;max-width:150px;height:auto}
+.empty .ea .o{stroke:var(--ink)}.empty .ea .p{fill:var(--surface)}.empty .ea .sh{fill:var(--line-2)}.empty .ea .ln{stroke:var(--line)}
+.empty b{font-family:var(--f-display);font-size:19px!important;display:block;color:var(--ink);font-size:17px;margin-bottom:4px}
 
 /* recipe sheet */
 .back{display:inline-flex;align-items:center;gap:6px;margin:12px 0 8px;color:var(--muted);font-weight:700;font-size:14px}
@@ -590,6 +601,7 @@ body.cook .sh-head h1{font-size:clamp(24px,3.4vw,34px)}
     <input id="q" type="search" autocomplete="off" enterkeyhint="search" placeholder="Search recipes or ingredients" aria-label="Search recipes or ingredients">
     <button class="clr" id="q-clr" aria-label="Clear search" hidden><span class="ms">close</span></button>
   </div>
+  <button class="thb" id="theme-btn" aria-label="Theme"><span class="ms">brightness_auto</span></button>
   <nav class="topnav" aria-label="Main">
     <a href="#" data-nav="home"><span class="ms">menu_book</span>Recipes</a>
     <a href="#learn" data-nav="learn"><span class="ms">school</span>Learn</a>
@@ -802,6 +814,12 @@ async function detail(r){
 function algBadges(algs){return algs.length?`<span class="algs" title="Allergens: ${esc(algs.map(a=>ALG[a]).join(", "))}">${algs.map(a=>`<span class="al">${ALG[a]}</span>`).join("")}</span>`:""}
 function dietTag(r){return r.diet===2?`<span class="diet">${ICON.leaf}Vegan</span>`:r.diet===1?`<span class="diet">${ICON.leaf}Vegetarian</span>`:""}
 function inOrder(id){return ord.lines.some(l=>l.id===id)}
+const EART={
+ ticket:`<svg class="ea" width="150" height="104" viewBox="0 0 150 104" aria-hidden="true"><ellipse class="sh" cx="75" cy="96" rx="52" ry="6"/><path class="p o" d="M44 14h62v72l-7-5-7 5-7-5-7 5-7-5-7 5-7-5-6 5z" stroke-width="2.5" stroke-linejoin="round"/><path class="ln" d="M54 30h42M54 42h30M54 54h36" stroke-width="3" stroke-linecap="round" stroke-dasharray="1 7"/><circle cx="112" cy="22" r="15" fill="var(--accent)"/><path d="M112 15v14M105 22h14" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>`,
+ star:`<svg class="ea" width="150" height="96" viewBox="0 0 150 96" aria-hidden="true"><ellipse class="sh" cx="75" cy="88" rx="46" ry="6"/><path class="o" d="M75 12l12 25 27 3-20 18 6 27-25-14-25 14 6-27-20-18 27-3z" fill="#FFE7A8" stroke-width="2.5" stroke-linejoin="round"/><path d="M66 52q9 8 18 0" stroke="#17181B" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="67" cy="44" r="2.6" fill="#17181B"/><circle cx="83" cy="44" r="2.6" fill="#17181B"/><path d="M118 18l4 4M126 30h5M30 28h-5M33 16l-4-4" stroke="var(--mark)" stroke-width="3" stroke-linecap="round"/></svg>`,
+ book:`<svg class="ea" width="150" height="100" viewBox="0 0 150 100" aria-hidden="true"><ellipse class="sh" cx="75" cy="92" rx="50" ry="6"/><path class="p o" d="M42 22h58a8 8 0 0 1 8 8v54H50a8 8 0 0 1-8-8z" stroke-width="2.5"/><path class="o" d="M42 76a8 8 0 0 1 8-8h58" fill="none" stroke-width="2.5"/><path class="ln" d="M60 36h32M60 46h22" stroke-width="3" stroke-linecap="round"/><path class="o" d="M104 10c8 4 10 14 3 20l-22 22-8 2 2-8 22-22c3-3 2-10 3-14z" fill="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/></svg>`,
+ search:`<svg class="ea" width="150" height="100" viewBox="0 0 150 100" aria-hidden="true"><ellipse class="sh" cx="75" cy="92" rx="46" ry="6"/><circle class="p o" cx="66" cy="44" r="28" stroke-width="2.5"/><path class="o" d="M86 64l22 22" stroke-width="7" stroke-linecap="round"/><path d="M58 38q8-10 16 0" stroke="var(--accent)" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="66" cy="54" r="2.6" fill="var(--accent)"/></svg>`,
+ done:`<svg class="ea" width="150" height="96" viewBox="0 0 150 96" aria-hidden="true"><ellipse class="sh" cx="75" cy="88" rx="44" ry="6"/><circle cx="75" cy="44" r="32" fill="var(--ok-soft)" class="o" stroke-width="2.5"/><path d="M60 45l10 10 20-22" stroke="var(--ok)" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`};
 function rowHtml(r){
   const fav=favs.includes(r.id), io=inOrder(r.id);
   return `<div class="row"><a href="#r-${r.id}">${plate(r.ty)}<div><div class="t">${esc(r.t)}</div>${r.s?`<div class="s">${esc(r.s)}</div>`:""}
@@ -866,14 +884,14 @@ function viewHome(){
     ${ui.coll>=0?`<div style="margin-top:8px"><button class="chip" id="coll-clr">× ${esc(D.folders[ui.coll][0])}</button></div>`:""}
     ${ui.coll===MINE_F?`<div class="mine-bar"><a class="btn pri" href="#new">${ICON.plus}New recipe</a>${mine.length?`<button class="btn" id="mine-exp">${msI("download")}Back up</button>`:""}<label class="btn" style="cursor:pointer">${msI("upload")}Restore<input type="file" id="mine-imp" accept=".json,application/json" hidden></label></div><p class="note-line" style="margin-top:0">Your recipes are saved on this device. Use Back up to keep a copy or move them to another phone.</p>`:""}
     <div style="margin-top:12px">${list.length?`<div class="list">${list.slice(0,ui.shown).map(rowHtml).join("")}</div>${list.length>ui.shown?`<button class="more" id="more">Show more (${(list.length-ui.shown).toLocaleString("en")} left)</button>`:""}`
-      :ui.coll===MINE_F&&!mine.length?`<div class="empty"><b>No recipes of your own yet</b>Add your house recipes and use them with scaling, orders, prep lists and food cost.<br><br><a href="#new">Add your first recipe</a></div>`:`<div class="empty"><b>No recipes match</b>Try fewer words, another ingredient, or clear a filter.</div>`}</div>`;
+      :ui.coll===MINE_F&&!mine.length?`<div class="empty">${EART.book}<b>No recipes of your own yet</b>Add your house recipes and use them with scaling, orders, prep lists and food cost.<br><br><a href="#new">Add your first recipe</a></div>`:`<div class="empty">${EART.search}<b>No recipes match</b>Try fewer words, another ingredient, or clear a filter.</div>`}</div>`;
   $("sort").value=ui.sort==="az"&&!ui.q?"rel":ui.sort;
 }
 function homeDaily(){const el=$("home-daily");if(!el)return;learnData().then(()=>{const e=$("home-daily");if(e)e.innerHTML=dailyHtml()}).catch(()=>{})}
 function viewFav(){
   const list=favs.map(id=>byId.get(id)).filter(Boolean);
   $("main").innerHTML=`<div class="rhead"><h2>Favourites</h2><span class="mono" style="color:var(--muted);font-size:13px">${list.length} ${favRemote?"· synced to your account":"· on this device"}</span></div>
-  ${list.length?`<div class="list">${list.map(rowHtml).join("")}</div>`:`<div class="empty"><b>No favourites yet</b>Tap the star on any recipe to keep it here.</div>`}`;
+  ${list.length?`<div class="list">${list.map(rowHtml).join("")}</div>`:`<div class="empty">${EART.star}<b>No favourites yet</b>Tap the star on any recipe to keep it here.</div>`}`;
 }
 function fmtG(g){if(!isFinite(g)||g<=0)return"–";if(g>=1000)return (Math.round(g/10)/100).toLocaleString("en")+" kg";if(g>=100)return Math.round(g)+" g";if(g>=10)return (Math.round(g*2)/2)+" g";return (Math.round(g*10)/10)+" g"}
 async function viewRecipe(id){
@@ -995,7 +1013,7 @@ function viewOrder(){
       <label><span class="lb">g/guest </span><input data-f="gpg" type="number" inputmode="numeric" min="0" value="${l.gpg==null?"":esc(l.gpg)}"></label>
       <label><span class="lb">K </span><select data-f="k">${[0.5,0.6,0.7,0.8,0.9,1,1.1,1.2,1.3,1.5].map(k=>`<option ${Number(l.k)===k?"selected":""}>${k}</option>`).join("")}</select></label>`:""}
       <span class="pp">${(Math.round(portions(l)*10)/10).toLocaleString("en")} portions</span></div>${r.lines.length?"":`<p class="note-line" style="color:var(--warn);margin-top:8px">No product data for this recipe yet, so it is not counted in the order list.</p>`}</div>`}).join("")
-      :`<div class="empty"><b>The order is empty</b>Open any recipe and tap Add to order, or use the + next to a recipe in the list.<br><br><a href="#">Browse recipes</a></div>`}</div>
+      :`<div class="empty">${EART.ticket}<b>The order is empty</b>Open any recipe and tap Add to order, or use the + next to a recipe in the list.<br><br><a href="#">Browse recipes</a></div>`}</div>
     ${ord.lines.length?`<p class="note-line">Buffet: portions = guests × K × (g per guest ÷ TTK portion) + reserve. K is the popularity factor (1 = average, 1.3 = very popular). Plated: one portion per guest + reserve.</p>
     ${mxHtml()}
     <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="o-menu">${msI("restaurant_menu")}Save as menu</button><button class="btn" id="o-new">New order</button></div>`:menus().length?`<div style="margin-top:12px"><a class="btn" href="#orders">${msI("restaurant_menu")}Start from a saved menu</a></div>`:""}</section>
@@ -1159,7 +1177,7 @@ function menusHtml(){const a=menus();return `<div class="rhead"><h2>Menus</h2><s
   ${a.length?`<div class="svd">${a.map(t=>{const arm=delArm==="m:"+t.id;const ds=t.lines.map(l=>byId.get(l.id)).filter(Boolean);
     return `<div class="sv"><span><b>${esc(t.name)}</b><small>${ds.length} dishes · ${esc(t.pax)} guests · ${esc(ds.slice(0,4).map(r=>r.t).join(", "))}${ds.length>4?"…":""}</small></span>
     <button class="btn pri" data-usemenu="${esc(t.id)}">Use</button><button class="btn ${arm?"del-yes":""}" data-delmenu="${esc(t.id)}" aria-label="Delete menu">${arm?"Delete?":"×"}</button></div>`}).join("")}</div>`
-  :`<div class="empty"><b>No menus yet</b>Build an order and tap Save as menu. Next time, start a new order from it in one tap and only change the guests and date.</div>`}`}
+  :`<div class="empty">${EART.book}<b>No menus yet</b>Build an order and tap Save as menu. Next time, start a new order from it in one tap and only change the guests and date.</div>`}`}
 function viewOrders(){
   const where=userCol?"Saved to your account, visible only to you.":(STANDALONE?"Saved on this device.":"Saved on this device. Sign in to claude.ai to keep orders on all your devices.");
   const list=userCol?savedDocs.map(s=>({id:s.id,o:s.data()})):lsGet("bb-saved",[]).map(o=>({id:o.id,o}));
@@ -1167,7 +1185,7 @@ function viewOrders(){
   ${list.length?`<div class="svd">${list.map(({id,o})=>{const when=o.updatedAt?new Date(o.updatedAt).toLocaleString("en-GB",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}):"";const arm=delArm===id;
    return `<div class="sv"><span><b>${esc(o.name||"Untitled order")}</b><small>${esc(o.date||"no date")} · ${esc(o.pax)} guests · ${(o.lines||[]).length} dishes · ${esc(when)}</small></span>
    <button class="btn" data-open="${esc(id)}">Open</button><button class="btn ${arm?"del-yes":""}" data-del="${esc(id)}" aria-label="Delete">${arm?"Delete?":"×"}</button></div>`}).join("")}</div>`
-   :`<div class="empty"><b>No saved orders</b>Build an order and tap Save order. It will appear here.</div>`}`+menusHtml();
+   :`<div class="empty">${EART.ticket}<b>No saved orders</b>Build an order and tap Save order. It will appear here.</div>`}`+menusHtml();
 }
 async function saveOrder(){
   if(!ord.lines.length)return;
@@ -1325,7 +1343,7 @@ function viewReview(){withLearn(()=>{
   <div class="strip"><div><small>In this round</small><b>${items.length}</b></div><div><small>Answered</small><b>${done}</b></div><div><small>Right</small><b>${ok}</b></div></div></div></div>
   <div class="lbody">${items.length?`<ol class="quiz">${items.map(([k,m,i,x])=>{const a=RV.a[k];return `<li><p>${esc(x[0])}<small style="display:block;color:var(--muted);font-weight:600;font-size:12px">Module ${m.n} · ${esc(m.t)}</small></p><div class="opts">${shuf(x[1].length,k).map(j=>[x[1][j],j]).map(([o,j])=>`<button data-rv="${k}|${j}" ${a!=null?"disabled":""} class="${a!=null?(j===x[2]?"right":j===a?"wrong":""):""}">${esc(o)}</button>`).join("")}</div></li>`}).join("")}</ol>
   <div class="lfoot"><button class="btn" id="rv-new">${msI("refresh")}New round</button><a class="btn pri" href="#learn">Done</a></div>`
-  :`<div class="empty" style="box-shadow:none;background:var(--sunk)"><b>Nothing to repeat</b>Wrong answers from tests and the card of the day appear here.</div>`}</div></article>`;
+  :`<div class="empty" style="box-shadow:none;background:var(--sunk)">${EART.done}<b>Nothing to repeat</b>Wrong answers from tests and the card of the day appear here.</div>`}</div></article>`;
 })}
 const modDone=m=>m.L.filter(l=>LP.done[l.id]).length;
 const TOOLS=[
@@ -1339,6 +1357,11 @@ const TOOLS=[
   ["glossary","Kitchen glossary","translate","EN · BG · RU terms"]];
 let toolFavs=lsGet("bb-toolfav",[]);
 const TOOLKW={doneness:"steak temperature core rare medium well rest probe",sousvide:"water bath vacuum bag low temperature",salt:"brine cure seasoning percent",yield:"loss shrink raw cooked trim weight",bakers:"bread pizza pasta dough flour hydration",buffet:"guests grams per person banquet quantity",cost:"food cost menu price margin vat profit",glossary:"translate bulgarian russian terms dictionary"};
+const THEMES=[["auto","brightness_auto","Theme: like the phone"],["light","light_mode","Theme: light"],["dark","dark_mode","Theme: dark"],["night","bedtime","Theme: warm night"]];
+let theme=lsGet("bb-theme","auto");
+function applyTheme(){const t=THEMES.find(x=>x[0]===theme)||THEMES[0];if(t[0]==="auto")document.documentElement.removeAttribute("data-theme");else document.documentElement.setAttribute("data-theme",t[0]);
+  const b=$("theme-btn");if(b){b.innerHTML=msI(t[1]);b.setAttribute("aria-label",t[2])}}
+applyTheme();
 const toolName=id=>(TOOLS.find(t=>t[0]===id)||[id,id])[1];
 function learnShell(inner){return inner}
 async function withLearn(fn){
@@ -1703,6 +1726,7 @@ function bind(){
     if(t.id==="o-share"){shareText("Order list"+(ord.name?" - "+ord.name:""),orderText(compute()));return}
     if(t.id==="offl"){cacheAll();return}
     if(t.dataset.lq){ui.q=t.dataset.lq;$("q").value=ui.q;$("q-clr").hidden=false;ui.coll=-1;ui.shown=PAGE;history.pushState(null,"",location.pathname+location.search);route();window.scrollTo(0,0);return}
+    if(t.id==="theme-btn"){const i=THEMES.findIndex(x=>x[0]===theme);theme=THEMES[(i+1)%THEMES.length][0];lsSet("bb-theme",theme);applyTheme();toast(THEMES.find(x=>x[0]===theme)[2]);return}
     if(t.dataset.asgopen){const el=$("asg");if(el)el.outerHTML=assignForm(t.dataset.asgopen);const i=$("asg-by");if(i&&!i.value)i.focus();return}
     if(t.dataset.asgsend){assignSend(t.dataset.asgsend);return}
     if(t.dataset.tasksend){taskSend(t.dataset.tasksend);return}
