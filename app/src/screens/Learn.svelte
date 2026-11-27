@@ -26,16 +26,18 @@
     {@const next = LD.mods.flatMap((m) => m.L).find((l) => !v.done[l.id])}
     {@const cur = LD.mods.find((m) => !passed(m.id))}
     {@const nMiss = Object.keys(v.miss).length}
+    {@const tks = Object.keys(v.tasks).filter((k) => taskTitle(k)).sort((a, b) => Number(taskDone(a)) - Number(taskDone(b)) || ((v.tasks[a].due || "9") < (v.tasks[b].due || "9") ? -1 : 1))}
+    {@const dp = dailyPick()}{@const [qm, qi, qx] = dp.q}{@const [fm, fl] = dp.f}{@const today = dayKey()}{@const d = v.daily && v.daily.d === today ? v.daily : null}{@const sn = streakNow()}
     <section class="card pad prog" style="--img:url({BASE}bg/learn-dark.webp)">
       <div><b class="num">{done}</b><small>of {all} lessons · {nPass} of {LD.mods.length} tests passed</small></div>
-      <div class="bar" role="progressbar" aria-valuenow={Math.round((done / all) * 100)} aria-valuemin="0" aria-valuemax="100"><i style="width:{all ? (done / all) * 100 : 0}%"></i></div>
+      <div class="bar" role="progressbar" aria-label="Lessons done" aria-valuenow={Math.round((done / all) * 100)} aria-valuemin="0" aria-valuemax="100"><i style="width:{all ? (done / all) * 100 : 0}%"></i></div>
       <div class="pa">
         {#if next}<a class="hb" href="#l-{next.id}">{done ? "Continue" : "Start"}: {next.t}</a>{:else}<span class="hb">All lessons done</span>{/if}
         <a class="hb2" href="#tool-glossary">Glossary</a>
       </div>
     </section>
 
-    {@const tks = Object.keys(v.tasks).filter((k) => taskTitle(k)).sort((a, b) => Number(taskDone(a)) - Number(taskDone(b)) || ((v.tasks[a].due || "9") < (v.tasks[b].due || "9") ? -1 : 1))}
+    <div class="cols"><div class="main">
     {#if tks.length}
       <section class="sec"><div class="sec-h"><h2>Assigned to you</h2><small class="muted">{tks.filter((k) => !taskDone(k)).length} open</small></div>
         <div class="group">{#each tks as k (k)}{@const tk = v.tasks[k]}{@const dn = taskDone(k)}{@const late = !dn && tk.due && tk.due < dayKey()}
@@ -45,7 +47,6 @@
         {/each}</div></section>
     {/if}
 
-    {@const dp = dailyPick()}{@const [qm, qi, qx] = dp.q}{@const [fm, fl] = dp.f}{@const today = dayKey()}{@const d = v.daily && v.daily.d === today ? v.daily : null}{@const sn = streakNow()}
     <section class="sec card pad daily" id="daily">
       <div class="dh"><p class="eyebrow">Card of the day</p>{#if sn}<span class="st">{sn} {sn === 1 ? "day" : "days"} in a row</span>{/if}</div>
       <a class="fact" href="#l-{fl.id}"><span>{fl.k}</span><small>{fl.t} · Module {fm.n}</small></a>
@@ -64,6 +65,7 @@
         <div class="cf"><label class="tf"><span>Name on the certificate</span><input bind:value={v.name} onchange={() => LP.save()} placeholder="Your full name" autocomplete="name" /></label><Button kind="pri" icon="pdf" onclick={courseCert}>Certificate PDF</Button></div></section>
     {/if}
 
+    </div><div class="side">
     <section class="sec"><div class="sec-h"><h2>Modules</h2><small class="muted">{LD.mods.length} modules</small></div>
       <ol class="mods">
         {#each LD.mods as m (m.id)}{@const k = modDone(m)}{@const q = v.quiz[m.id]}
@@ -78,6 +80,7 @@
         {/each}
       </ol>
     </section>
+    </div></div>
     <p class="note">Progress and test results are saved on this device.</p>
   </LearnLoad>
 </div>
@@ -93,6 +96,7 @@
   .hb { background: var(--hero-ink); color: var(--hero); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .hb2 { color: var(--hero-ink); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .25); }
   .sec { margin-top: 24px; }
+  @media (min-width: 980px) { .cols { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 24px; align-items: start; } }
   .task { display: flex; align-items: center; gap: 8px; padding: 12px 12px 12px 16px; }
   .task a { flex: 1; min-width: 0; display: grid; gap: 2px; color: var(--ink); } .task b { font-weight: 600; } .task small { font-size: 12.5px; color: var(--muted); }
   .task .ok { color: var(--ok); } .task .late { color: var(--warn); }
@@ -101,7 +105,7 @@
   .dh { display: flex; justify-content: space-between; align-items: center; }
   .st { font-size: 12.5px; font-weight: 600; color: var(--accent); }
   .fact { display: grid; gap: 4px; padding: 12px 14px; border-radius: var(--r-m); background: var(--sunk); color: var(--ink); }
-  .fact span { font-size: 15px; line-height: 1.45; } .fact small { font-size: 12.5px; color: var(--accent); font-weight: 500; }
+  .fact span { font-size: 15px; line-height: 1.45; } .fact small { font-size: 12.5px; color: var(--ink-2); font-weight: 500; }
   .dq { font-weight: 600; font-size: 16px; }
   .opts { display: grid; gap: 8px; }
   .opts button { text-align: left; padding: 11px 14px; border: 0; border-radius: var(--r-s); background: var(--sunk); color: var(--ink); font-size: 14.5px; }

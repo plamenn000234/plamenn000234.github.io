@@ -1,6 +1,6 @@
 import { defineConfig, type Plugin } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
-import { readdirSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 
 /** Writes sw.js for /v3/ with the list of built files, so 3.0 works offline. The version changes when any file name changes. */
@@ -14,7 +14,9 @@ function offline(): Plugin {
       const img = (d: string) => readdirSync(new URL("../" + d, import.meta.url)).filter((f) => /\.(webp|png)$/.test(f)).sort().map((f) => "../" + d + "/" + f);
       const shared = ["../index.json", "../learn.json", "../icon-192.png", ...img("img/dish"), ...img("img/empty"), "bg/today-dark.webp", "bg/today-light.webp", "bg/learn-dark.webp"];
       const list = [...own, ...shared];
-      const v = "cs3-" + createHash("sha1").update(list.join("|")).digest("hex").slice(0, 10);
+      const h = createHash("sha1").update(list.join("|"));
+      for (const f of shared) if (/\.(webp|png)$/.test(f)) h.update(readFileSync(new URL(f.startsWith("../") ? f : "public/" + f, import.meta.url))); // a new picture under the same name refreshes the cache too
+      const v = "cs3-" + h.digest("hex").slice(0, 10);
       const src = SW.replace("__V__", v).replace("__LIST__", JSON.stringify(list));
       this.emitFile({ type: "asset", fileName: "sw.js", source: src });
     },
@@ -31,9 +33,12 @@ self.addEventListener("fetch", (e) => {
   const url = new URL(req.url), fonts = /^fonts\.(googleapis|gstatic)\.com$/.test(url.hostname);
   if (url.origin !== self.location.origin && !fonts) return;
   if (req.mode === "navigate" || /\\.json$/.test(url.pathname)) {
-    // network first for the page and data, the cache when offline
-    e.respondWith(fetch(req).then((r) => { if (r.ok) { const c = r.clone(); caches.open(V).then((x) => x.put(req, c)); } return r; })
-      .catch(() => caches.match(req, { ignoreSearch: true }).then((r) => r || (req.mode === "navigate" ? caches.match("index.html") : Response.error()))));
+    // network first for the page and data; the cached copy when offline or when the network is slower than 3 s
+    const net = fetch(req).then((r) => { if (r.ok) { const c = r.clone(); caches.open(V).then((x) => x.put(req, c)); } return r; });
+    const cached = () => caches.match(req, { ignoreSearch: true }).then((r) => r || (req.mode === "navigate" ? caches.match("index.html") : undefined));
+    const slow = new Promise((ok) => setTimeout(() => cached().then((r) => r && ok(r)), 3000));
+    e.respondWith(Promise.race([net.catch(() => cached().then((r) => r || Response.error())), slow]));
+    e.waitUntil(net.catch(() => {}));
     return;
   }
   // cache first for scripts, styles and pictures (built file names change when they change)
@@ -51,6 +56,7 @@ self.addEventListener("message", (e) => {
 // 3.0 is served from /v3/ next to the live 2.x app. Data files (index.json, r/, learn.json, img/) stay at the site root.
 export default defineConfig({
   base: "/v3/",
+  define: { __APP_VERSION__: JSON.stringify(JSON.parse(readFileSync(new URL("./package.json", import.meta.url), "utf8")).version) },
   plugins: [svelte(), offline()],
   build: { outDir: "../v3", emptyOutDir: true, target: "es2020", assetsInlineLimit: 0 },
 });

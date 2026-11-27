@@ -19,6 +19,7 @@ async function page(opts = {}) {
   await p.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
   p.errors = [];
   p.on("pageerror", (e) => p.errors.push(e.message));
+  if (!opts.tour) await p.addInitScript(() => localStorage.setItem("bb-tour3", "1"));
   if (opts.init) await p.addInitScript(opts.init);
   return p;
 }
@@ -208,6 +209,64 @@ await test("offline: service worker caches 3.0 and it opens without internet", a
   await p.reload(); await ready(p); await p.goto(BASE + "#learn"); await p.waitForSelector(".mods li", { timeout: 10000 });
   await p.goto(BASE + "#tool-salt"); await p.waitForSelector("text=Fine salt");
   await p.context().setOffline(false);
+});
+
+await test("cook mode: steps, swipe keys, ingredients, exit", async () => {
+  const p = await page(); await p.goto(BASE + "#recipes"); await ready(p);
+  await p.fill("input[aria-label='Search recipes']", "risotto"); await p.waitForSelector("a.row");
+  const id = (await p.locator("a.row").first().getAttribute("href")).slice(3);
+  await p.goto(BASE + "#r-" + id); await p.waitForSelector(".ing li");
+  await p.click("a[href^='#cook-']"); await p.waitForSelector(".cook .tx");
+  assert(/Step 1 of \d+/i.test(await p.locator(".cook .n").innerText()), "no step 1");
+  assert(await p.evaluate(() => document.documentElement.classList.contains("cooking")), "no cooking class");
+  await p.keyboard.press("ArrowRight"); await p.waitForSelector("text=/Step 2 of/i");
+  await p.click("button[aria-label='Ingredients']"); await p.waitForSelector(".cook .ing li");
+  await p.click("text=Back to the steps"); await p.keyboard.press("Escape"); await p.waitForSelector(".ing li");
+  assert(!(await p.evaluate(() => document.documentElement.classList.contains("cooking"))), "cooking class left");
+  assert(p.errors.length === 0, p.errors.join("; ")); if (SHOTS) await p.screenshot({ path: SHOTS + "/cook.png" });
+});
+
+await test("settings: back up everything and restore it", async () => {
+  const p = await page({ init: () => { if (!localStorage.getItem("bb-favs")) localStorage.setItem("bb-favs", JSON.stringify(["43fc74fc"])); } });
+  await p.goto(BASE + "#settings"); await ready(p); await p.waitForSelector("text=Your data");
+  if (SHOTS) await p.screenshot({ path: SHOTS + "/settings.png" });
+  const [d] = await Promise.all([p.waitForEvent("download"), p.click("text=Back up everything")]);
+  assert(/^Chefsheet_Backup_\d{4}-\d\d-\d\d\.json$/.test(d.suggestedFilename()), d.suggestedFilename());
+  const path = await d.path(); const j = JSON.parse(await (await import("fs")).promises.readFile(path, "utf8"));
+  assert(j.app === "chefsheet" && j.data["bb-favs"][0] === "43fc74fc", "backup content");
+  j.data["bb-favs"] = ["43fc74fc", "a781489f"];
+  await p.setInputFiles("input[type=file]", { name: "b.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify(j)) });
+  await p.waitForEvent("load"); await ready(p);
+  assert((await p.evaluate(() => localStorage.getItem("bb-favs"))).includes("a781489f"), "not restored");
+  await p.setInputFiles("input[type=file]", { name: "x.json", mimeType: "application/json", buffer: Buffer.from("{}") });
+  await p.waitForSelector("text=not a Chefsheet backup");
+  assert(p.errors.length === 0, p.errors.join("; "));
+});
+
+await test("what can I cook: any chicken + cream finds recipes", async () => {
+  const p = await page(); await p.goto(BASE + "#recipes-have"); await ready(p);
+  await p.fill("#pq", "chick"); await p.waitForSelector("text=Any chicken"); await p.keyboard.press("Enter");
+  await p.fill("#pq", "cream"); await p.waitForSelector(".sg button"); await p.keyboard.press("Enter");
+  await p.waitForSelector("a.row .hint"); const h = await p.locator("a.row .hint").first().innerText();
+  assert(/USES 2 OF 2/i.test(h), h); await noHScroll(p);
+  if (SHOTS) await p.screenshot({ path: SHOTS + "/have.png" });
+});
+
+await test("welcome tour on the first start, then never again", async () => {
+  const p = await page({ tour: true }); await p.goto(BASE); await ready(p);
+  await p.waitForSelector(".tour"); if (SHOTS) await p.screenshot({ path: SHOTS + "/tour.png" });
+  for (let i = 0; i < 3; i++) await p.click(".tour .nx");
+  await p.click("text=Start cooking"); await p.waitForSelector(".tour", { state: "detached" });
+  await p.reload(); await ready(p); await p.waitForTimeout(500);
+  assert(!(await p.locator(".tour").count()), "tour shown again");
+});
+
+await test("accessibility basics: no unnamed buttons or images", async () => {
+  for (const h of ["#today", "#recipes", "#settings", "#learn"]) {
+    const p = await page(); await p.goto(BASE + h); await ready(p); await p.waitForTimeout(600);
+    const bad = await p.evaluate(() => [...document.querySelectorAll("button, a[href], img")].filter((e) => { const r = e.getBoundingClientRect(); if (!r.width) return false; if (e.tagName === "IMG") return !e.hasAttribute("alt"); return !(e.getAttribute("aria-label") || e.textContent.trim() || e.getAttribute("title")); }).map((e) => e.outerHTML.slice(0, 80)));
+    assert(!bad.length, h + ": " + bad.join(" | ")); await p.context().close();
+  }
 });
 
 await b.close();

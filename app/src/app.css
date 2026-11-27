@@ -2,8 +2,8 @@
 :root {
   --sat: env(safe-area-inset-top, 0px); --sab: env(safe-area-inset-bottom, 0px);
   /* steel and graphite */
-  --bg: #F3F4F6; --surface: #FFFFFF; --raised: #FFFFFF; --sunk: #EBEDF0; --ink: #14171B; --ink-2: #353B43; --muted: #6A727C; --line: #D9DDE2; --line-2: #E7EAED; --hair: rgba(20, 23, 27, .08);
-  --accent: #D9480F; --accent-ink: #FFFFFF; --accent-soft: #FCE9DE; --ok: #2E7D4F; --ok-soft: #E2F1E7; --mark: #D98E04; --warn: #C92A2A;
+  --bg: #F3F4F6; --surface: #FFFFFF; --raised: #FFFFFF; --sunk: #EBEDF0; --ink: #14171B; --ink-2: #353B43; --muted: #5B636D; --line: #D9DDE2; --line-2: #E7EAED; --hair: rgba(20, 23, 27, .08);
+  --accent: #C2410C; --accent-ink: #FFFFFF; --accent-soft: #FCE9DE; --ok: #2E7D4F; --ok-soft: #E2F1E7; --mark: #D98E04; --warn: #C92A2A;
   --pri: #14171B; --pri-ink: #FFFFFF; --hero: #171A1F; --hero-ink: #F4F5F7; --hero-muted: #9AA2AC;
   --paper: #FFFFFF; --grain: transparent; --ill-bg: #F1F3F5;
   --f-display: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
@@ -106,3 +106,8 @@ button { cursor: pointer; }
 .tf textarea { resize: vertical; line-height: 1.45; }
 .tf input:focus, .tf select:focus, .tf textarea:focus { box-shadow: inset 0 0 0 2px var(--ink); background: var(--raised); }
 .acts { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* cook mode covers the app: no tab bar, timers sit above the step buttons */
+html.cooking nav.tabs, html.cooking header.top { display: none; }
+html.cooking .tbar { z-index: 55 !important; bottom: calc(var(--sab) + 96px) !important; }
+html.cooking body { overflow: hidden; }

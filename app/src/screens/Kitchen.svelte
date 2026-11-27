@@ -46,6 +46,7 @@
     {#if !o.lines.length}
       <Empty art="orders" title="The order is empty">Open a recipe and tap “Add to order”, or start from a saved menu.<div class="ea"><Button kind="pri" href="#recipes" icon="tab-recipes">Pick dishes</Button><Button href="#kitchen-saved">Saved menus</Button></div></Empty>
     {:else}
+      <div class="kcols"><div class="kl">
       <section class="card pad ev">
         <label class="tf"><span>Event or menu</span><input bind:value={o.name} oninput={upd} placeholder="e.g. Saturday buffet" /></label>
         <label class="tf"><span>Date</span><input type="date" bind:value={o.date} oninput={upd} /></label>
@@ -68,6 +69,7 @@
         {/if}{/each}</div>
       </section>
 
+      </div>
       <section class="sec ticket paper">
         <div class="th"><div><p class="eyebrow">Order list</p><h2>{o.name || "Order"}</h2><p class="note">{o.date || "no date"} · {o.pax} guests · reserve {o.reserve}% · {c.count} products</p></div>
           <div class="ta"><Button small icon="copy" onclick={() => copyText(orderText(c), "Order list copied")}>Copy</Button><Button small icon="share" onclick={() => shareText("Order list", orderText(c))}>Share</Button></div></div>
@@ -90,6 +92,7 @@
         {#if c.miss.length}<p class="note">Not counted (no product data yet): {c.miss.join(", ")}</p>{/if}
         {#if c.count}<p class="cost">{#if c.cost.n}Food cost <b>{money(c.cost.sum)}</b>{Number(o.pax) > 0 ? ` · ${money(c.cost.sum / Number(o.pax))} per guest` : ""}{c.cost.n < c.count ? ` · prices for ${c.cost.n} of ${c.count} products` : ""}{:else}No prices yet.{/if} <a href="#prices">{c.cost.n ? "Edit prices" : "Add prices"}</a></p>{/if}
       </section>
+      </div>
 
       <div class="acts">
         <Button kind="pri" icon="check" onclick={() => { const r = saveOrder(); if (r) { rev++; toast.show("Order saved on this device"); } }}>{o.sid ? "Update saved order" : "Save order"}</Button>
@@ -121,6 +124,7 @@
   {/if}
 </div>
 <style>
+  @media (min-width: 980px) { .kcols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; } .kcols > .ticket { margin-top: 0; } }
   .head { margin: 22px 0 16px; display: grid; gap: 6px; }
   .tabs2 { display: flex; gap: 2px; padding: 3px; border-radius: 12px; background: var(--sunk); margin-bottom: 18px; width: max-content; max-width: 100%; }
   .tabs2 a { padding: 8px 14px; border-radius: 9px; color: var(--muted); font-size: 13.5px; font-weight: 500; white-space: nowrap; }

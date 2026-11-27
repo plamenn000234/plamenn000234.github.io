@@ -133,6 +133,51 @@ export function filtered(ui: Filter): Recipe[] {
   return out.map((x) => x[0]);
 }
 
+/* ---------- what can I cook: search by the products you have ---------- */
+const STAPLE = new Set(["salt", "sugar", "black pepper, ground", "olive oil", "sunflower oil", "water"]);
+/** Products whose name matches the text, the most used first. */
+let use: number[] | null = null;
+export function findProducts(q: string, n = 8): number[] {
+  const t = fold(q).trim(); if (t.length < 2) return [];
+  if (!use) { use = D.products.map(() => 0); for (const r of R) for (const [pi] of r.lines) use[pi] = (use[pi] || 0) + 1; }
+  const out: number[] = [];
+  prodHay.forEach((h, i) => { if ((use![i] || 0) > 0 && (h.startsWith(t) || h.includes(" " + t) || h.includes(t))) out.push(i); });
+  const st = (i: number) => (prodHay[i].startsWith(t) ? 0 : prodHay[i].includes(" " + t) ? 1 : 2);
+  return out.sort((a, b) => st(a) - st(b) || use![b] - use![a]).slice(0, n);
+}
+export const isStaple = (pi: number) => STAPLE.has(fold(D.products[pi]?.[0] || ""));
+export interface Have { r: Recipe; hit: number; miss: number }
+export type Pick = number | string; // one product, or a word that stands for every product with it in the name
+/** Product indexes a pick stands for. */
+export function pickSet(k: Pick): Set<number> {
+  if (typeof k === "number") return new Set([k]);
+  const t = fold(k).trim(), out = new Set<number>();
+  prodHay.forEach((h, i) => { if (h.startsWith(t) || h.includes(" " + t)) out.add(i); });
+  return out;
+}
+/** The whole word a typed start stands for: "chick" → "chicken", "mushr" → "mushroom". */
+export function completeWord(q: string) {
+  const t = fold(q).trim(); if (t.length < 3) return "";
+  const n = new Map<string, number>();
+  for (const h of prodHay) for (const w of h.split(/[^\p{L}]+/u)) if (w.startsWith(t)) { const b = w.length > 3 && w.endsWith("s") && !w.endsWith("ss") ? w.slice(0, -1) : w; n.set(b, (n.get(b) || 0) + 1); }
+  let best = "", bn = 0; for (const [w, c] of n) if (c > bn || (c === bn && w.length < best.length)) { best = w; bn = c; }
+  return best;
+}
+export const pickName = (k: Pick) => (typeof k === "number" ? D.products[k]?.[0] || "" : "Any " + k);
+/** Recipes that use the picks. Most picks used first, then the fewest products still to buy (salt, sugar, pepper and oils do not count). */
+export function byProducts(picks: Pick[], base: Recipe[]): Have[] {
+  if (!picks.length) return [];
+  const sets = picks.map(pickSet), all = new Set<number>(); sets.forEach((x) => x.forEach((i) => all.add(i)));
+  const out: Have[] = [];
+  for (const r of base) {
+    let miss = 0; const ids = new Set<number>();
+    for (const [pi] of r.lines) { ids.add(pi); if (!all.has(pi) && !isStaple(pi)) miss++; }
+    let hit = 0; for (const st of sets) { for (const i of st) if (ids.has(i)) { hit++; break; } }
+    if (hit) out.push({ r, hit, miss });
+  }
+  return out.sort((a, b) => b.hit - a.hit || a.miss - b.miss || a.r.t.localeCompare(b.r.t));
+}
+
 /* ---------- dish picture ---------- */
 export function dishType(r: Recipe): [number, string] {
   if(r.semi)return [30,"semi"];

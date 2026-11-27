@@ -10,6 +10,7 @@
     <div class="nav"><TabBar place="top" /></div>
     <button class="sbtn" onclick={onsearch} aria-label="Search tools, recipes, lessons"><Icon name="search" size={18} /><span>Search</span></button>
     <button class="ib" onclick={() => toast.show("Theme: " + nextTheme())} aria-label="Change theme"><Icon name="theme" size={18} /></button>
+    <a class="ib" href="#settings" aria-label="Settings"><Icon name="gear" size={18} /></a>
   </div>
 </header>
 <style>

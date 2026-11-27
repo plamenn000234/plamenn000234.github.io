@@ -4,11 +4,12 @@
   import { D, type Recipe } from "../core/catalog";
   import { ALG } from "../core/constants";
   import { favs } from "../core/kitchen.svelte";
-  let { r }: { r: Recipe } = $props();
+  let { r, hint = "" }: { r: Recipe; hint?: string } = $props();
 </script>
 <a class="row" href="#r-{r.id}">
   <Dish kind={r.ty[1]} size={56} />
   <span class="tx">
+    {#if hint}<small class="hint">{hint}</small>{/if}
     <b>{r.t}</b>
     {#if r.s}<small class="s">{r.s}</small>{/if}
     <small class="meta"><span>{D.folders[r.f][0]}</span><span>{r.N} portions</span>{#if r.kcal}<span>{r.kcal} kcal</span>{/if}{#if r.diet === 2}<span class="veg">Vegan</span>{:else if r.diet === 1}<span class="veg">Vegetarian</span>{/if}{#if r.algs.length}<span title={r.algs.map((a) => ALG[a]).join(", ")}>{r.algs.length} allergen{r.algs.length > 1 ? "s" : ""}</span>{/if}</small>
@@ -16,6 +17,7 @@
   {#if favs.v.includes(r.id)}<span class="fav"><Icon name="star" size={16} /></span>{/if}<span class="chev"><Icon name="fwd" size={16} /></span>
 </a>
 <style>
+  .hint { font-size: 11.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--accent); }
 .row { display: flex; align-items: center; gap: 14px; padding: 12px 16px; background: var(--surface); color: var(--ink); transition: background .15s; }
   @media (hover: hover) { .row:hover { background: var(--raised); } }
   .row:active { background: var(--sunk); }

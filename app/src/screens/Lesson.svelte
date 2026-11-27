@@ -64,7 +64,7 @@
   </div>
 </LearnLoad>
 <style>
-  .lb { display: grid; gap: 14px; margin-top: 18px; }
+  .lb { display: grid; gap: 14px; margin-top: 18px; max-width: 820px; }
   .lb h2 { font-size: 19px; margin-top: 10px; }
   .key { display: flex; gap: 12px; align-items: flex-start; padding: 16px 18px; border-radius: var(--r); background: var(--surface); box-shadow: var(--sh-1), inset 3px 0 0 var(--accent); }
   .key :global(svg) { color: var(--accent); flex: none; margin-top: 2px; } .key p { font-size: 16px; line-height: 1.5; font-weight: 500; }

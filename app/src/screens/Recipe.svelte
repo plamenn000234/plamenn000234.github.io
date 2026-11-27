@@ -11,7 +11,7 @@
   import Timed from "../ui/Timed.svelte";
   import Empty from "../ui/Empty.svelte";
   import { byId, detail, D, R, type Detail, type Recipe } from "../core/catalog";
-  import { ALG } from "../core/constants";
+  import { REPORT_TO, ALG } from "../core/constants";
   import { fmtG, shelf } from "../core/util";
   import { favs, toggleFav, seen, addLine, inOrder, ord, recipeCost, money } from "../core/kitchen.svelte";
   import { toast, shareText, copyText } from "../core/ui.svelte";
@@ -39,6 +39,7 @@
   const nItems = $derived(d?.c ? d.c.reduce((a, c) => a + c[2].length, 0) : 0);
   const fav = $derived(r ? favs.v.includes(r.id) : false);
   const io = $derived.by(() => { void ord.v.lines.length; return r ? inOrder(r.id) : false; });
+  const reportHref = (rr: Recipe) => "mailto:" + REPORT_TO + "?subject=" + encodeURIComponent("Chefsheet: problem in " + rr.t) + "&body=" + encodeURIComponent("Recipe: " + rr.name + "\nCollection: " + D.folders[rr.f][0] + "\nID: " + rr.id + "\n\nWhat is wrong:\n");
   function batch(rr: Recipe, dd: Detail | null) {
     let tot = 0, yl: number | null = null;
     (dd?.c || []).forEach((c) => c[2].forEach((x) => { if (typeof x[1] !== "number") return; if (/^(cooked |total )?yield/i.test(x[0])) { yl = (yl || 0) + x[1]; return; } if (/\([A-Z]\)\s*$/.test(x[0])) return; tot += x[1]; }));
@@ -82,6 +83,7 @@
     <button class="rb" class:on={fav} aria-pressed={fav} aria-label="Favourite" onclick={() => toast.show(toggleFav(r.id) ? "Added to favourites" : "Removed from favourites")}><Icon name="star" size={20} /></button>
     <button class="rb" aria-label="Share" onclick={() => shareText(r.t, text())}><Icon name="share" size={20} /></button>
     <button class="rb" aria-label="Copy" onclick={() => copyText(text(), "Recipe copied")}><Icon name="copy" size={20} /></button>
+    <a class="rb cookb" aria-label="Cook mode" title="Cook mode: one step at a time, the screen stays on" href="#cook-{r.id}?p={p}"><Icon name="flame" size={20} /></a>
     <button class="rb" aria-label="PDF" title="PDF for {p} portions" onclick={() => makePdf(fileBase(r.t) + "_" + p + "p.pdf", async () => (d ? recipePdf(r, d, p) : null))}><Icon name="pdf" size={20} /></button>
     <button class="rb" aria-label="Service card" title="Service card for the front of house" onclick={() => makePdf("Service_Card_" + fileBase(r.t) + ".pdf", () => svcPdf([r]))}><Icon name="cook" size={20} /></button>
     {#if r.mine}<a class="rb" aria-label="Edit" href="#edit-{r.id}"><Icon name="edit" size={20} /></a>{/if}
@@ -118,7 +120,7 @@
       </section>
       <section><h2>Method</h2>
         {#each d.c as c, ci}{#if c[3].length}<div class="comp">{#if d.c.length > 1}<h3>{c[0]}</h3>{/if}
-          <ol class="steps">{#each c[3] as s, i}{@const k = ci + ":" + i}<li class:done={done.has(k)} onclick={() => (done = tick(done, k))} role="presentation"><span><Timed text={s} ctx={r.t} /></span></li>{/each}</ol>
+          <ol class="steps">{#each c[3] as s, i}{@const k = ci + ":" + i}<!-- svelte-ignore a11y_no_noninteractive_element_interactions, a11y_click_events_have_key_events --><li class:done={done.has(k)} onclick={() => (done = tick(done, k))}><span><Timed text={s} ctx={r.t} /></span></li>{/each}</ol>
         </div>{/if}{/each}
       </section>
     </div>
@@ -134,10 +136,10 @@
         <p><a href="#prices-{r.id}">{cost.n ? "Edit prices" : "Set prices"}</a></p></div>{/if}
       <div><h4>Storage</h4><p>{d.st || "Not stated."}</p></div>
       <div><h4>Allergens</h4>{#if r.algs.length}<div class="alist">{#each r.algs as a}<span><i>{a}</i>{ALG[a]}</span>{/each}</div>{#if d.al}<p class="note">{d.al}</p>{/if}{:else}<p>No allergens from the list of 14.</p>{/if}</div>
-      {#if d.nu?.p}<div><h4>Nutrition</h4><table class="nut"><thead><tr><th></th><th>Protein</th><th>Fat</th><th>Carbs</th><th>kcal</th></tr></thead><tbody>
+      {#if d.nu?.p}<div><h4>Nutrition</h4><table class="nut"><thead><tr><th><span class="sr">Per</span></th><th>Protein</th><th>Fat</th><th>Carbs</th><th>kcal</th></tr></thead><tbody>
         <tr><td>Portion</td>{#each d.nu.p as v}<td>{v}</td>{/each}</tr>{#if d.nu.h}<tr><td>100 g</td>{#each d.nu.h as v}<td>{v}</td>{/each}</tr>{/if}</tbody></table></div>{/if}
     </div>
-    <p class="disc">{r.mine ? "Your own recipe, saved on this device. " : ""}Allergens and diet tags come from the listed ingredients. Always check the labels of the products you buy. Nutrition values are estimates.</p>
+    <p class="disc">{r.mine ? "Your own recipe, saved on this device. " : ""}Allergens and diet tags come from the listed ingredients. Always check the labels of the products you buy. Nutrition values are estimates. {#if !r.mine}<a href={reportHref(r)}>Report a problem with this recipe</a>{/if}</p>
   {/if}
 </article>
 {/if}
@@ -181,7 +183,7 @@
   .skel { height: 300px; border-radius: var(--r); background: linear-gradient(90deg, var(--sunk), var(--surface), var(--sunk)); background-size: 200% 100%; animation: sk 1.2s infinite; }
   @keyframes sk { to { background-position: -200% 0; } }
   .body { display: grid; gap: 32px; grid-template-columns: minmax(0, 1fr); margin-top: 8px; }
-  @media (min-width: 860px) { .body { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); } }
+  @media (min-width: 860px) { .body { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); } .body > section:first-child { position: sticky; top: calc(var(--sat) + 76px); align-self: start; max-height: calc(100vh - var(--sat) - 92px); overflow-y: auto; overscroll-behavior: contain; } }
   .body h2 { font-size: 24px; margin-bottom: 14px; }
   .comp { margin-bottom: 22px; } .comp h3 { font-size: 13px; font-family: var(--f-body); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin: 4px 0 8px; } .comp > .note { margin-bottom: 8px; }
   .ing { list-style: none; margin: 0; padding: 0 16px; background: var(--surface); border-radius: var(--r); box-shadow: var(--sh-1); }
@@ -201,8 +203,9 @@
   .facts h4 { font-family: var(--f-body); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
   .big { font: 600 24px var(--f-display); }
   .alist { display: flex; flex-wrap: wrap; gap: 8px 14px; }
-  .alist i { font-style: normal; display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font-size: 11px; font-weight: 700; margin-right: 6px; }
+  .alist i { font-style: normal; display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--accent-soft); color: var(--ink); font-size: 11px; font-weight: 700; margin-right: 6px; }
   .nut { border-collapse: collapse; font-size: 13.5px; } .nut th, .nut td { padding: 5px 10px 5px 0; text-align: left; font-variant-numeric: tabular-nums; } .nut th { font-weight: 500; color: var(--muted); font-size: 11.5px; }
-  .disc { font-size: 12px; color: var(--muted); margin: 20px 0 0; }
+  .disc { font-size: 12px; color: var(--muted); margin: 20px 0 0; } .disc a { text-decoration: underline; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   .pad { padding: 20px 0; }
 </style>
