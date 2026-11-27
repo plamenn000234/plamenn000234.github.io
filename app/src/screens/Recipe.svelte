@@ -91,7 +91,7 @@
     <a class="rb cookb" aria-label="Cook mode" title="Cook mode: one step at a time, the screen stays on" href="#cook-{r.id}?p={p}"><Icon name="flame" size={20} /></a>
     <button class="rb" aria-label="PDF" title="PDF for {p} portions" onclick={() => makePdf(fileBase(r.t) + "_" + p + "p.pdf", async () => (d ? recipePdf(r, d, p, note) : null))}><Icon name="pdf" size={20} /></button>
     <button class="rb" aria-label="Service card" title="Service card for the front of house" onclick={() => makePdf("Service_Card_" + fileBase(r.t) + ".pdf", () => svcPdf([r]))}><Icon name="cook" size={20} /></button>
-    {#if r.mine}<a class="rb" aria-label="Edit" href="#edit-{r.id}"><Icon name="edit" size={20} /></a>
+    {#if r.mine}<a class="rb" aria-label="Edit" href="#edit-{r.id}"><Icon name="edit" size={20} /></a><a class="rb" aria-label="Share with the community" title="Share with the community" href="#community?share={r.id}"><Icon name="share" size={20} /></a>
     {:else}<a class="rb" aria-label="Make it mine" title="Make it mine: a copy you can edit" href="#new?from={r.id}"><Icon name="edit" size={20} /></a>{/if}
   </div>
 

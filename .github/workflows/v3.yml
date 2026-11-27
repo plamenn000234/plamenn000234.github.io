@@ -1,7 +1,7 @@
 name: Chefsheet 3.0 checks
 on:
   pull_request:
-    paths: ["app/**", "v3/**", "index.json", "learn.json", "r/**", ".github/workflows/v3.yml"]
+    paths: ["app/**", "v3/**", "server/**", "index.json", "learn.json", "r/**", ".github/workflows/v3.yml"]
   push:
     branches: [main]
     paths: ["app/**", "v3/**"]
@@ -21,10 +21,13 @@ jobs:
         run: npm run build
       - name: Built /v3/ matches the sources
         run: git diff --stat --exit-code -- ../v3 || (echo "Run 'npm run build' in app/ and commit v3/." && exit 1)
+      - name: API tests (server/worker.js on Node with SQLite)
+        run: node --no-warnings ../server/test.mjs
       - name: Install browser
         run: npm i --no-save playwright@1 && npx playwright install --with-deps chromium
       - name: Smoke tests (phone and desktop, light and dark)
         run: |
           (cd .. && python3 -m http.server 8765 >/dev/null 2>&1 &)
+          (node --no-warnings ../server/dev.mjs >/dev/null 2>&1 &)
           sleep 1
           npm test

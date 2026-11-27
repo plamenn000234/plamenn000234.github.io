@@ -65,6 +65,7 @@
     <a class="chip" class:on={onlyFav} href={onlyFav ? "#recipes" : "#recipes-fav"}><Icon name="star" size={14} />Favourites {favs.v.length || ""}</a>
     <a class="chip" class:on={coll === mineFolder()} href={coll === mineFolder() ? "#recipes" : "#c-" + D.folders[mineFolder()][1]}>My recipes {folderCount[mineFolder()] || ""}</a>
     <a class="chip" href="#recipes-have"><Icon name="kitchen" size={14} />What can I cook?</a>
+    <a class="chip" href="#community"><Icon name="book" size={14} />Community</a>
     <a class="chip" href="#new">New recipe</a>
     <a class="chip" href="#new-semi">New semi-finished</a>
   </div>

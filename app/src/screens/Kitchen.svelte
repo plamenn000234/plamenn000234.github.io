@@ -16,6 +16,7 @@
   import { router } from "../core/router.svelte";
   import { H, dueToday } from "../core/haccp.svelte";
   import { S, toBuy, low } from "../core/stock.svelte";
+  import { cloud } from "../core/cloud.svelte";
   import { guestLink, qrSvg, guestPdf } from "../core/guest";
   let showQr = $state(false);
   const gLink = $derived.by(() => { void JSON.stringify(o.lines); return showQr ? guestLink(o.name || "", orderDishes()) : ""; });
@@ -49,6 +50,7 @@
   <div class="head"><p class="eyebrow">Production</p><h1>Kitchen</h1></div>
   {#if H.v.on}<a class="card hz press" href="#haccp"><Icon name="thermo" size={22} /><span><b>Food safety logs</b><small>{nDue ? nDue + " unit" + (nDue > 1 ? "s" : "") + " not checked today" : "Temperatures checked today"}</small></span><Icon name="fwd" size={16} /></a>{/if}
   {#if S.v.on}<a class="card hz press" href="#stock"><Icon name="stock" size={22} /><span><b>Stock and write-offs</b><small>{nLow ? nLow + " product" + (nLow > 1 ? "s" : "") + " running low" : Object.keys(S.v.have).length + " products on hand"}</small></span><Icon name="fwd" size={16} /></a>{/if}
+  {#each cloud.signed ? cloud.a.kitchens : [] as kk (kk.id)}<a class="card hz press" href="#board-{kk.id}"><Icon name="tool-prep" size={22} /><span><b>Prep board · {kk.name}</b><small>Live tasks for your team</small></span><Icon name="fwd" size={16} /></a>{/each}
   <div class="tabs2"><a href="#kitchen" aria-current={tab === 0 ? "page" : undefined}>Current order</a><a href="#kitchen-saved" aria-current={tab === 1 ? "page" : undefined}>Saved orders and menus</a></div>
 
   {#if tab === 0}
