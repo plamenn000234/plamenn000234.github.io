@@ -175,6 +175,24 @@ await test("editor: semi-finished, a dish that uses it, edit and delete", async 
   assert(p.errors.length === 0, p.errors.join("; "));
 });
 
+await test("make it mine: copy a library recipe, note carried over; notes show in cook mode", async () => {
+  const p = await page(); await p.goto(BASE + "#r-" + rid); await p.waitForSelector(".ing li");
+  await p.click("button:has-text('Add a note')"); await p.fill(".notes textarea", "Plate on 28 cm."); await p.click("button:has-text('Save note')");
+  await p.waitForSelector(".notes .nt:has-text('Plate on 28 cm.')");
+  const n = await p.evaluate((rid) => JSON.parse(localStorage.getItem("bb-notes"))[rid].t, rid); assert(n === "Plate on 28 cm.", "bb-notes " + n);
+  await p.goto(BASE + "#cook-" + rid); await p.waitForSelector(".cn:has-text('Plate on 28 cm.')");
+  await p.goto(BASE + "#r-" + rid); await p.waitForSelector(".ing li");
+  const nIng = await p.locator(".ing li:not(.yl)").count();
+  await p.click("a[aria-label='Make it mine']"); await p.waitForSelector("h1:has-text('Make it mine')");
+  await p.waitForFunction(() => document.querySelector("#ed-name").value.length > 0);
+  const rows = await p.locator(".ir").count(); assert(rows > 0 && rows <= nIng, `rows ${rows} vs ${nIng}`);
+  if (SHOTS) await p.screenshot({ path: SHOTS + "/make-mine.png", fullPage: true });
+  await p.click("button:has-text('Save recipe')"); await p.waitForURL(/#r-u/);
+  const m = await p.evaluate(() => JSON.parse(localStorage.getItem("bb-mine"))[0]); assert(m.from === rid && m.ing.length === rows, "bb-mine " + JSON.stringify(m).slice(0, 200));
+  await p.waitForSelector(".notes .nt:has-text('Plate on 28 cm.')");
+  assert(p.errors.length === 0, p.errors.join("; "));
+});
+
 await test("learn: lesson with diagram, mark done, test, mistakes, card of the day, task link", async () => {
   const p = await page(); await p.goto(BASE + "#learn"); await ready(p); await p.waitForSelector(".mods li");
   const mid = await p.$eval(".mods a", (a) => a.getAttribute("href").slice(3));

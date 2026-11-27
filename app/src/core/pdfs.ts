@@ -57,7 +57,7 @@ export function orderCsv() {
   return "﻿Section,Item,Unit,Qty,Note\n" + c.secs.flatMap((s, i) => s.map((it) => [D.sections[i], it.name, it.unit, fmtQ(it.q).replace("–", "0"), it.note || ""].map(q).join(","))).join("\n");
 }
 
-export async function recipePdf(r: Recipe, d: Detail, n: number) {
+export async function recipePdf(r: Recipe, d: Detail, n: number, note = "") {
   const doc = await pdfDoc(); const W = 210, M = 14, f = n / r.N; let y = 16;
   const page = (h = 0) => { if (y + h > 284) { doc.addPage(); y = 16; } };
   doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.setTextColor(...ACC); doc.text(pdfSafe((D.folders[r.f][0] + (r.sub ? " / " + r.sub : "")).toUpperCase()), M, y); y += 7;
@@ -73,6 +73,7 @@ export async function recipePdf(r: Recipe, d: Detail, n: number) {
     c[3].forEach((s, i) => { const ls = doc.splitTextToSize(pdfSafe(s), W - 2 * M - 8); page(ls.length * 4.4 + 1); doc.setFont("helvetica", "bold"); doc.text(String(i + 1) + ".", M + 2, y); doc.setFont("helvetica", "normal"); doc.text(ls, M + 8, y); y += ls.length * 4.4 + 1.4; });
     y += 4;
   });
+  if (note) { const ls = doc.splitTextToSize(pdfSafe("Notes: " + note), W - 2 * M); page(ls.length * 4.4); doc.setFont("helvetica", "bold"); doc.setFontSize(9.5); doc.text(ls, M, y); doc.setFont("helvetica", "normal"); y += ls.length * 4.4 + 2; }
   if (d.st) { const ls = doc.splitTextToSize(pdfSafe("Storage: " + d.st), W - 2 * M); page(ls.length * 4.4); doc.setFontSize(9.5); doc.text(ls, M, y); y += ls.length * 4.4 + 2; }
   if (d.nu?.p) { page(6); doc.text(pdfSafe(`Nutrition per portion: protein ${d.nu.p[0]} g, fat ${d.nu.p[1]} g, carbs ${d.nu.p[2]} g, ${d.nu.p[3]} kcal`), M, y); y += 6; }
   page(6); doc.setFontSize(8); doc.setTextColor(...MUTED); doc.text("Made with Chefsheet. Check product labels for allergens.", M, y);
