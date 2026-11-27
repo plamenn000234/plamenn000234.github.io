@@ -16,6 +16,7 @@ export function parse(h: string): Route {
   if (h === "#kitchen") return { tab: "kitchen", view: "kitchen", arg: "", q };
   if ((a = m("#kitchen-")) != null) return { tab: "kitchen", view: "kitchen", arg: a, q };
   if (h === "#prep") return { tab: "kitchen", view: "prep", arg: "", q };
+  if (h === "#haccp") return { tab: "kitchen", view: "haccp", arg: "", q };
   if (h === "#suppliers") return { tab: "kitchen", view: "suppliers", arg: "", q };
   if (h === "#prices") return { tab: "kitchen", view: "prices", arg: "", q };
   if ((a = m("#prices-")) != null) return { tab: "recipes", view: "prices", arg: a, q };

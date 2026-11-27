@@ -7,6 +7,7 @@ export const NEWS: News[] = [
     ["Make it mine", "Copy any library recipe and change grams, steps and serving.", "#recipes"],
     ["My notes", "Add your kitchen's notes to any recipe. They show in cook mode and in the PDF.", "#recipes"],
     ["Gels & thickeners", "Gelatin sheets or powder by bloom, agar, starch, roux and xanthan.", "#tool-gel"],
+    ["Food safety logs", "Fridge temperatures, cooling and deliveries with a monthly PDF. Turn on in Settings.", "#settings"],
     ["Recipes without…", "Filters → Without: hide recipes with mushrooms, pork or anything else.", "#recipes"],
   ] },
 ];

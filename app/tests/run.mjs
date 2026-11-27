@@ -342,6 +342,30 @@ await test("what's new: card on Today for an updated app, gone after Got it; not
   assert(await p.locator(".news").count() === 0, "news still shown"); assert(p.errors.length === 0, p.errors.join("; "));
 });
 
+await test("food safety logs: off by default, turn on, temperatures, cooling, delivery, PDF", async () => {
+  const p = await page(); await p.goto(BASE + "#kitchen"); await ready(p); assert(await p.locator("a[href='#haccp']").count() === 0, "logs shown while off");
+  await p.goto(BASE + "#settings"); await p.waitForSelector("text=Food safety logs (HACCP)"); await p.check(".sw input");
+  await p.goto(BASE + "#kitchen"); await p.waitForSelector("a.hz:has-text('2 units not checked today')");
+  await p.goto(BASE + "#today"); await p.waitForSelector("text=Temperature check");
+  await p.goto(BASE + "#haccp"); await p.waitForSelector(".unit");
+  await p.fill(".tf.by input", "PN");
+  await p.fill("input[aria-label='Temperature of Fridge 1']", "3.5"); await p.click(".unit:has-text('Fridge 1') button:has-text('Save')");
+  await p.fill("input[aria-label='Temperature of Freezer 1']", "-12"); await p.click(".unit:has-text('Freezer 1') button:has-text('Save')");
+  await p.waitForSelector(".log li.bad:has-text('Freezer 1')"); assert(await p.locator("em.due").count() === 0, "still due");
+  await p.click(".seg button:has-text('Cooling')"); await p.fill(".form input >> nth=0", "Beef stock"); await p.click("button:has-text('Start cooling')");
+  await p.waitForSelector(".cool:has-text('Beef stock')"); await p.waitForSelector(".tbar .t");
+  await p.fill("input[aria-label='Core temperature of Beef stock']", "18"); await p.click("button:has-text('2 h check')");
+  await p.fill("input[aria-label='Core temperature of Beef stock']", "4"); await p.click("button:has-text('Final check')");
+  await p.waitForSelector(".log li:has-text('Beef stock'):has-text('OK')");
+  await p.click(".seg button:has-text('Deliveries')"); await p.fill(".form input >> nth=1", "Chicken breast"); await p.fill(".form input[type=number]", "9");
+  await p.waitForSelector("text=Too warm"); await p.click("button:has-text('Save delivery')"); await p.waitForSelector(".log li.bad:has-text('Rejected')");
+  const h = await p.evaluate(() => JSON.parse(localStorage.getItem("bb-haccp")));
+  assert(h.on && h.temps.length === 2 && h.temps[0].by === "PN" && h.cool[0].t2 === 4 && h.recv[0].ok === false, JSON.stringify(h).slice(0, 300));
+  if (SHOTS) await p.screenshot({ path: SHOTS + "/haccp.png", fullPage: true });
+  const f = await download(p, () => p.click(".pdf button")); assert(/^Food_Safety_Log_\d{4}-\d{2}\.pdf$/.test(f), f);
+  assert(p.errors.length === 0, p.errors.join("; "));
+});
+
 await test("gels: gelatin sheets by bloom, roux flour and butter", async () => {
   const p = await page(); await p.goto(BASE + "#tool-gel"); await ready(p); await p.waitForSelector(".outs");
   const sel = p.locator(".tool-body select");

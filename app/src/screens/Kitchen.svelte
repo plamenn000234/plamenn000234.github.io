@@ -14,6 +14,8 @@
   import { fmtQ } from "../core/util";
   import { toast, copyText, shareText } from "../core/ui.svelte";
   import { router } from "../core/router.svelte";
+  import { H, dueToday } from "../core/haccp.svelte";
+  const nDue = $derived(H.v.on ? dueToday().length : 0);
   const tab = $derived(router.route.arg === "saved" ? 1 : 0);
   let rev = $state(0);
   const o = $derived(ord.v);
@@ -40,6 +42,7 @@
 </script>
 <div class="page">
   <div class="head"><p class="eyebrow">Production</p><h1>Kitchen</h1></div>
+  {#if H.v.on}<a class="card hz press" href="#haccp"><Icon name="thermo" size={22} /><span><b>Food safety logs</b><small>{nDue ? nDue + " unit" + (nDue > 1 ? "s" : "") + " not checked today" : "Temperatures checked today"}</small></span><Icon name="fwd" size={16} /></a>{/if}
   <div class="tabs2"><a href="#kitchen" aria-current={tab === 0 ? "page" : undefined}>Current order</a><a href="#kitchen-saved" aria-current={tab === 1 ? "page" : undefined}>Saved orders and menus</a></div>
 
   {#if tab === 0}
@@ -126,6 +129,8 @@
 <style>
   @media (min-width: 980px) { .kcols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; } .kcols > .ticket { margin-top: 0; } }
   .head { margin: 22px 0 16px; display: grid; gap: 6px; }
+  .hz { display: flex; align-items: center; gap: 12px; padding: 14px 16px; margin-bottom: 14px; color: var(--ink); max-width: 760px; }
+  .hz span { flex: 1; display: grid; } .hz b { font: 600 15.5px var(--f-display); } .hz small { font-size: 12.5px; color: var(--muted); }
   .tabs2 { display: flex; gap: 2px; padding: 3px; border-radius: 12px; background: var(--sunk); margin-bottom: 18px; width: max-content; max-width: 100%; }
   .tabs2 a { padding: 8px 14px; border-radius: 9px; color: var(--muted); font-size: 13.5px; font-weight: 500; white-space: nowrap; }
   .tabs2 a[aria-current="page"] { background: var(--raised); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.08), 0 2px 8px rgba(0,0,0,.06); }

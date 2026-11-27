@@ -12,6 +12,7 @@
   import { saveOffline } from "../core/offline";
   import { tour } from "../core/tour.svelte";
   import { NEWS } from "../core/news.svelte";
+  import { H } from "../core/haccp.svelte";
   let showNews = $state(false);
   const VERSION = __APP_VERSION__;
   let ti = $state(Math.max(0, THEMES.findIndex((t) => t[0] === theme.v)));
@@ -49,6 +50,12 @@
     <h2>Without internet</h2>
     <p class="note">Tools, lessons and recipes you opened already work offline. Save every collection to open any recipe without a connection.</p>
     <div><Button icon="check" onclick={saveOffline}>Save all recipes</Button></div>
+  </section>
+
+  <section class="card pad st">
+    <h2>Extra sections</h2>
+    <label class="sw"><input type="checkbox" checked={H.v.on} onchange={(e) => { H.v.on = (e.target as HTMLInputElement).checked; H.save(); toast.show(H.v.on ? "Food safety logs are in Kitchen now" : "Food safety logs hidden. Records are kept"); }} />
+      <span><b>Food safety logs (HACCP)</b><small>Fridge and freezer temperatures, cooling, deliveries, a monthly PDF. Shows in Kitchen.</small></span></label>
   </section>
 
   <section class="card pad st" id="data">
@@ -90,5 +97,7 @@
   .row:last-child { box-shadow: none; }
   .row span { flex: 1; } .row :global(svg) { color: var(--muted); flex: none; }
   .nw { padding: 6px 2px 12px; box-shadow: inset 0 -1px 0 var(--hair); } .nw ul { margin: 6px 0 0; padding-left: 18px; display: grid; gap: 6px; font-size: 14px; color: var(--ink-2); }
+  .sw { display: flex; gap: 12px; align-items: flex-start; } .sw input { width: 22px; height: 22px; margin-top: 2px; accent-color: var(--accent); flex: none; }
+  .sw span { display: grid; gap: 2px; } .sw b { font-weight: 600; font-size: 15px; } .sw small { font-size: 13px; color: var(--muted); }
   .ver { margin: 18px 0 8px; text-align: center; }
 </style>

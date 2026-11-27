@@ -17,6 +17,7 @@
   const L = {
     Prep: () => import("./screens/Prep.svelte"),
     Suppliers: () => import("./screens/Suppliers.svelte"),
+    Haccp: () => import("./screens/Haccp.svelte"),
     Prices: () => import("./screens/Prices.svelte"),
     Editor: () => import("./screens/Editor.svelte"),
     Cook: () => import("./screens/Cook.svelte"),
@@ -54,6 +55,7 @@
   {:else if rt.view === "settings"}<Lazy load={L.Settings} />
   {:else if rt.view === "prep"}<Lazy load={L.Prep} />
   {:else if rt.view === "suppliers"}<Lazy load={L.Suppliers} />
+  {:else if rt.view === "haccp"}<Lazy load={L.Haccp} />
   {:else if rt.view === "editor"}{#key rt.arg}<Lazy load={L.Editor} id={rt.arg.startsWith("+") ? "" : rt.arg} semi={rt.arg === "+semi"} />{/key}
   {:else if rt.view === "prices"}{#key rt.arg}<Lazy load={L.Prices} rid={rt.arg} />{/key}
   {/if}
