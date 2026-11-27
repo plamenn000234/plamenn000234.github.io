@@ -87,10 +87,10 @@ await test("2.x data is kept and migrated", async () => {
   assert(s.favs === '["zzz"]', "favs changed"); assert(s.theme === "night", "theme not applied");
 });
 
-await test("old links: #order → #kitchen, #fav → favourites, #prep opens 2.x", async () => {
+await test("old links: #order → #kitchen, #fav → favourites, #m- opens 2.x", async () => {
   const p = await page(); await p.goto(BASE + "#order"); await ready(p); assert((await p.evaluate(() => location.hash)) === "#kitchen", "no redirect");
   await p.goto(BASE + "#fav"); await p.waitForSelector("h1:has-text('Favourites')");
-  await p.goto(BASE + "#prep"); await p.waitForURL((u) => !u.pathname.startsWith("/v3/"), { timeout: 8000 });
+  await p.goto(BASE + "#m-m1"); await p.waitForURL((u) => !u.pathname.startsWith("/v3/"), { timeout: 8000 });
 });
 
 await test("global search finds tools and recipes", async () => {
@@ -104,6 +104,59 @@ await test("timer starts from a recipe step", async () => {
   const p = await page(); await p.goto(BASE + "#r-" + rid); await p.waitForSelector(".steps li");
   const tm = p.locator(".steps .tm").first();
   if (await tm.count()) { await tm.click(); await p.waitForSelector(".tbar .t"); }
+});
+
+// An order with two dishes, shared by the kitchen tests below.
+async function withOrder() {
+  const p = await page(); await p.goto(BASE + "#recipes"); await ready(p);
+  await p.fill("input[aria-label='Search recipes']", "salmon"); await p.waitForSelector("a.row");
+  const ids = await p.$$eval("a.row", (a) => a.slice(0, 2).map((x) => x.getAttribute("href").slice(3)));
+  await p.evaluate((ids) => { localStorage.setItem("bb-order", JSON.stringify({ name: "Test banquet", date: "2026-12-05", pax: 40, reserve: 10, sid: null,
+    lines: ids.map((id) => ({ id, pax: null, mode: "plated", gpg: null, pre: null, k: 1 })) })); }, ids);
+  return { p, ids };
+}
+const download = async (p, click) => { const [d] = await Promise.all([p.waitForEvent("download", { timeout: 20000 }), click()]); return d.suggestedFilename(); };
+
+await test("prep list, labels and order PDF, CSV", async () => {
+  const { p } = await withOrder(); await p.goto(BASE + "#prep"); await p.reload(); await p.waitForSelector(".pd li");
+  await p.locator(".pd li button").first().click(); assert(await p.locator(".pd li.got").count() === 1, "tick did not work");
+  if (SHOTS) await p.screenshot({ path: SHOTS + "/prep.png" });
+  let f = await download(p, () => p.click("button:has-text('PDF')")); assert(/^Prep_List_Test_banquet_2026-12-05\.pdf$/.test(f), f);
+  f = await download(p, () => p.click("button:has-text('Labels')")); assert(/^Labels_.*\.pdf$/.test(f), f);
+  await p.goto(BASE + "#kitchen"); await p.waitForSelector(".ticket li");
+  f = await download(p, () => p.click(".acts button:has-text('PDF')")); assert(/^Order_List_.*\.pdf$/.test(f), f);
+  f = await download(p, () => p.click(".acts button:has-text('CSV')")); assert(/\.csv$/.test(f), f);
+  f = await download(p, () => p.click(".acts button:has-text('Service cards')")); assert(/^Service_Cards_/.test(f), f);
+  await p.click(".acts button:has-text('Allergen matrix')"); await p.waitForSelector(".mx tbody tr");
+  f = await download(p, () => p.click(".mx button:has-text('PDF')")); assert(/^Allergen_Matrix_/.test(f), f);
+  assert(p.errors.length === 0, p.errors.join("; "));
+});
+
+await test("suppliers: add one, assign a product, order grouped by supplier", async () => {
+  const { p } = await withOrder(); await p.goto(BASE + "#suppliers"); await p.reload(); await ready(p);
+  await p.fill("input[aria-label='New supplier']", "Metro"); await p.fill("input[aria-label='New supplier phone']", "+359 88 123 4567"); await p.click("button[aria-label='Add supplier']");
+  await p.waitForSelector("input[aria-label='Supplier name']");
+  await p.goto(BASE + "#kitchen"); await p.waitForSelector(".ticket li"); await p.click(".ticket button:has-text('By supplier')");
+  await p.waitForSelector("h3:has-text('No supplier')"); await p.locator(".si select").first().selectOption({ label: "Metro" });
+  await p.waitForSelector("h3:has-text('Metro')"); assert(await p.locator("a[href^='https://wa.me/359881234567']").count() === 1, "no WhatsApp link");
+  if (SHOTS) await p.screenshot({ path: SHOTS + "/kitchen-suppliers.png", fullPage: true });
+  const s = await p.evaluate(() => JSON.parse(localStorage.getItem("bb-sup"))); assert(s.list.length === 1 && Object.keys(s.map).length === 1, "bb-sup " + JSON.stringify(s));
+});
+
+await test("prices: set a price, food cost appears; save as menu and delete it", async () => {
+  const { p } = await withOrder(); await p.goto(BASE + "#prices"); await p.reload(); await ready(p);
+  await p.waitForSelector(".pr input"); const inp = p.locator(".pr input").first(); await inp.fill("4.5"); await inp.press("Tab");
+  const pr = await p.evaluate(() => JSON.parse(localStorage.getItem("bb-prices"))); assert(Object.values(pr)[0] === 4.5, "price not saved");
+  await p.goto(BASE + "#kitchen"); await p.waitForSelector("text=Food cost");
+  await p.click("button:has-text('Save as menu')"); await p.goto(BASE + "#kitchen-saved"); await p.waitForSelector("text=Test banquet");
+  const del = p.locator("button[aria-label='Delete menu Test banquet']"); await del.click(); await del.click();
+  await p.waitForTimeout(200); assert((await p.evaluate(() => JSON.parse(localStorage.getItem("bb-menus")).length)) === 0, "menu not deleted");
+});
+
+await test("recipe PDF and service card", async () => {
+  const { p, ids } = await withOrder(); await p.goto(BASE + "#r-" + ids[0]); await p.waitForSelector(".ing li");
+  let f = await download(p, () => p.click("button[aria-label='PDF']")); assert(/p\.pdf$/.test(f), f);
+  f = await download(p, () => p.click("button[aria-label='Service card']")); assert(/^Service_Card_/.test(f), f);
 });
 
 await b.close();
