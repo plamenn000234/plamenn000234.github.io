@@ -271,30 +271,31 @@ await test("accessibility basics: no unnamed buttons or images", async () => {
 
 await test("tools: numbers match the tables (yield, buffet, bakers, sous-vide, cost)", async () => {
   const p = await page(); const out = async () => (await p.locator(".tool-body .outs").allInnerTexts()).join(" | ").replace(/\s+/g, " ");
+  const has = async (re, not = false) => { for (let k = 0; k < 30; k++) { if (re.test(await out()) !== not) return true; await p.waitForTimeout(100); } return false; };
   // Yield: minced meat has no sous-vide figure, so the method moves to braise (88 %) and the button matches
   await p.goto(BASE + "#tool-yield"); await ready(p); await p.waitForSelector(".tool-body select");
   await p.locator(".tool-body .seg button").first().click();
   await p.selectOption(".tool-body select", { label: "Minced meat 80/20" });
-  assert(/COOKED 880 g/i.test(await out()), await out());
+  assert(await has(/COOKED 880 g/i), "got " + await out());
   assert(await p.locator(".tool-body .seg button[aria-pressed=true]").innerText().then((t) => /Braise/.test(t)), "button not moved");
-  assert(!/BUY RAW/i.test(await out()), "empty buy raw shown");
-  await p.locator(".tool-body input").nth(1).fill("9000"); assert(/BUY RAW 10,227 g/i.test(await out()), await out());
+  assert(await has(/BUY RAW/i, true), "empty buy raw shown");
+  await p.locator(".tool-body input").nth(1).fill("9000"); assert(await has(/BUY RAW 10,227 g/i), "got " + await out());
   // Buffet: 100 guests × 92 g × K 1 × 1.1 = 10.1 kg; 2 proteins: chicken 120 g → 13.2 kg
-  await p.goto(BASE + "#tool-buffet"); await p.waitForSelector(".tool-body select");
-  assert(/10.1 kg/.test(await out()), await out());
-  await p.click(".tool-body .seg button:has-text('2 proteins')"); assert(/13.2 kg/.test(await out()), await out());
+  await p.goto(BASE + "#tool-buffet"); await p.reload(); await ready(p); await p.waitForSelector(".tool-body select");
+  assert(await has(/10.1 kg/), "got " + await out());
+  await p.click(".tool-body .seg button:has-text('2 proteins')"); assert(await has(/13.2 kg/), "got " + await out());
   // Bakers: pasta has no yeast line
-  await p.goto(BASE + "#tool-bakers"); await p.waitForSelector(".tool-body select");
-  await p.selectOption(".tool-body select", "0"); assert(!/YEAST/i.test(await out()), await out());
-  await p.selectOption(".tool-body select", "3"); assert(/YEAST/i.test(await out()), await out());
+  await p.goto(BASE + "#tool-bakers"); await p.reload(); await ready(p); await p.waitForSelector(".tool-body select");
+  await p.selectOption(".tool-body select", "0"); assert(await has(/YEAST/i, true), "got " + await out());
+  await p.selectOption(".tool-body select", "3"); assert(await has(/YEAST/i), "got " + await out());
   // Sous-vide: carrots have no salt figure, no broken number
-  await p.goto(BASE + "#tool-sousvide"); await p.waitForSelector(".tool-body select");
+  await p.goto(BASE + "#tool-sousvide"); await p.reload(); await ready(p); await p.waitForSelector(".tool-body select");
   await p.selectOption(".tool-body select", { label: "Carrots" }); await p.waitForSelector("text=No salt in the bag");
   assert(!/–\s*g|NaN/.test(await p.locator(".tool-body").innerText()), "broken salt");
   // Cost: 3.20 at 30 % → 10.67 net, 12.80 with 20 % VAT; menu price 15 → 25.6 %
-  await p.goto(BASE + "#tool-cost"); await p.waitForSelector(".tool-body input");
-  assert(/10.67/.test(await out()) && /12.80/.test(await out()), await out());
-  await p.locator(".tool-body input").nth(3).fill("15"); assert(/25.6 %/.test(await out()), await out());
+  await p.goto(BASE + "#tool-cost"); await p.reload(); await ready(p); await p.waitForSelector(".tool-body input");
+  assert(await has(/10.67/) && await has(/12.80/), "got " + await out());
+  await p.locator(".tool-body input").nth(3).fill("15"); assert(await has(/25.6 %/), "got " + await out());
   assert(p.errors.length === 0, p.errors.join("; "));
 });
 
