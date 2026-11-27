@@ -10,14 +10,15 @@
   <button class="btn {kind}" class:small class:on={pressed} aria-pressed={pressed} aria-label={label} {onclick} {disabled} {id}>{#if icon}<Icon name={icon} size={small ? 16 : 18} />{/if}{@render children?.()}</button>
 {/if}
 <style>
-  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 40px; padding: 0 14px; border-radius: 3px; border: 1px solid var(--line);
-    background: transparent; color: var(--ink); font-size: 14px; font-weight: 500; letter-spacing: .02em; white-space: nowrap; text-decoration: none; transition: background .15s, border-color .15s, transform .1s; }
-  .btn:active { transform: scale(.98); }
-  .btn:hover { border-color: var(--muted); }
-  .btn.pri { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
-  .btn.pri:hover { filter: brightness(1.05); }
-  .btn.ghost { border-color: transparent; }
-  .btn.on { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
-  .btn.small { min-height: 32px; padding: 0 10px; font-size: 13px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; padding: 0 18px; border-radius: 999px; border: 0;
+    background: var(--surface); color: var(--ink); box-shadow: var(--sh-1), inset 0 0 0 1px var(--hair); font-size: 14.5px; font-weight: 500; letter-spacing: .01em; white-space: nowrap; text-decoration: none;
+    transition: transform .18s var(--ease), background .2s, box-shadow .2s, color .2s; -webkit-user-select: none; user-select: none; }
+  .btn:active { transform: scale(.96); }
+  @media (hover: hover) { .btn:hover { box-shadow: var(--sh-2), inset 0 0 0 1px var(--hair); } }
+  .btn.pri { background: var(--pri); color: var(--pri-ink); box-shadow: 0 6px 18px rgba(26, 25, 23, .22); }
+  .btn.ghost { background: transparent; box-shadow: none; }
+  .btn.on { color: var(--accent); background: var(--accent-soft); box-shadow: none; }
+  .btn.on :global(path) { fill: currentColor; }
+  .btn.small { min-height: 36px; padding: 0 14px; font-size: 13.5px; }
   .btn:disabled { opacity: .45; pointer-events: none; }
 </style>

@@ -8,8 +8,9 @@
   <button type="button" aria-label="More {label.toLowerCase()}" onclick={() => set(value + 1)}>+</button>
 </div>
 <style>
-  .stp { display: inline-flex; align-items: stretch; border: 1px solid var(--line); border-radius: 3px; background: var(--surface); }
-  button { width: 42px; border: 0; background: transparent; font-size: 20px; }
-  input { width: 64px; border: 0; border-inline: 1px solid var(--line-2); background: transparent; text-align: center; font: 600 19px var(--f-display); padding: 6px 0; -moz-appearance: textfield; appearance: textfield; }
+.stp { display: inline-flex; align-items: center; gap: 2px; padding: 3px; border-radius: 999px; background: var(--sunk); }
+  button { width: 40px; height: 40px; border: 0; border-radius: 50%; background: var(--raised); box-shadow: var(--sh-1); font-size: 20px; line-height: 1; transition: transform .15s var(--ease); }
+  button:active { transform: scale(.9); }
+  input { width: 64px; border: 0; background: transparent; text-align: center; font: 600 21px var(--f-display); padding: 6px 0; -moz-appearance: textfield; appearance: textfield; font-variant-numeric: tabular-nums; outline: none; }
   input::-webkit-inner-spin-button { display: none; }
 </style>

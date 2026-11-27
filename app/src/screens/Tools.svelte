@@ -22,8 +22,8 @@
   {/if}
 </div>
 <style>
-  .head { margin: 14px 0 12px; display: grid; gap: 4px; }
-  .sq { display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--muted); color: var(--muted); }
-  .sq:focus-within { border-color: var(--accent); color: var(--ink); }
-  .sq input { flex: 1; min-width: 0; border: 0; background: transparent; padding: 10px 0; font-size: 16px; outline: none; color: var(--ink); }
+  .head { margin: 22px 0 18px; display: grid; gap: 6px; } .head .note { max-width: 52ch; font-size: 14px; }
+  .sq { display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 16px; border-radius: 999px; background: var(--surface); box-shadow: var(--sh-1); color: var(--muted); }
+  .sq:focus-within { box-shadow: var(--sh-2), inset 0 0 0 2px var(--ink); color: var(--ink); }
+  .sq input { flex: 1; min-width: 0; border: 0; background: transparent; font-size: 16px; outline: none; color: var(--ink); }
 </style>

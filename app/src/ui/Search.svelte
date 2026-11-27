@@ -35,9 +35,9 @@
   </div>
 {/if}
 <style>
-  .scrim { position: fixed; inset: 0; z-index: 40; background: rgba(20, 18, 15, .35); animation: f .2s; }
+  .scrim { position: fixed; inset: 0; z-index: 40; background: rgba(20, 18, 15, .4); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); animation: f .2s; }
   .panel { position: fixed; z-index: 41; top: calc(var(--sat) + 8px); left: 8px; right: 8px; max-width: 680px; margin: 0 auto; max-height: calc(100dvh - var(--sat) - 16px); display: flex; flex-direction: column;
-    background: var(--bg); border: 1px solid var(--line); border-radius: var(--r); box-shadow: 0 20px 60px rgba(0,0,0,.25); animation: d .25s var(--ease); }
+    background: var(--bg); border-radius: 22px; box-shadow: var(--sh-3); overflow: hidden; animation: d .25s var(--ease); }
   .bar { display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 14px; border-bottom: 1px solid var(--line-2); }
   input { flex: 1; min-width: 0; border: 0; background: transparent; font-size: 17px; padding: 8px 0; outline: none; }
   .bar button { width: 40px; height: 40px; border: 0; background: transparent; display: grid; place-items: center; }
@@ -47,7 +47,8 @@
   .tl a { display: flex; align-items: center; gap: 12px; padding: 9px 6px; border-radius: 3px; color: var(--ink); }
   .tl a:hover { background: var(--sunk); }
   .tl span { display: grid; } .tl b { font: 600 15px var(--f-display); } .tl small { font-size: 12.5px; color: var(--muted); }
-  .rl { display: grid; gap: 6px; }
+  .rl { display: grid; background: var(--surface); border-radius: var(--r-m); overflow: hidden; box-shadow: var(--sh-1); }
+  .rl > :global(* + *) { box-shadow: inset 0 1px 0 var(--hair); }
   .more { font-size: 13.5px; padding: 4px 2px; }
   .gl div { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; font-size: 13.5px; padding: 7px 2px; border-bottom: 1px solid var(--line-2); }
   @keyframes f { from { opacity: 0; } } @keyframes d { from { opacity: 0; transform: translateY(-8px); } }

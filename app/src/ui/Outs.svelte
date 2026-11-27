@@ -6,9 +6,9 @@
   {#each items as [l, v, u]}<div><small>{l}</small><b class="num">{v}<span>{u || ""}</span></b></div>{/each}
 </div>
 <style>
-  .outs { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 1px; background: var(--line-2); border: 1px solid var(--line-2); border-radius: var(--r); overflow: hidden; }
-  .outs div { background: var(--paper); padding: 12px 14px; display: grid; gap: 2px; }
-  small { font-size: 11.5px; color: var(--muted); letter-spacing: .04em; }
-  b { font-family: var(--f-display); font-size: 24px; font-weight: 600; line-height: 1.15; }
-  span { font-size: 14px; color: var(--muted); font-weight: 500; margin-left: 2px; }
+.outs { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1px; background: rgba(255, 245, 230, .1); border-radius: var(--r-m); overflow: hidden; box-shadow: var(--sh-2); }
+  .outs div { background: var(--hero); color: var(--hero-ink); padding: 16px 18px 14px; display: grid; gap: 4px; }
+  small { font-size: 11px; color: var(--hero-muted); letter-spacing: .08em; text-transform: uppercase; }
+  b { font-family: var(--f-display); font-size: 30px; font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  span { font-size: 15px; color: var(--hero-muted); font-weight: 500; margin-left: 3px; font-family: var(--f-body); }
 </style>
