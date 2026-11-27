@@ -105,7 +105,7 @@ export async function detail(r: Recipe): Promise<Detail> {
 
 /* ---------- search ---------- */
 export const inColl = (r: Recipe, c: number) => r.f === c || r.also.includes(c);
-export interface Filter { q: string; coll: number; diet: number; free: Set<number>; low: boolean; sort: "rel" | "az" | "kcal"; only?: Set<string> | null }
+export interface Filter { q: string; coll: number; diet: number; free: Set<number>; low: boolean; sort: "rel" | "az" | "kcal"; only?: Set<string> | null; not?: Set<number> | null }
 export function filtered(ui: Filter): Recipe[] {
   const toks = fold(ui.q).split(/[^\p{L}\p{N}%]+/u).filter((t) => t.length > 1 || /\d/.test(t));
   const out: [Recipe, number][] = [];
@@ -115,6 +115,7 @@ export function filtered(ui: Filter): Recipe[] {
     if (ui.diet && r.diet < ui.diet) continue;
     if (ui.free.size && r.algs.some((a) => ui.free.has(a))) continue;
     if (ui.low && !(r.kcal > 0 && r.kcal <= 400)) continue;
+    if (ui.not?.size && r.lines.some((l) => ui.not!.has(l[0]))) continue;
     let score = 0;
     if (toks.length) {
       let ok = true;

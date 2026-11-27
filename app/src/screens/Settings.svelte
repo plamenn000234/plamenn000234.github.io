@@ -11,6 +11,8 @@
   import { saveFile, today } from "../core/files";
   import { saveOffline } from "../core/offline";
   import { tour } from "../core/tour.svelte";
+  import { NEWS } from "../core/news.svelte";
+  let showNews = $state(false);
   const VERSION = __APP_VERSION__;
   let ti = $state(Math.max(0, THEMES.findIndex((t) => t[0] === theme.v)));
   function setTheme(i: number) { theme.set(THEMES[i][0]); applyTheme(); }
@@ -63,6 +65,8 @@
   <section class="card pad st">
     <h2>Help</h2>
     <div class="links">
+      <button class="row" aria-expanded={showNews} onclick={() => (showNews = !showNews)}><Icon name="star" size={18} /><span>What's new</span><Icon name="fwd" size={16} /></button>
+      {#if showNews}<div class="nw">{#each NEWS as n}<p class="eyebrow">{n.date}</p><ul>{#each n.items as [t, x]}<li><b>{t}</b> · {x}</li>{/each}</ul>{/each}</div>{/if}
       <button class="row" onclick={() => tour.open()}><Icon name="book" size={18} /><span>Show the welcome tour again</span><Icon name="fwd" size={16} /></button>
       <a class="row" href={mail}><Icon name="edit" size={18} /><span>Send feedback or report a problem</span><Icon name="fwd" size={16} /></a>
       <a class="row" href="{ROOT}privacy.html"><Icon name="check" size={18} /><span>Privacy policy</span><Icon name="fwd" size={16} /></a>
@@ -85,5 +89,6 @@
   .row { display: flex; align-items: center; gap: 12px; padding: 13px 2px; border: 0; background: none; color: var(--ink); font-size: 15px; text-align: left; box-shadow: inset 0 -1px 0 var(--hair); }
   .row:last-child { box-shadow: none; }
   .row span { flex: 1; } .row :global(svg) { color: var(--muted); flex: none; }
+  .nw { padding: 6px 2px 12px; box-shadow: inset 0 -1px 0 var(--hair); } .nw ul { margin: 6px 0 0; padding-left: 18px; display: grid; gap: 6px; font-size: 14px; color: var(--ink-2); }
   .ver { margin: 18px 0 8px; text-align: center; }
 </style>

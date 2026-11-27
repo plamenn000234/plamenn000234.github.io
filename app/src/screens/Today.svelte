@@ -9,6 +9,7 @@
   import { byId, R, D } from "../core/catalog";
   import { read, KEYS } from "../core/store.svelte";
   import { timers } from "../core/ui.svelte";
+  import { news, NEWS } from "../core/news.svelte";
   const DEFAULT = ["yield", "salt", "cost", "doneness"];
   const pinned = $derived((toolFavs.v.length ? toolFavs.v : DEFAULT).map((id) => TOOLS.find((t) => t.id === id)).filter(Boolean));
   const rec = $derived(recent.v.map((id) => byId.get(id)).filter(Boolean).slice(0, 5));
@@ -28,6 +29,10 @@
 <div class="page">
   <div class="head"><p class="eyebrow">{dateStr}</p><h1>{hello}</h1></div>
 
+  {#if news.show}<section class="card news" aria-label="What's new">
+    <div class="nh"><p class="eyebrow">New in Chefsheet</p><button class="ok" onclick={() => news.done()}>Got it</button></div>
+    <ul>{#each NEWS[0].items as [t, x, h]}<li><a href={h}><b>{t}</b><small>{x}</small></a></li>{/each}</ul>
+  </section>{/if}
   <a class="hero press" href="#kitchen" style="--img-d:url({BASE}bg/today-dark.webp);--img-l:url({BASE}bg/today-light.webp)">
     <div class="ht"><p class="eyebrow">Kitchen{o.lines.length ? " · current order" : ""}</p>
       <h2>{o.lines.length ? o.name || "Order" : "Start an order"}</h2>
@@ -59,6 +64,12 @@
   </section>
 </div>
 <style>
+  .news { padding: 16px 18px; margin-bottom: 14px; box-shadow: var(--sh-1), inset 3px 0 0 var(--accent); }
+  .nh { display: flex; align-items: center; justify-content: space-between; gap: 12px; } .nh .eyebrow { color: var(--accent); }
+  .ok { border: 0; border-radius: 999px; padding: 8px 14px; background: var(--pri); color: var(--pri-ink); font-size: 13.5px; font-weight: 600; }
+  .news ul { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 2px; }
+  .news a { display: grid; gap: 2px; padding: 8px 0; color: var(--ink); box-shadow: inset 0 -1px 0 var(--hair); } .news li:last-child a { box-shadow: none; }
+  .news b { font: 600 15px var(--f-display); } .news small { font-size: 13px; color: var(--muted); }
   .head { margin: 22px 0 20px; display: grid; gap: 6px; }
   h1 { font-size: 36px; }
   .hero { position: relative; display: grid; gap: 18px; padding: 22px 22px 20px; border-radius: 24px; color: var(--hero-ink); overflow: hidden;
