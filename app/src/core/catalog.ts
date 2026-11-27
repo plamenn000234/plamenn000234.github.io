@@ -1,7 +1,7 @@
 // The recipe library: index.json, the per-collection r/*.json files, and the cook's own recipes (bb-mine).
 // Logic ported from the 2.x app so numbers stay identical.
 import { fold, key, splitName } from "./util";
-import { read, KEYS } from "./store.svelte";
+import { read, write, KEYS } from "./store.svelte";
 
 export const ROOT = new URL("../", location.href.replace(/[#?].*$/, "").replace(/[^/]*$/, "")).href; // site root, one level above /v3/
 export type Product = [name: string, sec: number, unit: string, k: number, per: number, note: string];
@@ -162,6 +162,27 @@ export function dishType(r: Recipe): [number, string] {
   if(W("curry|stew|tagine|ragout|ragu|goulash|chili|casserole|braise|kapama|moussaka|dal|daal"))return [22,"pot"];
   return [r.diet===2?140:120,"leaf"];
 }
-import { DISH, DISHA, FST } from "./constants";
+import { DISH, DISHA, FST, ALG } from "./constants";
 export const dishImg = (k: string) => { const d = DISH.includes(k) ? k : DISHA[k] || null; return d ? ROOT + "img/dish/" + d + ".webp" : ROOT + "img/dish/pot.webp"; };
 export const folderStyle = (i: number): [number, string] => FST[D.folders[i]?.[0]] || [150, "pot"];
+
+/* ---------- the cook's own recipes: save, delete, backup ---------- */
+export function mineSave(u: Mine) {
+  const a = read<Mine[]>(KEYS.mine, []); const i = a.findIndex((x) => x.id === u.id); u.up = Date.now(); u.updatedAt = u.up;
+  if (i >= 0) a[i] = u; else a.unshift(u); write(KEYS.mine, a); mineSync();
+}
+export function mineRemove(id: string) { write(KEYS.mine, read<Mine[]>(KEYS.mine, []).filter((x) => x.id !== id)); mineSync(); }
+export const mineBackup = () => JSON.stringify({ app: "chefsheet", kind: "my-recipes", v: 1, recipes: read<Mine[]>(KEYS.mine, []) }, null, 1);
+/** Restores a backup file; recipes with the same id are replaced. Returns how many were read, or -1 if the file is not a backup. */
+export function mineRestore(text: string) {
+  try {
+    const j = JSON.parse(text); const list = Array.isArray(j) ? j : j.recipes; if (!Array.isArray(list)) return -1;
+    const a = read<Mine[]>(KEYS.mine, []); let n = 0;
+    for (const u of list) {
+      if (!u || !u.name || !Array.isArray(u.ing)) continue;
+      u.id = String(u.id || "u" + Date.now().toString(36) + n); u.algs = Array.isArray(u.algs) ? u.algs.map(Number).filter((x: number) => ALG[x]) : []; u.steps = Array.isArray(u.steps) ? u.steps.map(String) : [];
+      const i = a.findIndex((x) => x.id === u.id); if (i >= 0) a[i] = u; else a.push(u); n++;
+    }
+    write(KEYS.mine, a); mineSync(); return n;
+  } catch { return -1; }
+}

@@ -1,14 +1,15 @@
 <script lang="ts">
-  // Production: the current order and its supplier list, saved orders and menus.
-  // Prep list, labels, PDF, service cards, suppliers and prices still open in 2.x during the alpha.
+  // Production: the current order, its order list by section or by supplier, files to print, saved orders and menus.
   import Icon from "../ui/Icon.svelte";
   import Button from "../ui/Button.svelte";
   import Field from "../ui/Field.svelte";
   import Seg from "../ui/Seg.svelte";
   import Empty from "../ui/Empty.svelte";
   import Dish from "../ui/Dish.svelte";
-  import { ord, compute, portions, saveOrder, savedOrders, savedMenus, openSaved, orderText, money, blankOrder } from "../core/kitchen.svelte";
-  import { byId, D, ROOT } from "../core/catalog";
+  import { ord, compute, portions, saveOrder, savedOrders, savedMenus, openSaved, orderText, money, blankOrder, saveMenu, deleteSaved, sup, supGroups, supText, supPhone } from "../core/kitchen.svelte";
+  import { orderPdf, orderCsv, mxPdf, svcPdf, orderDishes } from "../core/pdfs";
+  import { makePdf, saveFile, fileBase } from "../core/files";
+  import { byId, D } from "../core/catalog";
   import { ALG } from "../core/constants";
   import { fmtQ } from "../core/util";
   import { toast, copyText, shareText } from "../core/ui.svelte";
@@ -24,6 +25,17 @@
   function upd() { ord.save(); }
   function remove(id: string) { o.lines = o.lines.filter((l) => l.id !== id); upd(); }
   function tick(k: string) { const n = new Set(ticked); n.has(k) ? n.delete(k) : n.add(k); ticked = n; }
+  let by = $state(0), showMx = $state(false), arm = $state("");
+  const groups = $derived.by(() => { void JSON.stringify(sup.v); return by ? supGroups(c) : []; });
+  const dishes = $derived.by(() => { void JSON.stringify(o.lines); return orderDishes(); });
+  const AK = Object.keys(ALG).map(Number);
+  const base = () => fileBase(o.name || "order") + (o.date ? "_" + o.date : "");
+  function setSup(name: string, id: string) { if (id) sup.v.map[name] = id; else delete sup.v.map[name]; sup.save(); }
+  function del(id: string, menu: boolean) {
+    const k = (menu ? "m:" : "o:") + id;
+    if (arm !== k) { arm = k; setTimeout(() => { if (arm === k) arm = ""; }, 3000); return; }
+    arm = ""; deleteSaved(id, menu); rev++; toast.show(menu ? "Menu deleted" : "Order deleted");
+  }
   function newOrder() { ord.set(blankOrder()); ticked = new Set(); toast.show("New order"); }
 </script>
 <div class="page">
@@ -59,31 +71,53 @@
       <section class="sec ticket paper">
         <div class="th"><div><p class="eyebrow">Order list</p><h2>{o.name || "Order"}</h2><p class="note">{o.date || "no date"} · {o.pax} guests · reserve {o.reserve}% · {c.count} products</p></div>
           <div class="ta"><Button small icon="copy" onclick={() => copyText(orderText(c), "Order list copied")}>Copy</Button><Button small icon="share" onclick={() => shareText("Order list", orderText(c))}>Share</Button></div></div>
-        {#each c.secs as s, i}{#if s.length}
-          <h3>{D.sections[i]}</h3>
-          <ul>{#each s as it}{@const k = it.name + "|" + it.unit}<li class:got={ticked.has(k)}><button onclick={() => tick(k)}><span>{it.name}{#if it.note}<small>{it.note}</small>{/if}</span><b class="num">{fmtQ(it.q)} <i>{it.unit}</i></b></button></li>{/each}</ul>
-        {/if}{/each}
+        {#if c.count}<div class="segw"><Seg options={["By section", "By supplier"]} value={by} onchange={(i) => (by = i)} /></div>{/if}
+        {#if by === 0}
+          {#each c.secs as s, i}{#if s.length}
+            <h3>{D.sections[i]}</h3>
+            <ul>{#each s as it}{@const k = it.name + "|" + it.unit}<li class:got={ticked.has(k)}><button onclick={() => tick(k)}><span>{it.name}{#if it.note}<small>{it.note}</small>{/if}</span><b class="num">{fmtQ(it.q)} <i>{it.unit}</i></b></button></li>{/each}</ul>
+          {/if}{/each}
+        {:else}
+          {#each groups as g}
+            <div class="sg"><h3>{g.s ? g.s.name : "No supplier"} · {g.items.length}</h3>
+              {#if g.s}<span class="sga"><a class="mini" href="https://wa.me/{supPhone(g.s.phone)}?text={encodeURIComponent(supText(g))}" target="_blank" rel="noopener">WhatsApp</a><a class="mini" href="viber://forward?text={encodeURIComponent(supText(g))}">Viber</a><button class="mini" aria-label="Share the order for {g.s.name}" onclick={() => shareText("Order for " + g.s!.name, supText(g))}><Icon name="share" size={15} /></button></span>{/if}</div>
+            <ul>{#each g.items as it}<li class="si"><span>{it.name}{#if sup.v.list.length}<select aria-label="Supplier for {it.name}" value={sup.v.map[it.name] || ""} onchange={(e) => setSup(it.name, (e.target as HTMLSelectElement).value)}><option value="">Supplier…</option>{#each sup.v.list as x}<option value={x.id}>{x.name}</option>{/each}</select>{/if}</span><b class="num">{fmtQ(it.q)} <i>{it.unit}</i></b></li>{/each}</ul>
+          {/each}
+          {#if sup.v.list.length}<p class="note"><a href="#suppliers">Manage suppliers</a></p>
+          {:else}<div class="nosup"><b>No suppliers yet</b><p class="note">Add your suppliers, then pick one for each product. The app remembers it for every next order.</p><Button small href="#suppliers" icon="plus">Add suppliers</Button></div>{/if}
+        {/if}
         {#if c.algs.length}<p class="note al">Allergens: {c.algs.map((a) => ALG[a]).join(", ")}</p>{/if}
         {#if c.miss.length}<p class="note">Not counted (no product data yet): {c.miss.join(", ")}</p>{/if}
-        {#if c.cost.n}<p class="cost">Food cost <b>{money(c.cost.sum)}</b>{c.cost.n < c.count ? ` · prices for ${c.cost.n} of ${c.count} products` : ""}</p>{/if}
+        {#if c.count}<p class="cost">{#if c.cost.n}Food cost <b>{money(c.cost.sum)}</b>{Number(o.pax) > 0 ? ` · ${money(c.cost.sum / Number(o.pax))} per guest` : ""}{c.cost.n < c.count ? ` · prices for ${c.cost.n} of ${c.count} products` : ""}{:else}No prices yet.{/if} <a href="#prices">{c.cost.n ? "Edit prices" : "Add prices"}</a></p>{/if}
       </section>
 
       <div class="acts">
-        <Button kind="pri" icon="check" onclick={() => { const r = saveOrder(); if (r) { rev++; toast.show("Order saved on this device"); } }}>Save order</Button>
+        <Button kind="pri" icon="check" onclick={() => { const r = saveOrder(); if (r) { rev++; toast.show("Order saved on this device"); } }}>{o.sid ? "Update saved order" : "Save order"}</Button>
+        <Button icon="pdf" disabled={!c.count} onclick={() => makePdf("Order_List_" + base() + ".pdf", orderPdf)}>PDF</Button>
+        <Button disabled={!c.count} onclick={() => saveFile("Order_List_" + base() + ".csv", orderCsv())}>CSV</Button>
         <Button icon="tool-prep" href="#prep">Prep list</Button>
-        <Button icon="pdf" href="{ROOT}#order">PDF, labels, service cards</Button>
-        <Button icon="tool-price" href="#prices">Prices</Button>
+        <Button icon="tool-allergen" pressed={showMx} onclick={() => (showMx = !showMx)}>Allergen matrix</Button>
+        <Button icon="cook" onclick={() => makePdf("Service_Cards_" + fileBase(o.name || "menu") + ".pdf", () => svcPdf(dishes))}>Service cards</Button>
+        <Button icon="book" onclick={() => { const m = saveMenu(); if (m) { rev++; toast.show((m.updated ? "Menu updated: " : "Menu saved: ") + m.name); } }}>Save as menu</Button>
         <Button icon="plus" onclick={newOrder}>New order</Button>
       </div>
-      <p class="note">PDF, labels, service cards, suppliers and prices open in the current version of Chefsheet for now.</p>
+      {#if showMx}
+        <section class="card pad mx">
+          <div class="th"><div><p class="eyebrow">The 14 allergens, EU 1169/2011</p><h2>Allergen matrix</h2></div><Button small icon="pdf" onclick={() => makePdf("Allergen_Matrix_" + base() + ".pdf", mxPdf)}>PDF</Button></div>
+          <div class="mxw"><table><thead><tr><th>Dish</th>{#each AK as k}<th title={ALG[k]}>{k}</th>{/each}</tr></thead>
+            <tbody>{#each dishes as r}<tr><td>{r.t}</td>{#each AK as k}<td class:y={r.algs.includes(k)} title={ALG[k]}>{r.algs.includes(k) ? "●" : ""}</td>{/each}</tr>{/each}</tbody></table></div>
+          <p class="note">{AK.map((k) => k + " " + ALG[k]).join(" · ")}. From the listed ingredients: check product labels.</p>
+        </section>
+      {/if}
+      <p class="note">Gross (as-bought) quantities from the recipe net weights with standard trim losses. Deduct your stock on hand. Deep-frying oil is not included. Suppliers: <a href="#suppliers">{sup.v.list.length ? sup.v.list.length + " saved" : "add yours"}</a>.</p>
     {/if}
   {:else}
     <section class="sec"><div class="sec-h"><h2>Saved orders</h2><small class="muted">{saved.length}</small></div>
-      {#if saved.length}<div class="sl">{#each saved as s (s.id)}<button class="card" onclick={() => { openSaved(s.id); router.go("#kitchen"); toast.show("Opened: " + s.name); }}><b>{s.name}</b><small>{s.date || "no date"} · {s.pax} guests · {s.lines.length} dishes</small></button>{/each}</div>
+      {#if saved.length}<div class="sl">{#each saved as s (s.id)}<div class="card sv"><button class="op" onclick={() => { openSaved(s.id); router.go("#kitchen"); toast.show("Opened: " + s.name); }}><b>{s.name}</b><small>{s.date || "no date"} · {s.pax} guests · {s.lines.length} dishes</small></button><button class="dl" class:arm={arm === "o:" + s.id} aria-label="Delete {s.name}" onclick={() => del(s.id, false)}>{#if arm === "o:" + s.id}Delete?{:else}<Icon name="trash" size={17} />{/if}</button></div>{/each}</div>
       {:else}<p class="note">Save an order to keep it here.</p>{/if}</section>
     <section class="sec"><div class="sec-h"><h2>Menus</h2><small class="muted">{menus.length}</small></div>
-      {#if menus.length}<div class="sl">{#each menus as s (s.id)}<button class="card" onclick={() => { openSaved(s.id, true); router.go("#kitchen"); toast.show("Menu loaded: " + s.name); }}><b>{s.name}</b><small>{s.lines.length} dishes · reserve {s.reserve}%</small></button>{/each}</div>
-      {:else}<Empty art="menu" title="No menus yet">A menu is a set of dishes you use again and again. Save one from the order in the current version.</Empty>{/if}</section>
+      {#if menus.length}<div class="sl">{#each menus as s (s.id)}<div class="card sv"><button class="op" onclick={() => { openSaved(s.id, true); router.go("#kitchen"); toast.show("New order from menu: " + s.name); }}><b>{s.name}</b><small>{s.lines.length} dishes · {s.pax} guests · reserve {s.reserve}%</small></button><button class="dl" class:arm={arm === "m:" + s.id} aria-label="Delete menu {s.name}" onclick={() => del(s.id, true)}>{#if arm === "m:" + s.id}Delete?{:else}<Icon name="trash" size={17} />{/if}</button></div>{/each}</div>
+      {:else}<Empty art="menu" title="No menus yet">A menu is a set of dishes you use again and again. Build an order and tap “Save as menu”. Next time start a new order from it in one tap.</Empty>{/if}</section>
   {/if}
 </div>
 <style>
@@ -116,6 +150,23 @@
   .al { margin-top: 12px; } .cost { margin-top: 10px; font-size: 14px; } .cost b { font: 600 18px var(--f-display); }
   .acts { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 8px; }
   .sl { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); }
-  .sl button { display: grid; gap: 4px; text-align: left; padding: 16px 18px; border: 0; color: var(--ink); }
+  .sv { display: flex; align-items: center; }
+  .sv .op { flex: 1; min-width: 0; display: grid; gap: 4px; text-align: left; padding: 16px 18px; border: 0; background: transparent; color: var(--ink); }
+  .dl { flex: none; margin-right: 10px; min-width: 40px; height: 40px; padding: 0 10px; border: 0; border-radius: 999px; background: transparent; color: var(--muted); display: grid; place-items: center; font-size: 13px; font-weight: 600; }
+  .dl.arm { background: var(--warn); color: #fff; }
+  .segw { margin: 12px 0 4px; }
+  .sg { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; margin-top: 16px; } .sg h3 { margin: 0; }
+  .sga { display: flex; gap: 6px; }
+  .mini { display: inline-flex; align-items: center; gap: 4px; height: 30px; padding: 0 12px; border: 0; border-radius: 999px; background: var(--sunk); color: var(--ink); font-size: 13px; font-weight: 500; }
+  .si { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; box-shadow: inset 0 -1px 0 var(--hair); font-size: 15px; }
+  .si span { display: grid; gap: 4px; min-width: 0; } .si select { max-width: 200px; border: 0; border-radius: 8px; background: var(--sunk); padding: 5px 8px; font-size: 13px; color: var(--ink-2); }
+  .si b { font: 600 15.5px var(--f-display); white-space: nowrap; } .si i { font-style: normal; font-size: 12px; color: var(--muted); }
+  .nosup { display: grid; gap: 6px; justify-items: start; margin-top: 12px; padding: 14px 16px; border-radius: var(--r-m); background: var(--sunk); }
+  .mx { margin-top: 12px; }
+  .mxw { overflow-x: auto; margin: 10px 0; }
+  .mx table { border-collapse: collapse; font-size: 13px; min-width: 100%; }
+  .mx th, .mx td { padding: 7px 6px; text-align: center; box-shadow: inset 0 -1px 0 var(--hair); }
+  .mx th:first-child, .mx td:first-child { text-align: left; min-width: 160px; position: sticky; left: 0; background: var(--surface); }
+  .mx th { font-size: 11.5px; color: var(--muted); font-weight: 600; } .mx td.y { color: var(--accent); }
   .sl b { font: 600 15px var(--f-display); } .sl small { font-size: 12.5px; color: var(--muted); }
 </style>

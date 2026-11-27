@@ -11,6 +11,14 @@
   import Recipes from "./screens/Recipes.svelte";
   import Recipe from "./screens/Recipe.svelte";
   import Learn from "./screens/Learn.svelte";
+  import Prep from "./screens/Prep.svelte";
+  import Suppliers from "./screens/Suppliers.svelte";
+  import Prices from "./screens/Prices.svelte";
+  import Editor from "./screens/Editor.svelte";
+  import Module from "./screens/Module.svelte";
+  import Lesson from "./screens/Lesson.svelte";
+  import Quiz from "./screens/Quiz.svelte";
+  import Review from "./screens/Review.svelte";
   import { router } from "./core/router.svelte";
   import { load } from "./core/catalog";
   let ready = $state(false), err = $state(""), searching = $state(false);
@@ -31,6 +39,14 @@
   {:else if rt.view === "recipes"}{#key rt.arg}<Recipes />{/key}
   {:else if rt.view === "recipe"}<Recipe id={rt.arg} />
   {:else if rt.view === "learn"}<Learn />
+  {:else if rt.view === "module"}{#key rt.arg}<Module id={rt.arg} />{/key}
+  {:else if rt.view === "lesson"}{#key rt.arg}<Lesson id={rt.arg} />{/key}
+  {:else if rt.view === "quiz"}{#key rt.arg}<Quiz id={rt.arg} />{/key}
+  {:else if rt.view === "review"}<Review />
+  {:else if rt.view === "prep"}<Prep />
+  {:else if rt.view === "suppliers"}<Suppliers />
+  {:else if rt.view === "editor"}{#key rt.arg}<Editor id={rt.arg.startsWith("+") ? "" : rt.arg} semi={rt.arg === "+semi"} />{/key}
+  {:else if rt.view === "prices"}{#key rt.arg}<Prices rid={rt.arg} />{/key}
   {/if}
 </main>
 <TabBar place="bottom" />

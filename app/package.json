@@ -16,5 +16,8 @@
     "vite": "^6.4.6"
   },
   "private": true,
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "jspdf": "2.5.1"
+  }
 }

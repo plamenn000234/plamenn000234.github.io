@@ -108,3 +108,39 @@ export function orderText(c = compute()) {
   if (c.cost.n) t += `\nFood cost: ${money(c.cost.sum)}${c.cost.n < c.count ? ` (prices for ${c.cost.n} of ${c.count} products)` : ""}`;
   return t;
 }
+
+/* ---------- menus and deleting (records are removed, so 2.x never sees a deleted one) ---------- */
+export function saveMenu() {
+  const o = ord.v; if (!o.lines.length) return null;
+  const a = savedMenus(); const name = (o.name || "").trim() || "Menu " + (a.length + 1);
+  const i = a.findIndex((x) => x.name.toLowerCase() === name.toLowerCase());
+  const t: Saved = { id: i >= 0 ? a[i].id : "m" + Date.now().toString(36), name, pax: Number(o.pax) || 0, reserve: Number(o.reserve) || 0,
+    lines: o.lines.map((l) => ({ id: l.id, pax: null, mode: l.mode, gpg: l.gpg, pre: l.pre || null, k: Number(l.k) || 1 })), updatedAt: Date.now() };
+  if (i >= 0) a[i] = t; else a.unshift(t);
+  write(KEYS.menus, a); return { name, updated: i >= 0 };
+}
+export function deleteSaved(id: string, menu = false) {
+  const k = menu ? KEYS.menus : KEYS.saved;
+  write(k, read<Saved[]>(k, []).filter((x) => x && x.id !== id));
+  if (!menu && ord.v.sid === id) { ord.v.sid = null; ord.save(); }
+}
+
+/* ---------- suppliers (bb-sup: {list, map product → supplier id}) ---------- */
+export interface Supplier { id: string; name: string; phone?: string }
+export const sup = new Persisted<{ list: Supplier[]; map: Record<string, string> }>(KEYS.sup, { list: [], map: {} });
+if (!sup.v || !Array.isArray(sup.v.list)) sup.set({ list: [], map: {} });
+if (!sup.v.map) sup.v.map = {};
+export const supOf = (name: string) => sup.v.list.find((x) => x.id === sup.v.map[name]) || null;
+export interface SupGroup { s: Supplier | null; items: Item[] }
+export function supGroups(c: ReturnType<typeof compute>): SupGroup[] {
+  const g = new Map<string, SupGroup>(); sup.v.list.forEach((x) => g.set(x.id, { s: x, items: [] }));
+  const none: SupGroup = { s: null, items: [] };
+  c.secs.forEach((sec) => sec.forEach((it) => { const x = supOf(it.name); (x ? g.get(x.id)! : none).items.push(it); }));
+  const out = [...g.values()].filter((x) => x.items.length); if (none.items.length) out.push(none);
+  out.forEach((x) => x.items.sort((a, b) => a.name.localeCompare(b.name))); return out;
+}
+export function supText(grp: SupGroup) {
+  const o = ord.v; let t = `Order${grp.s ? " for " + grp.s.name : ""}${o.name ? " · " + o.name : ""}\n${o.date ? "Delivery: " + o.date + "\n" : ""}\n`;
+  grp.items.forEach((it) => (t += `${it.name} — ${fmtQ(it.q)} ${it.unit}\n`)); return t + "\nThank you!";
+}
+export const supPhone = (p?: string) => String(p || "").replace(/[^\d]/g, "");

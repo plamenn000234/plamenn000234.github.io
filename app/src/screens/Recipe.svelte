@@ -17,6 +17,8 @@
   import { toast, shareText, copyText } from "../core/ui.svelte";
   import { TOOLS, openWith } from "../tools/registry.svelte";
   import { router } from "../core/router.svelte";
+  import { recipePdf, svcPdf } from "../core/pdfs";
+  import { makePdf, fileBase } from "../core/files";
   let { id }: { id: string } = $props();
   const r = $derived(byId.get(id));
   let d = $state<Detail | null>(null), err = $state(false);
@@ -80,6 +82,8 @@
     <button class="rb" class:on={fav} aria-pressed={fav} aria-label="Favourite" onclick={() => toast.show(toggleFav(r.id) ? "Added to favourites" : "Removed from favourites")}><Icon name="star" size={20} /></button>
     <button class="rb" aria-label="Share" onclick={() => shareText(r.t, text())}><Icon name="share" size={20} /></button>
     <button class="rb" aria-label="Copy" onclick={() => copyText(text(), "Recipe copied")}><Icon name="copy" size={20} /></button>
+    <button class="rb" aria-label="PDF" title="PDF for {p} portions" onclick={() => makePdf(fileBase(r.t) + "_" + p + "p.pdf", async () => (d ? recipePdf(r, d, p) : null))}><Icon name="pdf" size={20} /></button>
+    <button class="rb" aria-label="Service card" title="Service card for the front of house" onclick={() => makePdf("Service_Card_" + fileBase(r.t) + ".pdf", () => svcPdf([r]))}><Icon name="cook" size={20} /></button>
     {#if r.mine}<a class="rb" aria-label="Edit" href="#edit-{r.id}"><Icon name="edit" size={20} /></a>{/if}
   </div>
 
