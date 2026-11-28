@@ -13,6 +13,7 @@ T = [
     (r"noodles, fresh|fresh noodles|ramen noodles, fresh|fresh ramen|udon, fresh|fresh udon|udon noodles, fresh", 9, 1.5, 52, [1], 1),
     (r"shokupan|milk bread", 9, 5, 48, [1, 7], 1),
     (r"chicken fat|schmaltz", 0, 99, 0, [], 0),
+    (r"kinako|soy flour", 37, 26, 28, [6], 2),
     (r"soybeans|edamame", 17, 9, 8, [6], 2),
     (r"sriracha|chilli sauce|chili sauce|sambal oelek", 1.9, 0.9, 19, [], 2),
     (r"yellow bean sauce|soybean paste|tauco|taucu", 7, 8, 15, [6], 2),
