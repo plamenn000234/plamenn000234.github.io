@@ -57,6 +57,7 @@ T = [
     (r"^mascarpone", 4.6, 44, 4, [7], 0),
     (r"^almond milk", 0.5, 1.1, 0.3, [8], 2),
     (r"^farro", 15, 2.5, 67, [1], 2),
+    (r"^starter culture", 0, 0, 0, [], 2),
     (r"john dory|pollack|pollock", 18, 0.9, 0, [4], 0),
     (r"^maroilles", 20, 28, 0, [7], 0),
     (r"^fromage blanc", 8, 3, 4, [7], 0),
