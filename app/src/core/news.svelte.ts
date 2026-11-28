@@ -7,6 +7,7 @@ export const NEWS: News[] = [
     ["Recipes by dish", "Recipes → What dish: soups, mains, desserts… then pick what it is made of and the cuisine.", "#recipes"],
     ["52 new Bulgarian tech cards", "Kapama, shkembe, tas kebap, garash and more, in Adriatic & Balkan → Bulgaria.", "#c-adriatic-balkan"],
     ["49 more Balkan tech cards", "Serbia, Croatia, Romania, North Macedonia, Bosnia, Montenegro, Slovenia and now Albania: sarma, gregada, bograč, tavë kosi…", "#c-adriatic-balkan"],
+    ["50 Eastern European & Caucasus tech cards", "Żurek, solyanka, stroganoff, chicken Kyiv, medovik, chakhokhbili, harissa, dovga…", "#c-eastern-european"],
   ] },
   { id: "2026-11-27", date: "27 November 2026", items: [
     ["Make it mine", "Copy any library recipe and change grams, steps and serving.", "#recipes"],
