@@ -13,6 +13,7 @@ export const NEWS: News[] = [
     ["49 Greek & Italian tech cards", "Patsas, ktapodi stifado, gida vrasti, kaimaki; vincisgrassi, sartù di riso, cinghiale in umido, focaccia di Recco, struffoli…", "#c-italian"],
     ["57 French tech cards", "Baeckeoffe, tête de veau, tripes à la mode de Caen, bourride, sandre au beurre blanc, aligot, pâté de campagne, flan pâtissier…", "#c-french"],
     ["31 German & Austrian tech cards", "Pichelsteiner, Gaisburger Marsch, Hasenpfeffer, Rehrücken Baden-Baden, Karpfen blau, Saumagen, Wiener Beuschel, Prinzregententorte, Baumkuchen, Topfenknödel…", "#c-german-austrian"],
+    ["33 Nordic tech cards", "Rullepølse, Västkustsallad, plukfisk, kalakukko, lohilaatikko, pinnekjøtt, karjalanpaisti, kroppkakor, Janssons frestelse, kransekake, Runeberg tortes…", "#c-nordic"],
   ] },
   { id: "2026-11-27", date: "27 November 2026", items: [
     ["Make it mine", "Copy any library recipe and change grams, steps and serving.", "#recipes"],

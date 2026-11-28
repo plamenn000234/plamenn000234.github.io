@@ -8,6 +8,7 @@ import re
 
 T = [
     (r"stockfish|stoccafisso", 17, 0.7, 0, [4], 0),
+    (r"brunost|brown whey cheese|gjetost", 10, 29, 42, [7], 1),
     (r"beef fat|back fat|bone marrow", 2, 90, 0, [], 0),
     (r"pig'?s heads?|calf'?s head|t[êe]te de veau", 16, 20, 0, [], 0),
     (r"stock|broth|fond\b|demi-glace|jus\b", 1, 0.5, 0.5, [9], 0),
@@ -56,7 +57,7 @@ T = [
     (r"smoked fish|smoked mackerel", 19, 15, 0, [4], 0),
     (r"caviar|roe|tarama|ikra", 25, 15, 2, [4], 0),
     (r"\btuna\b", 25, 8, 0, [4], 0),
-    (r"bluefish|lufer|turbot|kalkan|sea bass|seabass|bream|dentex|grouper|hake|cod\b|monkfish|gurnard|scorpion|rockfish|mullet|barbun|bonito|palamud|sole|plaice|(?<!cray|craw)(?<!cuttle)fish", 19, 3, 0, [4], 0),
+    (r"bluefish|lufer|turbot|kalkan|sea bass|seabass|bream|dentex|grouper|hake|haddock|cod\b|monkfish|gurnard|scorpion|rockfish|mullet|barbun|bonito|palamud|sole|plaice|(?<!cray|craw)(?<!cuttle)fish", 19, 3, 0, [4], 0),
     (r"fish sauce", 5, 0, 4, [4], 0),
     (r"shrimp|prawn|langoustine|scampi|lobster|crab|crayfish|crawfish", 20, 1, 0, [2], 0),
     (r"mussel|clam|oyster|squid|calamar|octopus|cuttlefish|scallop|snail|limpet|whelk|periwinkle", 15, 1.5, 3, [12], 0),
@@ -92,7 +93,7 @@ T = [
     (r"duck fat|goose fat", 0, 99, 0, [], 0),
     (r"duck breast|duck leg|duck confit|duck", 18, 20, 0, [], 0),
     (r"goose", 16, 30, 0, [], 0),
-    (r"rabbit|hare|venison|deer|wild boar|boar|pheasant|partridge|quail|game", 21, 4, 0, [], 0),
+    (r"rabbit|hare|venison|moose|\belk\b|deer|wild boar|boar|pheasant|partridge|quail|game", 21, 4, 0, [], 0),
     # ---- grains / bakery ----
     (r"brioche|croissant", 8, 20, 45, [1, 3, 7], 1),
     (r"cr[eê]pes?\b|pancakes?\b", 6, 10, 25, [1, 3, 7], 1),
@@ -150,7 +151,7 @@ T = [
     (r"tomato", 0.9, 0.2, 3.9, [], 2),
     (r"cucumber|gherkin|pickled cucumber|cornichon", 0.7, 0.1, 3.6, [], 2),
     (r"aubergine|eggplant|courgette|zucchini|marrow|squash|pumpkin", 1.1, 0.2, 6, [], 2),
-    (r"cabbage|sauerkraut|kale|collard|spinach|chard|sorrel|nettle|dock|lettuce|rocket|arugula|endive|frisée|watercress|purslane|lapad|lobada|spring greens|vine leaves|grape leaves", 2, 0.3, 4, [], 2),
+    (r"cabbage|sauerkraut|kale|collard|spinach|chard|sorrel|nettle|\bdock\b|lettuce|rocket|arugula|endive|frisée|watercress|purslane|lapad|lobada|spring greens|vine leaves|grape leaves", 2, 0.3, 4, [], 2),
     (r"cauliflower|broccoli|kohlrabi|brussels|asparagus|fennel|artichoke|okra|bamya|bamia|cardoons?", 2.5, 0.3, 5, [], 2),
     (r"sweetcorn|corn kernels|\bcorn\b(?! ?meal| ?flour| ?starch| grits)", 3.2, 1.2, 19, [], 2),
     (r"dried porcini|dried mushroom", 25, 3, 50, [], 2),
