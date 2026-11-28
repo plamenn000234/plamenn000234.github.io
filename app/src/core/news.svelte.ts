@@ -27,6 +27,7 @@ export const NEWS: News[] = [
     ["17 Vietnamese tech cards", "Bò kho, cà ri gà, chả cá Lã Vọng, bún riêu, bún thịt nướng, mì Quảng, hủ tiếu Nam Vang, bánh cuốn, cháo gà, nem nướng, bò lá lốt, gà kho gừng…", "#c-pan-asian"],
     ["17 Malaysian, Indonesian & Singaporean tech cards", "Gulai kambing, asam laksa, ayam masak merah, opor ayam, asam pedas, ikan bakar, otak-otak, bak kut teh, Hokkien prawn mee, mee siam, ayam percik…", "#c-pan-asian"],
     ["15 Asian dessert & drink tech cards", "Bánh flan, bánh da lợn, kuih dadar, bubur cha cha, cendol, sago gula melaka, tāng yuán, dòu huā, ginger milk curd, sujeonggwa, yakgwa, mizu yōkan, purin, tub tim grob…", "#c-pan-asian"],
+    ["70 Indian tech cards", "Bhel puri, dahi bhalla, galouti kebab, misal pav, pindi chole, rasam, Kolhapuri chicken, xacuti, nalli nihari, haleem, sorpotel, balchão, paneer lababdar, undhiyu, sarson ka saag, bisi bele bath, neer dosa, rasgulla, Mysore pak…", "#c-indian"],
   ] },
   { id: "2026-11-27", date: "27 November 2026", items: [
     ["Make it mine", "Copy any library recipe and change grams, steps and serving.", "#recipes"],
