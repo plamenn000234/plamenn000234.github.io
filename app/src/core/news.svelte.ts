@@ -36,6 +36,7 @@ export const NEWS: News[] = [
     ["49 more hotel tech cards", "Drop scones, potato farls, bubble and squeak, Jerusalem artichoke soup, chicken cacciatore, venison and rabbit casseroles, smoked fish pie, beef olives, game terrine, pressed ham, croquette potatoes, treacle sponge, egg custard tart…", "#recipes"],
     ["52 more Bulgarian tech cards", "Pastarma, sudzhuk, babek, Elenski but, nadenitsa, kopanitsa, pulneni chushki, bamya, teleshko vareno, sharan s orehi for Nikulden, pulneno agneshko for Gergyovden, cheverme, Smilyan beans, monastirski gyuvech, mlechna banitsa, kiselo mlyako…", "#c-adriatic-balkan"],
     ["50 more Balkan tech cards", "Podvarak, mućkalica, ražnjići, teletina ispod sača, kotlovina, lički lonac, hobotnica ispod peke, girice, zeljanica, sirnica, kačamak, Montenegrin kapama, Ohrid trout, varză a la Cluj, tocăniță, salată de boeuf, obara, matevž, flija, pispili…", "#c-adriatic-balkan"],
+    ["45 more Bulgarian tech cards", "Lyutika, turshiya, selska salata, drob s luk, svinsko s praz, Gergyovden lamb with spring onions, goose with sauerkraut, kebap v gyuveche, riba na keremida, kefal, stuffed squid, banitsa with spinach, ratluk, kalbur hurma, quince sladko, tahini halva, rosehip and mountain tea, greyana rakia, sharena sol…", "#c-adriatic-balkan"],
   ] },
   { id: "2026-11-27", date: "27 November 2026", items: [
     ["Make it mine", "Copy any library recipe and change grams, steps and serving.", "#recipes"],

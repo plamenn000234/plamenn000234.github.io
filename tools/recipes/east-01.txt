@@ -1,39 +1,32 @@
-=== Żurek · Polish Sour Rye Soup · White Sausage, Egg, Marjoram
-at Eastern European / Soups · N 12 · pg 380 · bowls
-## ZAKWAS (RYE SOUR)
-: Start 4–5 days ahead · 20–24 °C
-Wholemeal rye flour | 150
-Water | 750
-Garlic | 15
-Bay leaves | 1
-1. Mix rye flour with lukewarm boiled water, garlic and bay in a glass jar; cover with cloth.
-2. Ferment 4–5 days at 20–24 °C, stirring daily, until pleasantly sour. Strain; keep 0–4 °C up to 7 days.
+=== Rassolnik · Russian Pickle & Barley Soup · Beef, Smetana
+at Eastern European / Soups · N 12 · pg 350 · bowls
+tag Soups / Beef & veal
 ## SOUP
-Water | 3000
-Biała kiełbasa (white sausage) | 800
-Smoked bacon | 200
-Onion | 200
-Carrots | 150
-Parsnip | 100
-Celeriac | 100
+Beef shin, boneless | 800
+Pearl barley | 150
+Pickled cucumbers | 400
+Pickle brine | 300
 Potatoes | 600
-Rye sour (above) | 700
-Sour cream 20% | 200
-Garlic | 20
-Marjoram, dried | 4
-Horseradish, grated | 30
-Salt | 12
-Black pepper | 3
-Yield | 4600
-1. Simmer whole sausages 20 min in the water at 85 °C (do not boil: skins split); lift out and slice.
-2. Add bacon and vegetables, simmer 20 min; add diced potatoes 15 min.
-3. Shake the rye sour, pour in while stirring; simmer 5 min until it thickens.
-4. Temper sour cream; stir in off the boil with crushed garlic, marjoram, horseradish, salt and pepper. Return sausage. Core ≥ 75 °C.
+Onion | 250
+Carrots | 200
+Parsley root | 100
+Sunflower oil | 60
+Tomato paste | 30
+Water | 2800
+Bay leaves | 2
+Black peppercorns | 4
+Salt | 10
+## FINISH
+Sour cream 20% | 240
+Dill, fresh | 25
+Yield | 4200
+1. Simmer the beef in the water with bay and pepper 1 h 30 min; skim. Lift out, dice 1.5 cm; strain the broth.
+2. Soak barley 1 h; cook separately 40 min; drain (keeps the soup clear).
+3. Sweat onion, carrot and parsley root in oil 8 min; add tomato paste and the cucumbers in strips; cook 5 min.
+4. Bring the broth back to the boil; add potatoes in 1.5 cm dice; cook 10 min; add barley, vegetables, beef and brine to taste; simmer 10 min. Core ≥ 75 °C.
 ## SERVICE
-Eggs | 360
-1. Hard-boil eggs 10 min, halve. Serve 380 g with sausage slices and half an egg per bowl (or in a bread bowl).
-st Rye sour 0–4 °C 7 days. Soup 0–3 °C 72 h; reheat to ≥ 75 °C without boiling hard.
-tag Soups / Pork
+1. 330 g per bowl; 20 g smetana; dill.
+st Hot hold ≥ 63 °C max 3 h. Cook-chill 0–3 °C 72 h; reheat to ≥ 75 °C.
 
 === Solyanka Sbornaya · Russian Mixed-Meat Sour Soup · Pickles, Olives, Lemon
 at Eastern European / Soups · N 12 · pg 350 · bowls
@@ -212,29 +205,29 @@ Yield | 4600
 st Cook-chill 0–3 °C 4 days; reheat to ≥ 75 °C. Freezes −18 °C 3 months.
 tag Soups / Beef & veal
 
-=== Syrniki · Curd Cheese Fritters · Sour Cream, Berry Compote
+=== Draniki · Belarusian Potato Pancakes · Smetana, Crisp Bacon
 at Eastern European / Pierogi, Dumplings & Pancakes · N 10 · pg 200 · plates
+tag Mains / Vegetables
 fry Sunflower oil
-## MIXTURE
-: 30 pieces × 50 g
-Cottage cheese | 1200
-Eggs | 150
-Sugar | 100
-Wheat flour | 150
-Vanilla sugar | 10
-Salt | 3
-1. Use dry, firm curd (9 %); press through a sieve.
-2. Mix with eggs, sugar, vanilla, salt and 100 g flour; rest 15 min at 0–4 °C.
-3. Shape 50 g discs 1.5 cm thick in the remaining flour.
-## COOKING
-Sunflower oil | 300
-1. Fry at 160 °C 3 min per side until golden; finish 180 °C oven 5 min. Core ≥ 75 °C.
+## PANCAKES
+: 40 pancakes × 45 g
+Potatoes | 2200
+Onion | 200
+Eggs | 100
+Plain flour | 80
+Salt | 16
+Black pepper | 3
+Sunflower oil | 250
 ## SERVICE
 Sour cream 20% | 400
-Berry jam | 300
-1. 3 syrniki, 40 g sour cream and 30 g compote or jam.
-st Shaped raw 0–4 °C 24 h; cooked 0–4 °C 48 h, reheat 180 °C 6 min.
-tag Breakfast / Cheese
+Smoked bacon | 200
+Yield | 2000
+1. Peel potatoes; grate finely with the onion (the onion stops browning); squeeze out the liquid, let the starch settle, pour off the water and add the starch back.
+2. Mix with eggs, flour, salt and pepper. Fry at once: 45 g spoonfuls in 5 mm oil at 170 °C, 3 min per side until crisp. Core ≥ 75 °C.
+3. Fry bacon lardons crisp.
+## SERVICE
+1. 4 draniki with 40 g smetana and 20 g bacon.
+st Batter: use within 20 min. Fried: serve at once; 0–3 °C 48 h, reheat at 200 °C.
 
 === Grechnevye Bliny · Buckwheat Yeast Blini · Salmon, Sour Cream
 at Eastern European / Pierogi, Dumplings & Pancakes · N 12 · pg 180 · plates
@@ -290,32 +283,32 @@ Sour cream 20% | 300
 st Raw dumplings frozen on trays −18 °C 2 months. Cook from frozen 12 min.
 tag Desserts
 
-=== Lángos · Hungarian Fried Bread · Garlic, Sour Cream, Cheese
-at Eastern European / Pierogi, Dumplings & Pancakes · N 12 · pg 200 · pieces
-fry Sunflower oil
+=== Vareniki s Vishnei · Sour Cherry Dumplings · Smetana, Cherry Syrup
+at Eastern European / Pierogi, Dumplings & Pancakes · N 10 · pg 200 · plates
+tag Desserts / -
 ## DOUGH
-: 12 × 110 g
-Wheat flour | 750
-Potatoes, boiled | 250
-Milk | 300
-Water | 150
-Fresh yeast | 25
-Sugar | 10
-Salt | 14
+Wheat flour | 700
+Water | 280
+Eggs | 50
 Sunflower oil | 30
-1. Rice the potato; mix all ingredients and knead 10 min to a soft dough; prove 1 h at 26 °C.
-2. Divide into 110 g balls; rest 15 min on oiled trays.
-## FRYING
-Sunflower oil | 2000
-1. Stretch each ball by hand to Ø 20 cm with a thicker rim; fry at 175 °C 1 min per side.
-## TOPPING
-Garlic | 50
-Water | 50
-Sour cream 20% | 600
-Edam, grated | 400
-1. Mix crushed garlic with water and salt; brush on hot lángos; spread 50 g sour cream, top with 35 g cheese.
-st Shaped dough 0–4 °C 12 h. Fry to order.
-tag Bread & bakery
+Salt | 6
+## FILLING
+Sour cherries, pitted | 900
+Sugar | 150
+Cornflour | 30
+## SERVICE
+Sour cream 20% | 300
+Sugar (syrup) | 60
+Yield | 2000
+part Sour cherries, pitted 0.9
+1. Knead flour, water, egg, oil and salt to a smooth, firm dough; rest 30 min covered.
+2. Drain the cherries 30 min; keep the juice. Toss cherries with sugar and cornflour just before filling.
+3. Roll 1.5 mm; cut 7 cm rounds; put 3 cherries on each; seal edges firmly (60 vareniki).
+4. Boil in salted water in batches 4–5 min after they float. Core ≥ 75 °C.
+5. Syrup: boil the cherry juice with sugar until syrupy.
+## SERVICE
+1. 6 vareniki with 30 g smetana and syrup.
+st Raw vareniki: freeze on trays, then bag; 2 months; cook from frozen 7 min. Cooked: serve at once.
 
 === Kolduny · Belarusian Potato Dumplings with Meat · Mushroom Sauce
 at Eastern European / Pierogi, Dumplings & Pancakes · N 10 · pg 300 · plates
