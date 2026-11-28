@@ -228,6 +228,10 @@ T = [
     (r"manouri", 10, 32, 3, [7], 1),
     (r"kasseri", 25, 29, 1, [7], 1),
     (r"kefalotyri", 28, 30, 1, [7], 1),
+    (r"montasio|asiago|\bbitto\b|casera", 25, 30, 1, [7], 1),
+    (r"scamorza|provola", 25, 25, 1, [7], 1),
+    (r"fior di latte", 18, 20, 2, [7], 1),
+    (r"guanciale", 9, 60, 0, [], 0),
     # ---- fish & seafood ----
     (r"salt cod|bacalao|bakalar", 29, 1, 0, [4], 0),
     (r"anchov|sardine|sprat|herring|mackerel|tsatsa|cacao fish|scad|safrid", 19, 10, 0, [4], 0),

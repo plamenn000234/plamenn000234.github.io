@@ -38,6 +38,7 @@ export const NEWS: News[] = [
     ["50 more Balkan tech cards", "Podvarak, mućkalica, ražnjići, teletina ispod sača, kotlovina, lički lonac, hobotnica ispod peke, girice, zeljanica, sirnica, kačamak, Montenegrin kapama, Ohrid trout, varză a la Cluj, tocăniță, salată de boeuf, obara, matevž, flija, pispili…", "#c-adriatic-balkan"],
     ["46 more Bulgarian tech cards", "Lyutika, turshiya, selska salata, drob s luk, svinsko s praz, Gergyovden lamb with spring onions, goose with sauerkraut, kebap v gyuveche, riba na keremida, kefal, stuffed squid, banitsa with spinach, ratluk, kalbur hurma, quince sladko, tahini halva, rosehip and mountain tea, greyana rakia, sharena sol…", "#c-adriatic-balkan"],
     ["50 Greek & Cypriot tech cards", "Kayianas, sfougato, pispilita, bekri meze, kavourmas, bakaliaros plaki, soupies krasates, psari savoro, lagos lagoto, gamopilafo; Cypriot tavas, afelia, sheftalia, kolokasi, koupepia, flaouna; saragli, touloumba, halva Farsalon…", "#c-greek"],
+    ["60 regional Italian tech cards", "Cappon magro, cima alla genovese, sarde a beccafico, frico, sciatt, busecca, licurdia, testaroli, corzetti, fileja con 'nduja, spaghetti all'assassina, genovese, pasta 'ncasciata, timballo teramano, risotto alla pilota, tiella barese, cassoeula, scottiglia, arrosticini, cuscus trapanese, gubana, migliaccio…", "#c-italian"],
   ] },
   { id: "2026-11-27", date: "27 November 2026", items: [
     ["Make it mine", "Copy any library recipe and change grams, steps and serving.", "#recipes"],
