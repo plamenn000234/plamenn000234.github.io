@@ -206,7 +206,7 @@ Bay leaves | 2
 Salt | 16
 Black pepper | 3
 ## LID
-Puff pastry, all-butter | 800
+Puff pastry | 800
 Eggs | 50
 Yield | 4200
 1. Dice beef 3 cm; dust in flour; brown in dripping; add onion, stock and seasoning.
@@ -223,7 +223,7 @@ Wheat flour | 700
 Shredded suet (beef) | 200
 Water | 300
 Salt | 10
-Puff pastry, all-butter | 450
+Puff pastry | 450
 Minced beef | 1500
 Onion | 200
 Beef stock | 400
@@ -263,7 +263,7 @@ Salt | 16
 Black pepper | 3
 ## PASTRY
 Shortcrust pastry | 500
-Puff pastry, all-butter | 450
+Puff pastry | 450
 Eggs | 50
 Yield | 5000
 1. Brown floured beef in oil; colour bacon, onion and carrot; add tomato paste.
