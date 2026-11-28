@@ -24,6 +24,9 @@ export const NEWS: News[] = [
     ["26 Japanese tech cards", "Nikujaga, saba misoni, buri daikon, katsudon, tendon, hiyashi chūka, korokke, menchi katsu, hambāgu, omuraisu, beef curry, chikuzen-ni, tonjiru, yudōfu…", "#c-pan-asian"],
     ["25 Chinese tech cards", "Chongqing chilli chicken, twice-cooked pork, water-boiled fish, lion's head, Dongpo pork, black pepper beef, zhajiang mian, claypot rice, beef noodle soup, lu rou fan, three-cup chicken…", "#c-pan-asian"],
     ["25 Korean tech cards", "Tteokgalbi, samgyetang, galbitang, seolleongtang, yukgaejang, bossam, dongchimi, gamjatang, jangjorim, bibim guksu, kalguksu, dakgangjeong, LA galbi, kimchi jeon…", "#c-pan-asian"],
+    ["17 Vietnamese tech cards", "Bò kho, cà ri gà, chả cá Lã Vọng, bún riêu, bún thịt nướng, mì Quảng, hủ tiếu Nam Vang, bánh cuốn, cháo gà, nem nướng, bò lá lốt, gà kho gừng…", "#c-pan-asian"],
+    ["17 Malaysian, Indonesian & Singaporean tech cards", "Gulai kambing, asam laksa, ayam masak merah, opor ayam, asam pedas, ikan bakar, otak-otak, bak kut teh, Hokkien prawn mee, mee siam, ayam percik…", "#c-pan-asian"],
+    ["15 Asian dessert & drink tech cards", "Bánh flan, bánh da lợn, kuih dadar, bubur cha cha, cendol, sago gula melaka, tāng yuán, dòu huā, ginger milk curd, sujeonggwa, yakgwa, mizu yōkan, purin, tub tim grob…", "#c-pan-asian"],
   ] },
   { id: "2026-11-27", date: "27 November 2026", items: [
     ["Make it mine", "Copy any library recipe and change grams, steps and serving.", "#recipes"],

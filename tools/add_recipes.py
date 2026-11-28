@@ -179,7 +179,7 @@ if HT:
               + "".join(f"<tr><td>{lab}</td>" + "".join(f"<td>{v}</td>" for v in vals) + "</tr>" for lab, vals in (("Portion", det["nu"]["p"]), ("100 g", det["nu"]["h"]))) + "</table>"]
         doc = "<html><head><meta charset='utf-8'></head><body>" + "\n".join(o) + "</body></html>"
         ab = "".join(w[0] for w in re.findall(r"[A-Za-z]+", c["coll"]) if w.lower() not in ("and",)).upper()
-        short = re.sub(r"[^A-Za-z0-9]+", "_", __import__("unicodedata").normalize("NFKD", name.split(" · ")[0]).encode("ascii", "ignore").decode()).strip("_")
+        short = re.sub(r"[^A-Za-z0-9]+", "_", __import__("unicodedata").normalize("NFKD", name.split(" · ")[0].replace("Đ", "D").replace("đ", "d").replace("Ł", "L").replace("ł", "l").replace("Ø", "O").replace("ø", "o")).encode("ascii", "ignore").decode()).strip("_")
         fp = os.path.join(HT, cid + ".html"); open(fp, "w", encoding="utf-8").write(doc)
         man.append({"id": cid, "title": f"TTK_{ab}_{short}", "folder": DR["folders"].get(c["coll"] + (" / " + c["sub"] if c["sub"] else "")) or DR["folders"].get(c["coll"], "?"), "path": os.path.abspath(fp),
                     "sha256": hashlib.sha256(doc.encode()).hexdigest()})
