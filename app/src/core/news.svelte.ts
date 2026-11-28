@@ -9,6 +9,7 @@ export const NEWS: News[] = [
     ["49 more Balkan tech cards", "Serbia, Croatia, Romania, North Macedonia, Bosnia, Montenegro, Slovenia and now Albania: sarma, gregada, bograč, tavë kosi…", "#c-adriatic-balkan"],
     ["50 Eastern European & Caucasus tech cards", "Żurek, solyanka, stroganoff, chicken Kyiv, medovik, chakhokhbili, harissa, dovga…", "#c-eastern-european"],
     ["50 hotel tech cards", "Buffet mains, sides and cold starters, breakfast, soups and puddings: salmon Wellington, beef daube, celeriac gratin, apple charlotte…", "#recipes"],
+    ["63 Spanish & Portuguese tech cards", "Paella valenciana, callos, zarzuela, lechazo, tocino de cielo; bacalhau com grão, chanfana, ovos moles…", "#c-spanish-tapas"],
   ] },
   { id: "2026-11-27", date: "27 November 2026", items: [
     ["Make it mine", "Copy any library recipe and change grams, steps and serving.", "#recipes"],
