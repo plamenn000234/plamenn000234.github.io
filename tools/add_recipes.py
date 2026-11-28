@@ -113,7 +113,7 @@ for c in cards:
             if v is None:
                 unknown.add(n); continue
             pr, fa, ca, al, di = v
-            k = q / 100 * (0.3 if re.search(r"\blive\b|in shell|in the shell|shell-on", n, re.I) else 1) * (0.7 if re.search(r"bone-in|jointed|on the bone|whole,", n, re.I) else 1) * (0.05 if any(n.lower().startswith(f) for f in c["fry"]) else 1)
+            k = q / 100 * (0.15 if re.search(r"heads|bones", n, re.I) else 0.6 if re.search(r"\bribs\b|hock|knuckle|trotter", n, re.I) else 1) * (0.3 if re.search(r"\blive\b|in shell|in the shell|shell-on", n, re.I) else 1) * (0.7 if re.search(r"bone-in|jointed|on the bone|whole,", n, re.I) else 1) * (0.05 if any(n.lower().startswith(f) for f in c["fry"]) else 1)
             for a_, b_ in c.get("part", []):
                 if n.lower().startswith(a_): k *= b_
             tot[0] += pr * k; tot[1] += fa * k; tot[2] += ca * k

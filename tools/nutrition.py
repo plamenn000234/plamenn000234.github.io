@@ -17,10 +17,11 @@ T = [
     (r"black pepper|white pepper|peppercorn|allspice|cumin|coriander seed|caraway|fenugreek|savory|sharena|chubritsa|oregano, dried|thyme, dried|bay lea|cloves|nutmeg|cinnamon|star anise|cardamom|paprika|chilli flakes|chili flakes|cayenne|turmeric|mint, dried|dried mint|fennel seed|mustard seed|juniper|sumac|saffron", 12, 10, 45, [], 2),
     (r"vanilla", 0, 0, 13, [], 2),
     # ---- herbs / greens ----
-    (r"parsley|dill|coriander|cilantro|mint|basil|chives|lovage|tarragon|thyme|rosemary|sage|marjoram|oregano|devesil", 3, 0.6, 6, [], 2),
+    (r"\b(?:parsley|dill|coriander|cilantro|mint|basil|chives|lovage|tarragon|thyme|rosemary|sage|marjoram|oregano|devesil)\b", 3, 0.6, 6, [], 2),
     # ---- dairy ----
     (r"egg yolk", 16, 27, 1, [3], 1),
     (r"egg white", 11, 0, 1, [3], 1),
+    (r"egg (?:noodles|pasta|tagliatelle)", 12.5, 1.5, 72, [1, 3], 1),
     (r"\beggs?\b|quail egg", 12.6, 9.5, 0.7, [3], 1),
     (r"(?<!peanut )butter(?!milk|nut|beans|head)", 0.9, 82, 0.1, [7], 1),
     (r"ghee|clarified butter", 0, 99, 0, [7], 1),
@@ -39,6 +40,7 @@ T = [
     (r"kashkaval|kaşar|kasar|cașcaval|cascaval|yellow cheese|gouda|edam|emmental|gruy[eè]re|cheddar|tilsit|trappist", 25, 29, 1, [7], 1),
     (r"parmesan|parmigiano|grana padano|pecorino|paški sir|paski sir", 35, 28, 0, [7], 1),
     (r"mozzarella", 18, 20, 2, [7], 1),
+    (r"young cheese|mladi sir|mlad sir", 14, 18, 2, [7], 1),
     (r"cottage cheese|curd cheese|tvorog|quark|ricotta|izvara|skuta", 12, 5, 3, [7], 1),
     (r"smoked cheese|vurshets|pušeni sir", 24, 27, 1, [7], 1),
     # ---- fish & seafood ----
@@ -52,7 +54,8 @@ T = [
     (r"shrimp|prawn|langoustine|scampi|lobster|crab|crayfish|crawfish", 20, 1, 0, [2], 0),
     (r"mussel|clam|oyster|squid|calamar|octopus|cuttlefish|scallop|snail", 15, 1.5, 3, [12], 0),
     # ---- meat ----
-    (r"pork belly|pancetta|slanina|bacon|speck|lardo|pork fat|fatback|lard|kaiserfleisch|svinska mas|untură", 9, 53, 0, [], 0),
+    (r"^lard\b|untură", 0, 99, 0, [], 0),
+    (r"pork belly|pancetta|slanina|bacon|speck|lardo|pork fat|fatback|\blard\b|kaiserfleisch|svinska mas|untură", 9, 53, 0, [], 0),
     (r"pork (shoulder|neck|collar|butt)|pork leg|pork ham|pork, boneless|pork meat|pork cheek|pork knuckle|pork shank|pork hock|kotsi|pork ribs|spare ribs", 17, 18, 0, [], 0),
     (r"pork (loin|tenderloin|chop|fillet|escalope)|pork$", 21, 7, 0, [], 0),
     (r"pork mince|minced pork|ground pork", 17, 21, 0, [], 0),
@@ -67,7 +70,7 @@ T = [
     (r"beef tongue|veal tongue|tongue", 15, 16, 0, [], 0),
     (r"tripe|shkembe|škembe", 12, 4, 0, [], 0),
     (r"beef liver|veal liver|calf'?s liver|liver", 20, 4, 4, [], 0),
-    (r"kidney|sweetbread|heart|offal|lamb pluck|drob", 17, 5, 1, [], 0),
+    (r"kidney(?! beans)|sweetbread|heart|offal|lamb pluck|drob", 17, 5, 1, [], 0),
     (r"beef|veal|steak|sirloin|rump|topside|silverside", 21, 6, 0, [], 0),
     (r"lamb mince|minced lamb", 17, 23, 0, [], 0),
     (r"lamb|mutton|goat|kid\b|jare", 18, 16, 0, [], 0),
@@ -97,7 +100,7 @@ T = [
     (r"pasta|noodles|macaroni|spaghetti|tagliatelle|fide|tarhana|trahana|lasagne sheets", 12.5, 1.5, 72, [1, 3], 1),
     (r"biscuit|petit beurre|sponge fingers|ladyfinger", 7, 15, 70, [1, 3, 7], 1),
     # ---- legumes / nuts ----
-    (r"white beans|beans, dried|dried beans|cannellini|haricot|kidney beans|lima beans|butter beans|gigantes|zelen bob|smilyan beans|smilyanski", 22, 1.5, 47, [], 2),
+    (r"white beans|beans, dried|dried beans|cannellini|haricot|kidney beans|lima beans|borlotti|butter beans|gigantes|zelen bob|smilyan beans|smilyanski", 22, 1.5, 47, [], 2),
     (r"beans, cooked|cooked beans|canned beans|beans, canned", 7, 0.5, 18, [], 2),
     (r"chickpea", 19, 6, 47, [], 2),
     (r"lentil", 24, 1.5, 50, [], 2),
@@ -128,7 +131,7 @@ T = [
     (r"tomato", 0.9, 0.2, 3.9, [], 2),
     (r"cucumber|gherkin|pickled cucumber|cornichon", 0.7, 0.1, 3.6, [], 2),
     (r"aubergine|eggplant|courgette|zucchini|marrow|squash|pumpkin", 1.1, 0.2, 6, [], 2),
-    (r"cabbage|sauerkraut|kale|spinach|chard|sorrel|nettle|dock|lettuce|rocket|arugula|endive|frisée|watercress|purslane|lapad|lobada|spring greens|vine leaves|grape leaves", 2, 0.3, 4, [], 2),
+    (r"cabbage|sauerkraut|kale|collard|spinach|chard|sorrel|nettle|dock|lettuce|rocket|arugula|endive|frisée|watercress|purslane|lapad|lobada|spring greens|vine leaves|grape leaves", 2, 0.3, 4, [], 2),
     (r"cauliflower|broccoli|kohlrabi|brussels|asparagus|fennel|artichoke|okra|bamya|bamia", 2.5, 0.3, 5, [], 2),
     (r"dried porcini|dried mushroom", 25, 3, 50, [], 2),
     (r"mushroom|porcini|cep|chanterelle|morel|oyster mushroom|shiitake|champignon|button mushroom", 3, 0.4, 3.5, [], 2),
@@ -143,6 +146,7 @@ T = [
     # ---- sugar, sweet ----
     (r"honey", 0.3, 0, 82, [], 1),
     (r"sugar|caster|icing sugar|glucose|dextrose|invert", 0, 0, 100, [], 2),
+    (r"urnebes|tirokafteri|katiki|kopanisti", 12, 25, 3, [7], 1),
     (r"lyutenitsa|ljutenica|ajvar|zacuscă|zacusca|pindjur|pinjur", 1.5, 4, 12, [], 2),
     (r"molasses|syrup|grape must", 0, 0, 70, [], 2),
     (r"chocolate, dark|dark chocolate|couverture", 7, 40, 45, [7], 1),
@@ -151,6 +155,8 @@ T = [
     (r"rose water|orange blossom water", 0, 0, 0, [], 2),
     # ---- vinegar, wine, condiments ----
     (r"vinegar", 0, 0, 1, [14], 2),
+    (r"borș|\bbors\b", 0.5, 0, 3, [1], 2),
+    (r"\brum\b|vodka|whisky|liqueur|grappa", 0, 0, 0, [], 2),
     (r"red wine|white wine|wine\b|dry wine|rakia|rakija|brandy|cognac|vermouth|beer", 0.1, 0, 3, [14], 2),
     (r"mustard", 6, 6, 5, [10], 2),
     (r"mayonnaise", 1, 75, 1, [3, 10], 1),
