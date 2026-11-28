@@ -29,6 +29,7 @@ export const NEWS: News[] = [
     ["15 Asian dessert & drink tech cards", "Bánh flan, bánh da lợn, kuih dadar, bubur cha cha, cendol, sago gula melaka, tāng yuán, dòu huā, ginger milk curd, sujeonggwa, yakgwa, mizu yōkan, purin, tub tim grob…", "#c-pan-asian"],
     ["70 Indian tech cards", "Bhel puri, dahi bhalla, galouti kebab, misal pav, pindi chole, rasam, Kolhapuri chicken, xacuti, nalli nihari, haleem, sorpotel, balchão, paneer lababdar, undhiyu, sarson ka saag, bisi bele bath, neer dosa, rasgulla, Mysore pak…", "#c-indian"],
     ["60 Latin American tech cards", "Caldo de res, poc chuc, pozole verde, tikin xic, mixiote, pipián; escabeche, tacu tacu, adobo arequipeño, parihuela; xinxim, tutu à mineira, moqueca capixaba; lomo a lo pobre, puchero, empanadas de pino; bandeja paisa, ajiaco, pabellón, hallacas, bolo de rolo…", "#c-latin-american"],
+    ["70 North American tech cards", "Country ham with red-eye gravy, Kentucky Hot Brown, beef on weck, grillades & grits, redfish courtbouillon, Cincinnati chili, Senate bean soup, chess pie; Santa Maria tri-tip, Owensboro mutton, Lexington dip…", "#c-american-diner-southern"],
   ] },
   { id: "2026-11-27", date: "27 November 2026", items: [
     ["Make it mine", "Copy any library recipe and change grams, steps and serving.", "#recipes"],
