@@ -195,7 +195,7 @@ T = [
     (r"black pepper|white pepper|mixed spice|baharat|banga spice|beletete|berbere|mitmita|bouillon powder|curry leaves|hibiscus|locust bean|\biru\b|advieh|ras el hanout|bzar|hawaij|curry powder|mahlab|\bginger\b(?! ?bread| biscuit)|pul biber|nigella|peppercorn|allspice|cumin|coriander seed|caraway|fenugreek|savory|sharena|chubritsa|oregano, dried|thyme, dried|bay lea|cloves|nutmeg|cinnamon|star anise|anise seed|aniseed|cardamom|paprika|chilli flakes|chili flakes|cayenne|turmeric|mint, dried|dried mint|fennel seed|mustard seed|\bmace\b|ginger, ground|ground ginger|juniper|quatre [ée]pices|sumac|saffron", 12, 10, 45, [], 2),
     (r"vanilla", 0, 0, 13, [], 2),
     # ---- herbs / greens ----
-    (r"\b(?:parsley|dill|coriander|cilantro|mint|basil|chives|lovage|tarragon|thyme|rosemary|sage|marjoram|oregano|devesil)\b", 3, 0.6, 6, [], 2),
+    (r"\b(?:parsley|dill|coriander|cilantro|mint|basil|chives|lovage|borage|chervil|burnet|tarragon|thyme|rosemary|sage|marjoram|oregano|devesil)\b", 3, 0.6, 6, [], 2),
     # ---- dairy ----
     (r"egg yolk", 16, 27, 1, [3], 1),
     (r"egg white", 11, 0, 1, [3], 1),
