@@ -20,6 +20,8 @@ export const NEWS: News[] = [
     ["26 North African tech cards", "Houria, chorba beida, fricassé tunisien, mhajeb, karantika, tajine zitoune, mloukhia, douara, couscous royal, chakhchoukha, rechta, zlabia, assida zgougou…", "#c-north-african"],
     ["17 Persian tech cards", "Ash-e doogh, borani bademjan, kufteh Tabrizi, khoresh aloo esfenaj, lubia polo, shirin polo, kabab bakhtiari, sohan, koloocheh…", "#c-persian"],
     ["24 African tech cards", "Efo riro, ayamase, kedjenou, banga soup, attiéké, kitfo leb leb, zigni, kuku paka, frango piri-piri, ingelegde vis, umngqusho, matapa…", "#c-african"],
+    ["25 Thai tech cards", "Massaman, gaeng som, jungle curry, gaeng hung lay, nam tok, hor mok, son-in-law eggs, rad na, boat noodles, khao kluk kapi, nam prik pao, khao man gai…", "#c-pan-asian"],
+    ["26 Japanese tech cards", "Nikujaga, saba misoni, buri daikon, katsudon, tendon, hiyashi chūka, korokke, menchi katsu, hambāgu, omuraisu, beef curry, chikuzen-ni, tonjiru, yudōfu…", "#c-pan-asian"],
   ] },
   { id: "2026-11-27", date: "27 November 2026", items: [
     ["Make it mine", "Copy any library recipe and change grams, steps and serving.", "#recipes"],
