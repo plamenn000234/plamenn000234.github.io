@@ -25,7 +25,7 @@ def fold(s):
 
 YIELD = re.compile(r"^(cooked |total )?yield", re.I)
 SKIP = re.compile(r"^(water|ice|ice water|ice cubes|crushed ice|water, (hot|cold|warm|boiling|iced|filtered|sparkling)|hot water|cold water|iced water|boiling water|warm water)$")
-SUBREC = re.compile(r"\([A-Z]\)\s*$")
+SUBREC = re.compile(r"\(([A-Z]|above)\)\s*$")
 
 P = D["products"]
 PN = {fold(p[0]): i for i, p in enumerate(P)}
