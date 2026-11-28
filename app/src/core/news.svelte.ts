@@ -33,6 +33,7 @@ export const NEWS: News[] = [
     ["76 more French tech cards", "Ficelle picarde, gâteau de foies blonds, cotriade, merlan en colère, bœuf à la mode, gardiane, ris de veau, civet de lièvre, salmis de canard, terrine de lapin, saucisson brioché, opéra, pithiviers…", "#c-french"],
     ["70 regional French tech cards", "Kig ha farz, tablier de sapeur, axoa, macaronade sétoise, ttoro, merlu koskera, potjevleesch, waterzooi, canard à l'orange, poularde demi-deuil, tarte aux pralines, pogne de Romans…", "#c-french"],
     ["44 more hotel tech cards", "Quinoa porridge, turkey & sage sausages, broccoli & Stilton soup, turkey roulade, cod Mornay, vegetable Wellington, ham hock terrine, duck rillettes, lobster salad, pommes parisienne, mango & passion fruit mousse…", "#recipes"],
+    ["49 more hotel tech cards", "Drop scones, potato farls, bubble and squeak, Jerusalem artichoke soup, chicken cacciatore, venison and rabbit casseroles, smoked fish pie, beef olives, game terrine, pressed ham, croquette potatoes, treacle sponge, egg custard tart…", "#recipes"],
   ] },
   { id: "2026-11-27", date: "27 November 2026", items: [
     ["Make it mine", "Copy any library recipe and change grams, steps and serving.", "#recipes"],
