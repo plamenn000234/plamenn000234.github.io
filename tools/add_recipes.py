@@ -104,6 +104,9 @@ for c in cards:
     cid = hashlib.md5(c["name"].encode()).hexdigest()[:8]
     if c["name"].lower() in names and names[c["name"].lower()] != cid:
         raise SystemExit(f"{c['at']}: a recipe with this name already exists")
+    first = c["name"].split(" · ")[0].lower()
+    if cid not in have and any(r[1].split(" · ")[0].lower() == first for r in D["r"]):
+        print(f"warning {c['at']}: '{first}' already in the library (other collection)")
     tot = [0.0, 0.0, 0.0]; algs = {}; diet = 2
     for comp in c["c"]:
         for n, q in comp[2]:
@@ -113,7 +116,7 @@ for c in cards:
             if v is None:
                 unknown.add(n); continue
             pr, fa, ca, al, di = v
-            k = q / 100 * (0.15 if re.search(r"heads|bones", n, re.I) else 0.6 if re.search(r"\bribs\b|hock|knuckle|trotter", n, re.I) else 1) * (0.3 if re.search(r"\blive\b|in shell|in the shell|shell-on", n, re.I) else 1) * (0.7 if re.search(r"bone-in|jointed|on the bone|whole,", n, re.I) else 1) * (0.05 if any(n.lower().startswith(f) for f in c["fry"]) else 1)
+            k = q / 100 * (0.15 if re.search(r"heads|bones|carcass", n, re.I) else 0.6 if re.search(r"\bribs\b|hock|knuckle|trotter", n, re.I) else 1) * (0.3 if re.search(r"\blive\b|in shell|in the shell|shell-on", n, re.I) else 1) * (0.7 if re.search(r"bone-in|jointed|on the bone|whole,", n, re.I) else 1) * (0.05 if any(n.lower().startswith(f) for f in c["fry"]) else 1)
             for a_, b_ in c.get("part", []):
                 if n.lower().startswith(a_): k *= b_
             tot[0] += pr * k; tot[1] += fa * k; tot[2] += ca * k
@@ -178,7 +181,7 @@ if HT:
         ab = "".join(w[0] for w in re.findall(r"[A-Za-z]+", c["coll"]) if w.lower() not in ("and",)).upper()
         short = re.sub(r"[^A-Za-z0-9]+", "_", __import__("unicodedata").normalize("NFKD", name.split(" · ")[0]).encode("ascii", "ignore").decode()).strip("_")
         fp = os.path.join(HT, cid + ".html"); open(fp, "w", encoding="utf-8").write(doc)
-        man.append({"id": cid, "title": f"TTK_{ab}_{short}", "folder": DR["folders"].get(c["coll"] + (" / " + c["sub"] if c["sub"] else ""), "?"), "path": os.path.abspath(fp),
+        man.append({"id": cid, "title": f"TTK_{ab}_{short}", "folder": DR["folders"].get(c["coll"] + (" / " + c["sub"] if c["sub"] else "")) or DR["folders"].get(c["coll"], "?"), "path": os.path.abspath(fp),
                     "sha256": hashlib.sha256(doc.encode()).hexdigest()})
     json.dump(man, open(os.path.join(HT, "manifest.json"), "w"), indent=1, ensure_ascii=False)
     print("html:", len(man), "files in", HT)
