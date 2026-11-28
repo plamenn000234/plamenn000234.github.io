@@ -22,6 +22,8 @@ T = [
     (r"dhansak masala|sambar powder|sambar masala", 12, 10, 45, [], 2),
     (r"^mole paste", 9, 30, 40, [1, 8, 11], 2),
     (r"^rennet", 0, 0, 0, [], 1),
+    (r"^naranjilla", 0.4, 0.2, 6, [], 2),
+    (r"^wafer sheets", 9, 2, 80, [1], 2),
     (r"soybeans|edamame", 17, 9, 8, [6], 2),
     (r"sriracha|chilli sauce|chili sauce|sambal oelek", 1.9, 0.9, 19, [], 2),
     (r"yellow bean sauce|soybean paste|tauco|taucu", 7, 8, 15, [6], 2),
