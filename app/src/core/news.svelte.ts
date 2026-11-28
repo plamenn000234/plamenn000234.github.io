@@ -16,6 +16,7 @@ export const NEWS: News[] = [
     ["33 Nordic tech cards", "Rullepølse, Västkustsallad, plukfisk, kalakukko, lohilaatikko, pinnekjøtt, karjalanpaisti, kroppkakor, Janssons frestelse, kransekake, Runeberg tortes…", "#c-nordic"],
     ["33 British & Irish tech cards", "Arbroath smokie pots, jellied eels, Welsh cawl, boxty, Scottish steak pie, pie & mash with liquor, haggis, faggots, roast grouse, Sussex pond pudding, parkin, barmbrack…", "#c-british-irish-pub"],
     ["49 Turkish tech cards", "Yaprak sarma, lakerda, İmam bayıldı, tarhana, kelle paça, kuşbaşılı pide, talaş böreği, Urfa and cağ kebabı, kokoreç, hamsili pilav, uskumru dolması, perde pilavı, tavuk göğsü, katmer…", "#c-turkish"],
+    ["41 Middle Eastern tech cards", "Hindbeh, kibbeh labanieh, shish barak, dawood basha, kubba hamuth, kebab karaz, masgouf, machboos, mandi, saltah, ka'ak al Quds, mafroukeh, meghli, kleicha…", "#c-middle-eastern"],
   ] },
   { id: "2026-11-27", date: "27 November 2026", items: [
     ["Make it mine", "Copy any library recipe and change grams, steps and serving.", "#recipes"],
