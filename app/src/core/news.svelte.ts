@@ -3,6 +3,10 @@
 import { Persisted, KEYS, read } from "./store.svelte";
 export interface News { id: string; date: string; items: [title: string, text: string, href: string][] }
 export const NEWS: News[] = [
+  { id: "2026-11-28", date: "28 November 2026", items: [
+    ["Recipes by dish", "Recipes → What dish: soups, mains, desserts… then pick what it is made of and the cuisine.", "#recipes"],
+    ["52 new Bulgarian tech cards", "Kapama, shkembe, tas kebap, garash and more, in Adriatic & Balkan → Bulgaria.", "#c-adriatic-balkan"],
+  ] },
   { id: "2026-11-27", date: "27 November 2026", items: [
     ["Make it mine", "Copy any library recipe and change grams, steps and serving.", "#recipes"],
     ["My notes", "Add your kitchen's notes to any recipe. They show in cook mode and in the PDF.", "#recipes"],

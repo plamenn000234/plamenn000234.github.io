@@ -7,9 +7,7 @@ Usage: python3 tools/tag_recipes.py [--dry]
 """
 import json, re, sys, collections, os
 
-COURSES = ["Breakfast", "Starters & canapés", "Salads", "Soups", "Mains", "Sides", "Sauces & dressings", "Bases & stocks", "Desserts", "Bread & bakery", "Drinks"]
-MAINS = ["Beef & veal", "Pork", "Lamb & goat", "Poultry", "Game", "Fish", "Seafood", "Eggs", "Cheese", "Vegetables", "Mushrooms", "Pasta, rice & grains", "Legumes"]
-CUISINES = ["Balkan", "Mediterranean", "French", "Central & Northern Europe", "Eastern Europe & Caucasus", "Middle East & Africa", "Indian", "East & Southeast Asia", "Latin America & Caribbean", "North American"]
+from tag_recipes_names import COURSES, MAINS, CUISINES  # noqa
 DRY = "--dry" in sys.argv
 os.chdir(os.path.join(os.path.dirname(__file__), ".."))
 D = json.load(open("index.json", encoding="utf-8"))
@@ -165,9 +163,13 @@ def region(r):
         if re.search(p, s): return k
     return -1
 
+OVR = json.load(open("tools/recipes/tags.json")) if os.path.exists("tools/recipes/tags.json") else {}
 cnt = collections.Counter(); mc = collections.Counter(); rc = collections.Counter()
 for r in D["r"]:
-    c = course(r); m = main_of(r, c); k = region(r)
+    o = OVR.get(r[0], [None, None, None])  # hand-set tags from tools/recipes/tags.json win
+    c = o[0] if o[0] is not None else course(r)
+    m = o[1] if o[1] is not None else main_of(r, c)
+    k = o[2] if o[2] is not None else region(r)
     t = [c, m, k]
     if len(r) > 12: r[12] = t
     else: r.append(t)
