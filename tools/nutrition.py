@@ -224,6 +224,10 @@ T = [
     (r"young cheese|mladi sir|mlad sir", 14, 18, 2, [7], 1),
     (r"cottage cheese|curd cheese|tvorog|quark|ricotta|izvara|skuta", 12, 5, 3, [7], 1),
     (r"smoked cheese|vurshets|pušeni sir", 24, 27, 1, [7], 1),
+    (r"halloumi", 22, 26, 2, [7], 1),
+    (r"manouri", 10, 32, 3, [7], 1),
+    (r"kasseri", 25, 29, 1, [7], 1),
+    (r"kefalotyri", 28, 30, 1, [7], 1),
     # ---- fish & seafood ----
     (r"salt cod|bacalao|bakalar", 29, 1, 0, [4], 0),
     (r"anchov|sardine|sprat|herring|mackerel|tsatsa|cacao fish|scad|safrid", 19, 10, 0, [4], 0),
