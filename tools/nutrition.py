@@ -7,6 +7,7 @@ Alcohol is counted as 7 kcal/g through the fourth column (kcal override) where i
 import re
 
 T = [
+    (r"stockfish|stoccafisso", 17, 0.7, 0, [4], 0),
     (r"stock|broth|fond\b|demi-glace|jus\b", 1, 0.5, 0.5, [9], 0),
     # ---- zero / seasoning ----
     (r"^(water|ice|sparkling water|mineral water)\b|casings?\b|pickle brine", 0, 0, 0, [], 2),
@@ -39,9 +40,9 @@ T = [
     (r"kajmak|kaymak|clotted cream", 4, 45, 3, [7], 1),
     (r"sirene|feta|brine cheese|white cheese|telemea|brânză|branza|sir\b|urda", 15, 21, 1.5, [7], 1),
     (r"blue cheese|gorgonzola|roquefort|stilton|dolcelatte", 21, 29, 2, [7], 1),
-    (r"kashkaval|kaşar|kasar|cașcaval|cascaval|yellow cheese|gouda|edam|emmental|gruy[eè]re|cheddar|tilsit|trappist", 25, 29, 1, [7], 1),
+    (r"kashkaval|kaşar|kasar|cașcaval|cascaval|yellow cheese|gouda|edam|emmental|gruy[eè]re|cheddar|tilsit|trappist|caciocavallo|provolone|castelmagno|\btoma\b|fontina|graviera", 25, 29, 1, [7], 1),
     (r"parmesan|parmigiano|grana padano|pecorino|paški sir|paski sir", 35, 28, 0, [7], 1),
-    (r"mozzarella", 18, 20, 2, [7], 1),
+    (r"mozzarella|stracchino|crescenza", 18, 20, 2, [7], 1),
     (r"sulguni|imeruli|suluguni", 19, 22, 1, [7], 1),
     (r"young cheese|mladi sir|mlad sir", 14, 18, 2, [7], 1),
     (r"cottage cheese|curd cheese|tvorog|quark|ricotta|izvara|skuta", 12, 5, 3, [7], 1),
@@ -67,7 +68,7 @@ T = [
     (r"caul fat|pork caul", 4, 70, 0, [], 0),
     (r"pork skin|pork rind|calf'?s foot|calves'? feet|pig'?s trotter|trotters|pig'?s ear", 20, 15, 0, [], 0),
     (r"morcilla|black pudding", 15, 22, 15, [], 0),
-    (r"lukanka|sujuk|sudzhuk|kulen|salami|sausage|chorizo|kobasica|cârnați|carnati|nadenitsa|babek|loukanka|kranjska|kabanos|chouri[cç]o|lingui[cç]a|frankfurter|wiener|kiełbasa|kielbasa", 22, 34, 2, [], 0),
+    (r"lukanka|sujuk|sudzhuk|kulen|salami|sausage|chorizo|kobasica|cârnați|carnati|nadenitsa|babek|loukanka|kranjska|kabanos|chouri[cç]o|lingui[cç]a|frankfurter|wiener|kiełbasa|kielbasa|mortadella", 22, 34, 2, [], 0),
     (r"\bham\b|jam[oó]n|pršut|prsut|prosciutto|smoked pork loin|elenski but|pastarma|pastırma|pastrami|bresaola|hot-smoked", 25, 12, 1, [], 0),
     (r"veal (shank|knuckle|osso)|veal bones|beef bones|marrow bones|bones", 10, 10, 0, [], 0),
     (r"beef mince|minced beef|ground beef|beef & pork mince|mixed mince|mince", 18, 17, 0, [], 0),
@@ -75,7 +76,7 @@ T = [
     (r"beef tongue|veal tongue|tongue", 15, 16, 0, [], 0),
     (r"tripe|shkembe|škembe", 12, 4, 0, [], 0),
     (r"beef liver|veal liver|calf'?s liver|liver", 20, 4, 4, [], 0),
-    (r"kidney(?! beans)|sweetbread|heart|offal|lamb pluck|drob", 17, 5, 1, [], 0),
+    (r"kidney(?! beans)|sweetbread|(?<!artichoke )heart|offal|lamb pluck|drob", 17, 5, 1, [], 0),
     (r"beef|veal|steak|sirloin|rump|topside|silverside", 21, 6, 0, [], 0),
     (r"lamb mince|minced lamb", 17, 23, 0, [], 0),
     (r"lamb|mutton|goat|kid\b|jare", 18, 16, 0, [], 0),
@@ -101,12 +102,13 @@ T = [
     (r"millet", 11, 4, 73, [], 2),
     (r"boza", 1, 0.2, 12, [1], 2),
     (r"corn ?meal|corn grits|polenta|maize flour|mămăligă|mamaliga|cornflour|corn flour|kachamak", 8, 3, 75, [], 2),
-    (r"cornstarch|corn starch|potato starch|starch", 0.3, 0, 88, [], 2),
+    (r"cornstarch|corn starch|potato starch|starch|wafer paper", 0.3, 0, 88, [], 2),
     (r"bulgur|freekeh|couscous|pearl barley|barley|einkorn|spelt grain|wheat berries|wheat grain|zhito", 12, 1.5, 70, [1], 2),
     (r"\brice\b|arborio|carnaroli|basmati", 7, 0.6, 79, [], 2),
     (r"oats|oat flakes", 13, 7, 60, [1], 2),
     (r"breadcrumbs|panko|dried bread", 13, 5, 72, [1], 2),
     (r"bread|lavash|lepinja|pita|loaf|baguette|sourdough|\btoast\b|roll\b|buns?\b|pogača|pogacha|kifla|crouton", 9, 3, 50, [1], 2),
+    (r"\borzo\b|kritharaki|durum pasta|dried pasta \(durum", 12.5, 1.5, 72, [1], 1),
     (r"pasta|noodles|macaroni|spaghetti|tagliatelle|fide|tarhana|trahana|lasagne sheets", 12.5, 1.5, 72, [1, 3], 1),
     (r"biscuit|petit beurre|sponge fingers|ladyfinger", 7, 15, 70, [1, 3, 7], 1),
     # ---- legumes / nuts ----
@@ -172,7 +174,7 @@ T = [
     # ---- vinegar, wine, condiments ----
     (r"vinegar", 0, 0, 1, [14], 2),
     (r"borș|\bbors\b", 0.5, 0, 3, [1], 2),
-    (r"\brum\b|vodka|whisky|whiskey|bourbon|calvados|liqueur|grappa|\bgin\b", 0, 0, 0, [], 2),
+    (r"\brum\b|vodka|whisky|whiskey|bourbon|calvados|liqueur|grappa|\bgin\b|\bouzo\b|tsipouro|mastic", 0, 0, 0, [], 2),
     (r"\bcider\b", 0, 0, 3, [14], 2),
     (r"marsala|\bport\b|madeira|sherry", 0.1, 0, 12, [14], 2),
     (r"\bbeer\b|lager|\bale\b|stout|porter\b|kvass", 0.5, 0, 3.6, [1], 2),

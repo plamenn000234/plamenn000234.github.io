@@ -10,6 +10,7 @@ export const NEWS: News[] = [
     ["50 Eastern European & Caucasus tech cards", "Żurek, solyanka, stroganoff, chicken Kyiv, medovik, chakhokhbili, harissa, dovga…", "#c-eastern-european"],
     ["50 hotel tech cards", "Buffet mains, sides and cold starters, breakfast, soups and puddings: salmon Wellington, beef daube, celeriac gratin, apple charlotte…", "#recipes"],
     ["63 Spanish & Portuguese tech cards", "Paella valenciana, callos, zarzuela, lechazo, tocino de cielo; bacalhau com grão, chanfana, ovos moles…", "#c-spanish-tapas"],
+    ["49 Greek & Italian tech cards", "Patsas, ktapodi stifado, gida vrasti, kaimaki; vincisgrassi, sartù di riso, cinghiale in umido, focaccia di Recco, struffoli…", "#c-italian"],
   ] },
   { id: "2026-11-27", date: "27 November 2026", items: [
     ["Make it mine", "Copy any library recipe and change grams, steps and serving.", "#recipes"],
