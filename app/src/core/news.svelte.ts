@@ -17,6 +17,9 @@ export const NEWS: News[] = [
     ["33 British & Irish tech cards", "Arbroath smokie pots, jellied eels, Welsh cawl, boxty, Scottish steak pie, pie & mash with liquor, haggis, faggots, roast grouse, Sussex pond pudding, parkin, barmbrack…", "#c-british-irish-pub"],
     ["49 Turkish tech cards", "Yaprak sarma, lakerda, İmam bayıldı, tarhana, kelle paça, kuşbaşılı pide, talaş böreği, Urfa and cağ kebabı, kokoreç, hamsili pilav, uskumru dolması, perde pilavı, tavuk göğsü, katmer…", "#c-turkish"],
     ["41 Middle Eastern tech cards", "Hindbeh, kibbeh labanieh, shish barak, dawood basha, kubba hamuth, kebab karaz, masgouf, machboos, mandi, saltah, ka'ak al Quds, mafroukeh, meghli, kleicha…", "#c-middle-eastern"],
+    ["26 North African tech cards", "Houria, chorba beida, fricassé tunisien, mhajeb, karantika, tajine zitoune, mloukhia, douara, couscous royal, chakhchoukha, rechta, zlabia, assida zgougou…", "#c-north-african"],
+    ["17 Persian tech cards", "Ash-e doogh, borani bademjan, kufteh Tabrizi, khoresh aloo esfenaj, lubia polo, shirin polo, kabab bakhtiari, sohan, koloocheh…", "#c-persian"],
+    ["24 African tech cards", "Efo riro, ayamase, kedjenou, banga soup, attiéké, kitfo leb leb, zigni, kuku paka, frango piri-piri, ingelegde vis, umngqusho, matapa…", "#c-african"],
   ] },
   { id: "2026-11-27", date: "27 November 2026", items: [
     ["Make it mine", "Copy any library recipe and change grams, steps and serving.", "#recipes"],
