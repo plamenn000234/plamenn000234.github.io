@@ -1,31 +1,39 @@
-=== Beef Stroganoff · Beef Fillet Strips in Sour Cream · Mustard, Mushrooms
-at Eastern European / Mains · N 10 · pg 300 · plates
-## BEEF
-: Cooked à la minute · 2 portions per pan
-Beef tenderloin tails | 1500
-Sunflower oil | 60
-Salt | 12
-Black pepper | 3
-1. Cut beef across the grain into 1 × 1 × 5 cm strips; keep at 0–4 °C. Season just before cooking.
-2. Sear in a smoking-hot pan in one layer 60–90 s; remove (medium, core 55–58 °C).
-## SAUCE
-Onion | 400
-Button mushrooms | 500
-Butter | 80
-Wheat flour | 20
-Beef stock | 400
-Sour cream 20% | 500
-Mustard | 40
-Paprika, sweet | 5
-Dill | 15
-Yield | 3000
-1. Sweat sliced onion in butter 8 min; add sliced mushrooms until dry.
-2. Dust with flour, add stock, simmer 3 min; whisk in mustard, paprika and sour cream; reduce to coating (do not boil hard).
-3. Return the beef and its juices for 30 s to heat through. Finish with dill.
-## SERVICE
-1. 300 g with buttered buckwheat, mashed potatoes or straw potatoes; pickled cucumber on the side.
-st Sauce base 0–3 °C 72 h. Beef seared to order; do not hold above 2 h.
+=== Bitki Wołowe · Polish Beef Patties in Mushroom Sauce · Buckwheat Kasza
+at Eastern European / Mains · N 10 · pg 350 · plates
 tag Mains / Beef & veal
+## BITKI
+: 20 patties × 70 g raw
+Beef mince | 1300
+White bread, day-old | 100
+Milk | 100
+Onion | 150
+Eggs | 50
+Salt | 14
+Black pepper | 3
+Plain flour | 60
+Sunflower oil | 80
+## SAUCE
+Mushrooms, champignons | 500
+Dried mushrooms | 20
+Onion | 200
+Butter | 60
+Plain flour | 30
+Water | 600
+Sour cream 20% | 200
+Marjoram, dried | 2
+## KASZA
+Buckwheat groats | 400
+Water (kasza) | 800
+Butter (kasza) | 40
+Salt (kasza) | 6
+Yield | 3500
+1. Soak dried mushrooms in the 600 ml water 30 min; chop; keep the water.
+2. Soak bread in milk; squeeze. Mix mince, bread, grated onion, egg, salt and pepper; shape 70 g flat patties; flour; sear 2 min per side; set aside.
+3. Sauce: sweat onion in butter; add sliced fresh and soaked mushrooms; dust with flour; add mushroom water and marjoram. Add bitki; simmer covered 20 min. Stir in sour cream; do not boil. Core ≥ 75 °C.
+4. Kasza: toast groats 3 min; add boiling water, salt and butter; cover; cook 15 min on the lowest heat; rest 10 min.
+## SERVICE
+1. 2 bitki with 120 g sauce and 120 g kasza; pickled cucumber alongside.
+st Hot hold ≥ 63 °C max 2 h. Cook-chill 0–3 °C 72 h; reheat to ≥ 75 °C.
 
 === Kotlety Pozharskie · Minced Chicken Cutlets · Butter Centre, Breadcrumb Crust
 at Eastern European / Mains · N 10 · pg 250 · plates
@@ -329,23 +337,28 @@ Yield | 3200
 st 0–4 °C 48 h, covered.
 tag Salads / Fish
 
-=== Mizeria · Polish Cucumber Salad · Sour Cream, Dill
-at Eastern European / Salads & Sides · N 15 · pg 100 · portions
-## SALAD
-Cucumbers | 1500
-Salt | 10
-Sour cream 20% | 300
-Lemon juice | 30
-Sugar | 10
-Dill | 30
-White pepper | 1
-Yield | 1500
-1. Slice cucumbers 2 mm; salt 15 min; squeeze lightly, discard water.
-2. Mix sour cream, lemon, sugar, pepper and chopped dill; fold in the cucumber.
+=== Tökfőzelék · Hungarian Dill Squash Stew · Sour Cream, Paprika
+at Eastern European / Salads & Sides · N 15 · pg 150 · portions
+tag Sides / Vegetables
+## FŐZELÉK
+Marrow | 2000
+Onion | 150
+Butter | 60
+Plain flour | 50
+Paprika, sweet | 5
+Water | 200
+Sour cream 20% | 250
+White wine vinegar | 30
+Sugar | 15
+Dill, fresh | 40
+Salt | 16
+Yield | 2250
+1. Peel and seed the marrow; cut into fine julienne (or coarse grate); salt 20 min; squeeze lightly.
+2. Sweat onion in butter; add marrow; cook 5 min. Make a light roux paste with flour and a little water; stir in with paprika.
+3. Add water, vinegar and sugar; simmer 8 min. Stir in sour cream and plenty of chopped dill; season. Core ≥ 75 °C.
 ## SERVICE
-1. 100 g as a side to schnitzel, fish or potatoes.
-st 0–4 °C 12 h (weeps after that).
-tag Salads / Vegetables
+1. 150 g as a side (classic with fried meatballs or a fried egg), or 300 g as a vegetarian main.
+st Hot hold ≥ 63 °C max 2 h. 0–3 °C 48 h; reheat gently to ≥ 75 °C.
 
 === Marinovannye Griby · Pickled Forest Mushrooms · Garlic, Dill, Allspice
 at Eastern European / Salads & Sides · N 20 · pg 60 · portions

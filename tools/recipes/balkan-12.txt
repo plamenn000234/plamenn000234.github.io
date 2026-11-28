@@ -458,28 +458,32 @@ part Octopus, whole 0.7
 1. 160 g octopus and 240 g potatoes with the juices; parsley.
 st Raw octopus 0–3 °C 24 h or frozen. Hot hold ≥ 63 °C max 2 h. Cooked 0–3 °C 48 h; reheat to ≥ 75 °C.
 
-=== Dagnje na Buzaru · Mussels Buzara · White Wine, Garlic, Breadcrumbs
-at Adriatic & Balkan / Croatia & Dalmatia · N 10 · pg 400 · bowls
-tag Mains / Seafood
-## MUSSELS
-Mussels, live | 4000
-Olive oil | 120
-Garlic | 50
-Dry white wine | 400
-Breadcrumbs | 80
-Parsley, fresh | 60
-Black pepper | 4
-Lemons | 200
-## BREAD
-White bread | 600
-Yield | 4000
-part Mussels, live 0.35
-1. Scrub and debeard the mussels; discard any that are open and do not close when tapped, and any broken ones.
-2. Per 2 portions (800 g mussels): heat 25 ml oil, add 10 g chopped garlic for 20 s, add mussels and 80 ml wine; cover on high heat 3–4 min, shaking, until open. Discard any that stay closed.
-3. Sprinkle 15 g breadcrumbs and parsley; toss 30 s to thicken the juice; pepper. Core of mussel meat ≥ 75 °C.
+=== Komiška Pogača · Vis Island Salted Fish Pie · Onion, Tomato, Capers
+at Adriatic & Balkan / Croatia & Dalmatia · N 16 · pg 150 · portions
+tag Bread & bakery / Fish
+## DOUGH
+Wheat flour | 900
+Water | 520
+Olive oil | 60
+Fresh yeast | 25
+Salt | 14
+## FILLING
+Onion | 900
+Tomatoes, peeled, can | 400
+Anchovies, salted | 250
+Olive oil (filling) | 100
+Capers | 40
+Oregano, dried | 3
+Black pepper | 3
+Yield | 2400
+1. Knead flour, water, oil, yeast and salt 10 min; prove 1 h.
+2. Sweat sliced onion in oil 25 min until very soft; add tomatoes and oregano; cook 10 min until thick; cool.
+3. Rinse and fillet the salted fish; pat dry.
+4. Roll half the dough to line an oiled 30 × 40 cm tray; spread the onion; lay fish and capers on top; pepper. Cover with the second sheet; seal; prick.
+5. Prove 20 min; bake 220 °C 30 min until golden. Brush with olive oil. Core ≥ 75 °C.
 ## SERVICE
-1. 400 g mussels in a hot bowl with juice; lemon wedge; 60 g toasted bread.
-st Live mussels 2–4 °C covered with a damp cloth, never in water, max 48 h. Cook to order; do not reheat.
+1. 150 g, warm or at room temperature.
+st Room temperature 12 h. 0–3 °C 72 h.
 
 === Girice · Fried Picarel & Sprats · Lemon, Coarse Salt
 at Adriatic & Balkan / Croatia & Dalmatia · N 10 · pg 200 · plates
