@@ -30,6 +30,7 @@ export const NEWS: News[] = [
     ["70 Indian tech cards", "Bhel puri, dahi bhalla, galouti kebab, misal pav, pindi chole, rasam, Kolhapuri chicken, xacuti, nalli nihari, haleem, sorpotel, balchão, paneer lababdar, undhiyu, sarson ka saag, bisi bele bath, neer dosa, rasgulla, Mysore pak…", "#c-indian"],
     ["60 Latin American tech cards", "Caldo de res, poc chuc, pozole verde, tikin xic, mixiote, pipián; escabeche, tacu tacu, adobo arequipeño, parihuela; xinxim, tutu à mineira, moqueca capixaba; lomo a lo pobre, puchero, empanadas de pino; bandeja paisa, ajiaco, pabellón, hallacas, bolo de rolo…", "#c-latin-american"],
     ["70 North American tech cards", "Country ham with red-eye gravy, Kentucky Hot Brown, beef on weck, grillades & grits, redfish courtbouillon, Cincinnati chili, Senate bean soup, chess pie; Santa Maria tri-tip, Owensboro mutton, Lexington dip…", "#c-american-diner-southern"],
+    ["76 more French tech cards", "Ficelle picarde, gâteau de foies blonds, cotriade, merlan en colère, bœuf à la mode, gardiane, ris de veau, civet de lièvre, salmis de canard, terrine de lapin, saucisson brioché, opéra, pithiviers…", "#c-french"],
   ] },
   { id: "2026-11-27", date: "27 November 2026", items: [
     ["Make it mine", "Copy any library recipe and change grams, steps and serving.", "#recipes"],
